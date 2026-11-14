@@ -171,6 +171,16 @@
       border: 1px solid rgba(255, 107, 44, 0.3);
       color: #ffd8c7;
     }
+    .alert.ok {
+      background: rgba(39, 196, 125, 0.14);
+      border-color: rgba(39, 196, 125, 0.38);
+      color: #9bf6cb;
+    }
+    .alert.err {
+      background: rgba(255, 77, 109, 0.14);
+      border-color: rgba(255, 77, 109, 0.38);
+      color: #ffb3c1;
+    }
     .hidden { display: none; }
     .stat-box {
       background: var(--card-2);
@@ -249,7 +259,7 @@
       <div class="stat-num" id="res-score">0</div>
       <div class="meta" id="res-detail"></div>
     </div>
-    <div id="sync-status" class="alert">Vérification de la synchronisation...</div>
+    <div id="sync-status" class="alert" aria-live="polite">Vérification de la synchronisation...</div>
     <button class="btn" id="btn-back-sessions">Retour aux sessions</button>
     <div class="ad-slot" id="ad-slot-result">Emplacement Publicitaire · Niveau 3 (Fin de session)</div>
   </div>
@@ -257,9 +267,7 @@
 
 <script>
   // ====== CONFIGURATION ADMIN ======
-  // Remplace par l'URL /exec de Google Apps Script dès que tu l'auras déployé.
-  // Feuille cible : https://docs.google.com/spreadsheets/d/1-7YdqU8Nj6KOodHOCnxB-khBZ2lQ729L83gPo31Hnq0/edit?usp=drivesdk
-  const APPS_SCRIPT_URL = "";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzAwME1m0wTze18aMQ4XD5GMDfI4KGAnX325VFBfQGKlYLmQZ8lWITp9WPUxQKNSyjh/exec";
   // Date du Jour 1 du concours (format AAAA-MM-JJ)
   const CONCOURS_START_DATE = "2026-11-14";
 
@@ -292,6 +300,14 @@
   let score = 0;
   let timerId = null;
   let timeLeft = 15;
+  let enCoursEnvoi = false;
+
+  function genererSessionId() {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return window.crypto.randomUUID();
+    }
+    return `nr-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  }
 
   function shuffle(arr) {
     const copy = [...arr];
@@ -493,31 +509,34 @@
     showScreen("screen-result");
 
     const syncBox = document.getElementById("sync-status");
-    const payload = {
-      pseudo: currentUser.pseudo,
-      whatsapp: currentUser.whatsapp,
-      session: `Session ${activeSession.id}`,
-      score,
-      total: sessionQuestions.length * 100,
-      status: "TERMINE_1_TENTATIVE",
-      dayNumber: `Jour ${currentDay}`
-    };
+    syncBox.className = "alert";
+    syncBox.textContent = "Synchronisation du score avec NovaRoot...";
 
-    if (!APPS_SCRIPT_URL) {
-      syncBox.textContent = "Tentative verrouillée en local (1/1). Ajoute l'URL Apps Script /exec dans APPS_SCRIPT_URL pour pousser les scores vers la Google Sheet.";
-      return;
-    }
+    if (enCoursEnvoi) return;
+    enCoursEnvoi = true;
+
+    const payload = {
+      name: `${currentUser.pseudo} (${currentUser.whatsapp})`,
+      day: `Jour ${currentDay} - Session ${activeSession.id}`,
+      score: Number(score) || 0,
+      total: sessionQuestions.length * 100,
+      sessionId: `${genererSessionId()}-S${activeSession.id}`
+    };
 
     try {
       await fetch(APPS_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
       });
-      syncBox.textContent = "Score envoyé au tableau admin (Google Sheet).";
+      syncBox.className = "alert ok";
+      syncBox.textContent = "Score enregistré dans le suivi NovaRoot Impact (Google Sheet).";
     } catch (e) {
+      syncBox.className = "alert err";
       syncBox.textContent = "Connexion instable : réessaie depuis ton réseau ou contacte un admin.";
+    } finally {
+      enCoursEnvoi = false;
     }
   }
 </script>
