@@ -159,8 +159,21 @@
       color: var(--text);
       font-size: 14px;
       cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
     }
-    .opt:hover { border-color: var(--accent); }
+    .opt:hover:not(:disabled) { border-color: var(--accent); }
+    .opt.correct {
+      background: rgba(39, 196, 125, 0.22);
+      border-color: var(--ok);
+      color: #b7f9da;
+      font-weight: 700;
+    }
+    .opt.wrong {
+      background: rgba(255, 77, 109, 0.22);
+      border-color: var(--err);
+      color: #ffc2ce;
+      font-weight: 700;
+    }
     .alert {
       padding: 10px 12px;
       border-radius: 12px;
@@ -267,7 +280,7 @@
 
 <script>
   // ====== CONFIGURATION ADMIN ======
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzAwME1m0wTze18aMQ4XD5GMDfI4KGAnX325VFBfQGKlYLmQZ8lWITp9WPUxQKNSyjh/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhTpFMHXzNp-PXxOu-YH7ClRngbzLuk0QeHNi3kiqVT2FccEVFJA4cU3gGoINKTbgr/exec";
   // Date du Jour 1 du concours (format AAAA-MM-JJ)
   const CONCOURS_START_DATE = "2026-11-14";
 
@@ -301,6 +314,7 @@
   let timerId = null;
   let timeLeft = 15;
   let enCoursEnvoi = false;
+  let isAnswering = false;
 
   function genererSessionId() {
     if (window.crypto && typeof window.crypto.randomUUID === "function") {
@@ -442,6 +456,7 @@
     activeSession = sess;
     score = 0;
     qIndex = 0;
+    isAnswering = false;
 
     sessionQuestions = shuffle(QUESTION_BANK).slice(0, sess.count).map(item => {
       const indexed = item.opts.map((text, idx) => ({ text, isCorrect: idx === item.ans }));
@@ -460,6 +475,7 @@
 
   function renderQuestion() {
     clearInterval(timerId);
+    isAnswering = false;
     const currentQ = sessionQuestions[qIndex];
     timeLeft = activeSession.timePerQ;
 
@@ -474,7 +490,8 @@
       const btn = document.createElement("button");
       btn.className = "opt";
       btn.textContent = opt.text;
-      btn.addEventListener("click", () => handleAnswer(opt.isCorrect));
+      btn.dataset.correct = opt.isCorrect ? "1" : "0";
+      btn.addEventListener("click", () => handleAnswer(btn, opt.isCorrect));
       optsBox.appendChild(btn);
     });
 
@@ -483,22 +500,40 @@
       document.getElementById("q-timer").textContent = `${timeLeft}s`;
       if (timeLeft <= 0) {
         clearInterval(timerId);
-        handleAnswer(false);
+        handleAnswer(null, false);
       }
     }, 1000);
   }
 
-  function handleAnswer(isCorrect) {
+  function handleAnswer(clickedBtn, isCorrect) {
+    if (isAnswering) return;
+    isAnswering = true;
     clearInterval(timerId);
+
+    const allBtns = document.querySelectorAll("#q-options .opt");
+    allBtns.forEach(btn => {
+      btn.disabled = true;
+      if (btn.dataset.correct === "1") {
+        btn.classList.add("correct");
+      }
+    });
+
+    if (clickedBtn && !isCorrect) {
+      clickedBtn.classList.add("wrong");
+    }
+
     if (isCorrect) {
       score += sessionQuestions[qIndex].pts;
     }
-    qIndex += 1;
-    if (qIndex < sessionQuestions.length) {
-      renderQuestion();
-    } else {
-      finishSession();
-    }
+
+    setTimeout(() => {
+      qIndex += 1;
+      if (qIndex < sessionQuestions.length) {
+        renderQuestion();
+      } else {
+        finishSession();
+      }
+    }, 650);
   }
 
   async function finishSession() {
