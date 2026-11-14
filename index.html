@@ -3,516 +3,523 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Novaroot Impact — Quiz Otaku 2027</title>
+  <title>NOVAROOT IMPACT · Quiz Otaku 2027</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --card-alt: #0f172a;
-      --accent: #f97316;
-      --accent-hover: #ea580c;
-      --bonus: #a855f7;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --good: #22c55e;
-      --bad: #ef4444;
-      --border: rgba(255, 255, 255, 0.08);
+      --bg: #0b1020;
+      --card: #131b33;
+      --card-2: #192444;
+      --accent: #ff6b2c;
+      --accent-2: #ff8f5e;
+      --text: #f3f6ff;
+      --muted: #9aa7cc;
+      --ok: #27c47d;
+      --err: #ff4d6d;
+      --border: rgba(255,255,255,0.09);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    * { box-sizing: border-box; }
     body {
-      background: var(--bg);
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top, #172347 0%, var(--bg) 65%);
       color: var(--text);
       min-height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
-      padding: 14px;
+      padding: 16px;
     }
     .app {
       width: 100%;
       max-width: 460px;
       background: var(--card);
+      border: 1px solid var(--border);
       border-radius: 20px;
       padding: 20px;
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
-      border: 1px solid var(--border);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.45);
     }
     .badge {
       display: inline-block;
-      background: rgba(249, 115, 22, 0.18);
-      color: var(--accent);
-      font-size: 11px;
-      font-weight: 800;
+      background: rgba(255, 107, 44, 0.16);
+      color: var(--accent-2);
+      border: 1px solid rgba(255, 107, 44, 0.35);
       padding: 5px 10px;
       border-radius: 999px;
-      margin-bottom: 8px;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-    }
-    .level-pill {
-      display: inline-block;
       font-size: 11px;
       font-weight: 700;
-      padding: 4px 9px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.15);
-      color: #38bdf8;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
-    .level-pill.bonus {
-      background: rgba(168, 85, 247, 0.2);
-      color: #d8b4fe;
+    h1 {
+      margin: 12px 0 6px;
+      font-size: 22px;
+      line-height: 1.25;
     }
-    h1 { font-size: 21px; margin-bottom: 6px; }
-    h2 { font-size: 18px; margin-bottom: 8px; }
-    p { color: var(--muted); font-size: 13.5px; line-height: 1.45; margin-bottom: 14px; }
-    .hidden { display: none; }
-
-    .sessions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 14px;
+    p.sub {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
     }
-    .session-card {
-      background: var(--card-alt);
-      border: 1px solid #334155;
-      border-radius: 14px;
-      padding: 13px 14px;
-      text-align: left;
+    .field {
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card-2);
       color: var(--text);
-      cursor: pointer;
-      transition: border-color 0.15s ease, transform 0.1s ease;
+      font-size: 15px;
+      outline: none;
     }
-    .session-card:hover { border-color: var(--accent); }
-    .session-card:active { transform: scale(0.99); }
-    .session-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-    .session-desc { font-size: 12.5px; color: var(--muted); line-height: 1.35; }
-
+    input:focus { border-color: var(--accent); }
     .btn {
       width: 100%;
       padding: 13px 16px;
       border: none;
       border-radius: 12px;
-      font-size: 14.5px;
-      font-weight: 700;
-      cursor: pointer;
       background: var(--accent);
       color: #fff;
-      transition: background 0.15s ease;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      margin-top: 6px;
     }
-    .btn:hover { background: var(--accent-hover); }
-    .btn:active { transform: scale(0.99); }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
     .btn-secondary {
-      background: #334155;
-      margin-top: 9px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      color: var(--text);
     }
-
-    .topbar {
+    .session-card {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .session-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 12.5px;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .session-title { font-weight: 700; font-size: 15px; }
+    .pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.08);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .pill.open { background: rgba(39, 196, 125, 0.18); color: #6ef0b4; }
+    .pill.done { background: rgba(154, 167, 204, 0.18); color: #cdd6f4; }
+    .pill.locked { background: rgba(255, 77, 109, 0.16); color: #ff8fa3; }
+    .meta { font-size: 12px; color: var(--muted); }
+    .q-box {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .q-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
       color: var(--muted);
       margin-bottom: 8px;
-      gap: 8px;
     }
-    .progress {
-      width: 100%;
-      height: 7px;
-      background: var(--card-alt);
-      border-radius: 999px;
-      overflow: hidden;
-      margin-bottom: 14px;
-    }
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: var(--accent);
-      transition: width 0.25s ease;
-    }
-    .category-tag {
-      font-size: 11.5px;
-      color: var(--accent);
-      font-weight: 700;
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    .category-tag.bonus { color: #d8b4fe; }
-    .question {
+    .q-text {
       font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 14px;
+      font-weight: 600;
       line-height: 1.4;
     }
-    .options {
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-    }
-    .option-btn {
+    .opt {
       width: 100%;
       text-align: left;
       padding: 12px 14px;
+      margin-bottom: 8px;
       border-radius: 12px;
-      border: 1px solid #334155;
-      background: var(--card-alt);
+      border: 1px solid var(--border);
+      background: var(--card-2);
       color: var(--text);
-      font-size: 13.5px;
+      font-size: 14px;
       cursor: pointer;
     }
-    .option-btn.correct { border-color: var(--good); background: rgba(34, 197, 94, 0.18); }
-    .option-btn.wrong { border-color: var(--bad); background: rgba(239, 68, 68, 0.18); }
-
-    .ad-slot {
-      background: var(--card-alt);
-      border: 1px dashed #475569;
-      border-radius: 14px;
-      padding: 14px;
-      margin: 12px 0 14px 0;
-      text-align: center;
-    }
-    .ad-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-    .ad-box {
-      min-height: 76px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.03);
-      padding: 10px;
-      font-size: 12.5px;
-      color: #cbd5e1;
-    }
-
-    .score-box {
-      background: var(--card-alt);
-      padding: 15px;
-      border-radius: 14px;
-      text-align: center;
+    .opt:hover { border-color: var(--accent); }
+    .alert {
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.4;
       margin-bottom: 12px;
+      background: rgba(255, 107, 44, 0.12);
+      border: 1px solid rgba(255, 107, 44, 0.3);
+      color: #ffd8c7;
     }
-    .score-num { font-size: 30px; font-weight: 800; color: var(--accent); }
-    .status { font-size: 12.5px; color: var(--good); min-height: 18px; margin-top: 8px; text-align: center; }
+    .hidden { display: none; }
+    .stat-box {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      margin: 14px 0;
+    }
+    .stat-num { font-size: 32px; font-weight: 800; color: var(--accent-2); }
+    .ad-slot {
+      margin-top: 14px;
+      border: 1px dashed rgba(255,255,255,0.16);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <!-- Écran d'accueil : Choix des 3 sessions -->
-    <div id="home-screen">
-      <div class="badge">Novaroot Impact • Quiz Otaku 2027</div>
-      <h1>Choisis ta session en ligne</h1>
-      <p>10 questions par session : 3 Facile, 3 Moyen, 3 Difficile + 1 question surprise au hasard (points doublés), avec 3 bannières publicitaires.</p>
+<div class="app">
+  <span class="badge">Novaroot Impact · Quiz Otaku 2027</span>
 
-      <div class="sessions">
-        <button class="session-card" data-session="1">
-          <div class="session-title">Session 1 — Chronométrée Classique</div>
-          <div class="session-desc">15s par question • 3 Facile, 3 Moyen, 3 Difficile + 1 Hasard • Culture anime & manga.</div>
-        </button>
-
-        <button class="session-card" data-session="2">
-          <div class="session-title">Session 2 — Chronométrée Rapide</div>
-          <div class="session-desc">10s par question • 3 Facile, 3 Moyen, 3 Difficile + 1 Hasard • Défi vitesse.</div>
-        </button>
-
-        <button class="session-card" data-session="3">
-          <div class="session-title">Session 3 — Openings, Devinettes & Citations</div>
-          <div class="session-desc">3 Facile, 3 Moyen, 3 Difficile + 1 Hasard • Openings, « Qui suis-je ? », « Qui a dit ? », « Qu'est-ce ? ».</div>
-        </button>
-      </div>
-
-      <div class="score-box">
-        <div style="font-size:11.5px; color:var(--muted);">MEILLEUR RECORD GLOBAL</div>
-        <div class="score-num" id="best-score-home">0</div>
-      </div>
+  <!-- ÉCRAN 1 : IDENTIFICATION -->
+  <div id="screen-login">
+    <h1>Identification candidat</h1>
+    <p class="sub">Entre ton pseudo et ton numéro WhatsApp. Chaque session est ouverte 1 jour précis (Jour 1, Jour 2, Jour 3) avec 1 seule tentative officielle.</p>
+    <div class="field">
+      <label for="pseudo">Pseudo</label>
+      <input id="pseudo" type="text" placeholder="Ex. Kenjiro_2027" maxlength="30" />
     </div>
-
-    <!-- Écran de jeu -->
-    <div id="quiz-screen" class="hidden">
-      <div class="topbar">
-        <span id="session-label">Session 1</span>
-        <span class="level-pill" id="level-pill">Facile • 1/10</span>
-        <span id="timer">15s</span>
-      </div>
-      <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
-      <div class="category-tag" id="category-tag"></div>
-      <div class="question" id="question-text"></div>
-      <div class="options" id="options-box"></div>
+    <div class="field">
+      <label for="whatsapp">Numéro Téléphone (WhatsApp)</label>
+      <input id="whatsapp" type="tel" placeholder="Ex. +243 81 000 0000" maxlength="25" />
     </div>
-
-    <!-- Écran intermédiaire de fin de niveau (Bannière 1 et Bannière 2) -->
-    <div id="level-break-screen" class="hidden">
-      <div class="badge" id="break-badge">Niveau terminé</div>
-      <h2 id="break-title">Niveau Facile validé !</h2>
-      <p id="break-subtitle">Score actuel : 0 pts</p>
-
-      <div class="ad-slot">
-        <div class="ad-label" id="break-ad-label">Publicité • Bannière 1/3</div>
-        <div class="ad-box" id="break-ad-container">
-          <!-- Insère ici le script publicitaire (Bannière fin de niveau) -->
-          Espace Bannière Publicitaire (Fin de niveau)
-        </div>
-      </div>
-
-      <button class="btn" id="next-level-btn">Passer au niveau suivant</button>
-    </div>
-
-    <!-- Écran de fin de session (Bannière 3) -->
-    <div id="end-screen" class="hidden">
-      <div class="badge">Session terminée (10/10)</div>
-      <h1>Résultat final</h1>
-      <p id="end-message">Bien joué !</p>
-
-      <div class="score-box">
-        <div style="font-size:11.5px; color:var(--muted);">SCORE FINAL</div>
-        <div class="score-num" id="final-score">0</div>
-        <div style="font-size:12px; color:var(--muted); margin-top:4px;">Record : <span id="best-score-end">0</span></div>
-      </div>
-
-      <div class="ad-slot">
-        <div class="ad-label">Publicité • Bannière 3/3</div>
-        <div class="ad-box" id="end-ad-container">
-          <!-- Insère ici le script publicitaire (Bannière 3/3) -->
-          Espace Bannière Publicitaire (Fin de session — Bannière 3/3)
-        </div>
-      </div>
-
-      <button class="btn" id="replay-session-btn">Rejouer cette session</button>
-      <button class="btn btn-secondary" id="home-btn">Changer de session</button>
-      <div class="status" id="share-status"></div>
-    </div>
+    <div id="login-msg" class="alert hidden"></div>
+    <button class="btn" id="btn-login">Accéder aux sessions</button>
   </div>
 
-  <script>
-    const SESSIONS = {
-      1: {
-        name: "Session 1 • Chrono Classique",
-        timePerQuestion: 15,
-        fixedQuestions: [
-          { level: "Facile", category: "Anime", q: "Dans quel anime le personnage principal possède-t-il le Death Note ?", options: ["Bleach", "Death Note", "Naruto", "Code Geass"], answer: 1 },
-          { level: "Facile", category: "Manga", q: "Quel est le nom du bateau de l'équipage du Chapeau de Paille ?", options: ["Red Force", "Thousand Sunny", "Polar Tang", "Oro Jackson"], answer: 1 },
-          { level: "Facile", category: "Anime", q: "Dans Demon Slayer, quel souffle utilise Tanjiro Kamado à l'origine ?", options: ["Souffle de la Flamme", "Souffle de l'Eau", "Souffle de la Foudre", "Souffle du Soleil"], answer: 1 },
-          { level: "Moyen", category: "Studio", q: "Quel studio a produit L'Attaque des Titans (saisons 1 à 3) ?", options: ["MAPPA", "Wit Studio", "ufotable", "Bones"], answer: 1 },
-          { level: "Moyen", category: "Anime", q: "Dans Jujutsu Kaisen, quel est le nom du démon scellé en Yuji Itadori ?", options: ["Sukuna", "Mahito", "Geto", "Jogo"], answer: 0 },
-          { level: "Moyen", category: "Manga", q: "Dans My Hero Academia, quel est le nom du pouvoir d'Izuku Midoriya ?", options: ["All For One", "One For All", "Explosion", "Demi-Glace"], answer: 1 },
-          { level: "Difficile", category: "Manga", q: "Quel est le nom du père de Gon Freecss dans Hunter x Hunter ?", options: ["Silva Zoldyck", "Ging Freecss", "Isaac Netero", "Razor"], answer: 1 },
-          { level: "Difficile", category: "Anime", q: "Dans Fullmetal Alchemist: Brotherhood, quel est le nom complet d'Alphonse ?", options: ["Alphonse Elric", "Alphonse Mustang", "Alphonse Hughes", "Alphonse Scar"], answer: 0 },
-          { level: "Difficile", category: "Culture Otaku", q: "Quel terme désigne l'épisode de lancement d'une série animée ?", options: ["OVA", "Pilote", "Filler", "Spin-off"], answer: 1 }
-        ],
-        randomPool: [
-          { level: "Hasard (Bonus x2)", category: "Question Surprise", q: "Quel mangaka est le créateur de One Piece ?", options: ["Masashi Kishimoto", "Eiichiro Oda", "Tite Kubo", "Akira Toriyama"], answer: 1 },
-          { level: "Hasard (Bonus x2)", category: "Question Surprise", q: "Dans Naruto, quel est le rang de Kakashi Hatake au début de la série ?", options: ["Genin", "Chunin", "Jonin", "Hokage"], answer: 2 },
-          { level: "Hasard (Bonus x2)", category: "Question Surprise", q: "Combien de Dragon Balls faut-il réunir sur Terre pour invoquer Shenron ?", options: ["5", "7", "9", "12"], answer: 1 }
-        ]
-      },
-      2: {
-        name: "Session 2 • Chrono Rapide",
-        timePerQuestion: 10,
-        fixedQuestions: [
-          { level: "Facile", category: "Anime", q: "Quel est le prénom du rival d'Ash Ketchum dans Pokémon ?", options: ["Régis", "Pierre", "Ondine", "Sacha"], answer: 0 },
-          { level: "Facile", category: "Anime", q: "Quel personnage porte un chapeau de paille dans One Piece ?", options: ["Shanks", "Monkey D. Luffy", "Roronoa Zoro", "Sanji"], answer: 1 },
-          { level: "Facile", category: "Manga", q: "Quel animal est scellé en Naruto Uzumaki ?", options: ["Un renard à neuf queues", "Un loup blanc", "Un dragon", "Un chat noir"], answer: 0 },
-          { level: "Moyen", category: "Anime", q: "Dans Naruto, quel est le nom du clan de Sasuke ?", options: ["Senju", "Uchiwa", "Hyuga", "Nara"], answer: 1 },
-          { level: "Moyen", category: "Manga", q: "Dans Dragon Ball, comment s'appelle la transformation dorée de Goku ?", options: ["Ultra Instinct", "Super Saiyan", "Kaioken", "Fusion"], answer: 1 },
-          { level: "Moyen", category: "Anime", q: "Dans Bleach, comment s'appelle le Zanpakuto d'Ichigo Kurosaki ?", options: ["Zangetsu", "Ryujin Jakka", "Senbonzakura", "Hyōrinmaru"], answer: 0 },
-          { level: "Difficile", category: "Anime", q: "Dans Steins;Gate, quel objet modifié envoie des messages dans le passé ?", options: ["Un téléphone fixe", "Un micro-ondes", "Une montre à gousset", "Une radio"], answer: 1 },
-          { level: "Difficile", category: "Manga", q: "Dans Death Note, quelle condition est obligatoire pour tuer avec le cahier ?", options: ["Écrire en rouge", "Connaître le visage de la cible", "Toucher la cible", "Connaître sa date de naissance"], answer: 1 },
-          { level: "Difficile", category: "Culture Otaku", q: "Que signifie l'acronyme OVA dans l'animation japonaise ?", options: ["Original Video Animation", "Official Voice Acting", "Online Visual Archive", "Open Vector Art"], answer: 0 }
-        ],
-        randomPool: [
-          { level: "Hasard (Bonus x2)", category: "Question Surprise", q: "Dans Dragon Ball Z, quelle technique permet à Goku de se téléporter ?", options: ["Déplacement instantané", "Kamehameha", "Genkidama", "Taiyoken"], answer: 0 },
-          { level: "Hasard (Bonus x2)", category: "Question Surprise", q: "Quel est le nom du carnet utilisé par Light Yagami ?", options: ["Soul Note", "Death Note", "Dark Book", "Shinigami Log"], answer: 1 },
-          { level: "Hasard (Bonus x2)", category: "Question Surprise", q: "Dans Demon Slayer, qui est la petite sœur de Tanjiro ?", options: ["Shinobu", "Kanao", "Nezuko", "Mitsuri"], answer: 2 }
-        ]
-      },
-      3: {
-        name: "Session 3 • Openings, Devinettes & Citations",
-        timePerQuestion: 15,
-        fixedQuestions: [
-          { level: "Facile", category: "Opening", q: "Opening : Quel anime est célèbre pour le générique « Gurenge » de LiSA ?", options: ["Demon Slayer", "Jujutsu Kaisen", "Bleach", "Naruto Shippuden"], answer: 0 },
-          { level: "Facile", category: "Qui suis-je ?", q: "Qui suis-je ? Je cherche les sept boules de cristal et j'adore manger.", options: ["Son Goku", "Luffy", "Naruto", "Natsu"], answer: 0 },
-          { level: "Facile", category: "Qu'est-ce ?", q: "Qu'est-ce que le « One Piece » dans le manga d'Eiichiro Oda ?", options: ["Un trésor légendaire", "Une île volante", "Un fruit du démon", "Un navire géant"], answer: 0 },
-          { level: "Moyen", category: "Opening", q: "Opening : Quel opening accompagne la saison 1 de L'Attaque des Titans ?", options: ["Guren no Yumiya", "Kaikai Kitan", "Unravel", "Blue Bird"], answer: 0 },
-          { level: "Moyen", category: "Qui a dit ?", q: "Qui a dit : « Je vais devenir le Roi des Pirates ! » ?", options: ["Monkey D. Luffy", "Gol D. Roger", "Portgas D. Ace", "Shanks"], answer: 0 },
-          { level: "Moyen", category: "Qu'est-ce ?", q: "Qu'est-ce qu'un « Shinigami » dans Death Note ?", options: ["Un dieu de la mort", "Un chasseur de démons", "Un esprit de la forêt", "Un ninja renégat"], answer: 0 },
-          { level: "Difficile", category: "Opening", q: "Opening : Quel artiste interprète « Kaikai Kitan » (Jujutsu Kaisen S1) ?", options: ["Eve", "YOASOBI", "King Gnu", "Kenshi Yonezu"], answer: 0 },
-          { level: "Difficile", category: "Qui a dit ?", q: "Qui a dit : « Si tu ne veux pas mourir, ne te bats pas. » ?", options: ["Levi Ackerman", "Eren Yeager", "Armin Arlert", "Reiner Braun"], answer: 0 },
-          { level: "Difficile", category: "Qui suis-je ?", q: "Qui suis-je ? Alchimiste d'État qui a perdu son bras droit et sa jambe gauche.", options: ["Edward Elric", "Roy Mustang", "Alphonse Elric", "Maes Hughes"], answer: 0 }
-        ],
-        randomPool: [
-          { level: "Hasard (Bonus x2)", category: "Opening Surprise", q: "Opening : Quel célèbre générique de Naruto Shippuden est chanté par Ikimonogakari ?", options: ["Blue Bird", "Silhouette", "Sign", "Haruka Kanata"], answer: 0 },
-          { level: "Hasard (Bonus x2)", category: "Qui suis-je ? (Surprise)", q: "Qui suis-je ? Je porte un bandeau sur l'œil gauche et je maîtrise le Sixième Œil.", options: ["Satoru Gojo", "Kakashi Hatake", "Ken Kaneki", "Roronoa Zoro"], answer: 0 },
-          { level: "Hasard (Bonus x2)", category: "Qu'est-ce ? (Surprise)", q: "Qu'est-ce qu'un « Bankai » dans Bleach ?", options: ["La libération finale d'un Zanpakuto", "Une technique de soin", "Un masque de Hollow", "Un portail vers la Soul Society"], answer: 0 }
-        ]
+  <!-- ÉCRAN 2 : SÉLECTION DES SESSIONS -->
+  <div id="screen-sessions" class="hidden">
+    <h1>Sessions du concours</h1>
+    <p class="sub" id="candidate-summary"></p>
+    <div class="alert">
+      Règle stricte : 1 session par jour (Session 1 = Jour 1, Session 2 = Jour 2, Session 3 = Jour 3), ordre obligatoire, 1 seule tentative par session.
+    </div>
+    <div id="sessions-list"></div>
+    <button class="btn btn-secondary" id="btn-logout">Changer de candidat</button>
+    <div class="ad-slot" id="ad-slot-home">Emplacement Publicitaire · Niveau 1 (Bannière)</div>
+  </div>
+
+  <!-- ÉCRAN 3 : JEU -->
+  <div id="screen-game" class="hidden">
+    <h1 id="game-session-title">Session</h1>
+    <p class="sub" id="game-sub"></p>
+    <div class="alert">Attention : quitter ou rafraîchir la page consomme ta tentative officielle.</div>
+    <div class="q-box">
+      <div class="q-head">
+        <span id="q-counter">Question 1/10</span>
+        <span id="q-timer">15s</span>
+      </div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+    <div id="q-options"></div>
+    <div class="ad-slot" id="ad-slot-game">Emplacement Publicitaire · Niveau 2 (Interstitiel léger)</div>
+  </div>
+
+  <!-- ÉCRAN 4 : FIN DE SESSION -->
+  <div id="screen-result" class="hidden">
+    <h1>Session enregistrée</h1>
+    <p class="sub">Ton résultat a été enregistré pour cette tentative officielle. Les corrections détaillées ne sont pas affichées.</p>
+    <div class="stat-box">
+      <div class="meta">SCORE OBTENU</div>
+      <div class="stat-num" id="res-score">0</div>
+      <div class="meta" id="res-detail"></div>
+    </div>
+    <div id="sync-status" class="alert">Vérification de la synchronisation...</div>
+    <button class="btn" id="btn-back-sessions">Retour aux sessions</button>
+    <div class="ad-slot" id="ad-slot-result">Emplacement Publicitaire · Niveau 3 (Fin de session)</div>
+  </div>
+</div>
+
+<script>
+  // ====== CONFIGURATION ADMIN ======
+  // Remplace par l'URL /exec de Google Apps Script dès que tu l'auras déployé.
+  // Feuille cible : https://docs.google.com/spreadsheets/d/1-7YdqU8Nj6KOodHOCnxB-khBZ2lQ729L83gPo31Hnq0/edit?usp=drivesdk
+  const APPS_SCRIPT_URL = "";
+  // Date du Jour 1 du concours (format AAAA-MM-JJ)
+  const CONCOURS_START_DATE = "2026-11-14";
+
+  // Banque de questions (mélange automatique à chaque session)
+  const QUESTION_BANK = [
+    { q: "Dans One Piece, quel est le rêve de Monkey D. Luffy ?", opts: ["Devenir Roi des Pirates", "Trouver le All Blue", "Vaincre tous les Empereurs", "Cartographier le monde"], ans: 0, pts: 100 },
+    { q: "Quel studio a produit l'anime Attack on Titan (saisons 1 à 3) ?", opts: ["MAPPA", "Wit Studio", "ufotable", "Bones"], ans: 1, pts: 100 },
+    { q: "Dans Naruto, quel clan possède le Sharingan ?", opts: ["Hyuga", "Senju", "Uchiha", "Uzumaki"], ans: 2, pts: 100 },
+    { q: "Quel est le nom du Death Note de Light Yagami ?", opts: ["Ryuk", "Rem", "Sidoh", "Gelus"], ans: 0, pts: 100 },
+    { q: "Dans Demon Slayer, quel souffle utilise Tanjiro Kamado à l'origine ?", opts: ["Souffle de la Flamme", "Souffle de l'Eau", "Souffle du Soleil", "Souffle de la Foudre"], ans: 1, pts: 100 },
+    { q: "Quel auteur a créé Fullmetal Alchemist ?", opts: ["Hiromu Arakawa", "Eiichiro Oda", "Kohei Horikoshi", "Gege Akutami"], ans: 0, pts: 100 },
+    { q: "Dans Jujutsu Kaisen, quel est le nom du fléau qui vit en Yuji Itadori ?", opts: ["Mahito", "Jogo", "Ryomen Sukuna", "Geto"], ans: 2, pts: 100 },
+    { q: "Quel objet permet d'invoquer Shenron dans Dragon Ball ?", opts: ["7 Dragon Balls", "5 Dragon Balls", "6 Dragon Balls", "8 Dragon Balls"], ans: 0, pts: 100 },
+    { q: "Dans Hunter x Hunter, quel est l'examen que passe Gon au début ?", opts: ["Examen Chuunin", "Examen Hunter", "Examen des Ombres", "Examen Nen"], ans: 1, pts: 100 },
+    { q: "Quel studio anime Jujutsu Kaisen ?", opts: ["Madhouse", "MAPPA", "CloverWorks", "A-1 Pictures"], ans: 1, pts: 100 },
+    { q: "Dans Death Note, quel est l'alias du détective principal ?", opts: ["Near", "Mello", "L", "Watari"], ans: 2, pts: 100 },
+    { q: "Dans My Hero Academia, quel est le nom du pouvoir de Deku ?", opts: ["All For One", "One For All", "Explosion", "Half-Cold Half-Hot"], ans: 1, pts: 100 }
+  ];
+
+  const SESSIONS = [
+    { id: 1, day: 1, title: "Session 1 — Chronométrée Classique", timePerQ: 15, count: 10 },
+    { id: 2, day: 2, title: "Session 2 — Chronométrée Rapide", timePerQ: 10, count: 10 },
+    { id: 3, day: 3, title: "Session 3 — Openings, Devinettes & Citations", timePerQ: 12, count: 10 }
+  ];
+
+  let currentUser = null;
+  let activeSession = null;
+  let sessionQuestions = [];
+  let qIndex = 0;
+  let score = 0;
+  let timerId = null;
+  let timeLeft = 15;
+
+  function shuffle(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function getCurrentConcoursDay() {
+    const start = new Date(CONCOURS_START_DATE + "T00:00:00");
+    const now = new Date();
+    const diffMs = now - start;
+    const day = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+    return Math.max(1, day);
+  }
+
+  function userKey() {
+    return currentUser ? `${currentUser.pseudo.toLowerCase()}__${currentUser.whatsapp.replace(/\D/g, "")}` : "";
+  }
+
+  function getProgress() {
+    if (!currentUser) return { completed: [], lastPlayDay: null };
+    const raw = localStorage.getItem("nr_quiz_prog_" + userKey());
+    return raw ? JSON.parse(raw) : { completed: [], lastPlayDay: null };
+  }
+
+  function saveProgress(prog) {
+    localStorage.setItem("nr_quiz_prog_" + userKey(), JSON.stringify(prog));
+  }
+
+  function showScreen(id) {
+    ["screen-login", "screen-sessions", "screen-game", "screen-result"].forEach(s => {
+      document.getElementById(s).classList.toggle("hidden", s !== id);
+    });
+  }
+
+  document.getElementById("btn-login").addEventListener("click", () => {
+    const pseudo = document.getElementById("pseudo").value.trim();
+    const whatsapp = document.getElementById("whatsapp").value.trim();
+    const msg = document.getElementById("login-msg");
+
+    if (pseudo.length < 2 || whatsapp.replace(/\D/g, "").length < 7) {
+      msg.textContent = "Renseigne un pseudo valide et un numéro WhatsApp complet.";
+      msg.classList.remove("hidden");
+      return;
+    }
+    msg.classList.add("hidden");
+    currentUser = { pseudo, whatsapp };
+    renderSessions();
+    showScreen("screen-sessions");
+  });
+
+  document.getElementById("btn-logout").addEventListener("click", () => {
+    currentUser = null;
+    showScreen("screen-login");
+  });
+
+  document.getElementById("btn-back-sessions").addEventListener("click", () => {
+    renderSessions();
+    showScreen("screen-sessions");
+  });
+
+  function renderSessions() {
+    const prog = getProgress();
+    const currentDay = getCurrentConcoursDay();
+    document.getElementById("candidate-summary").textContent =
+      `Candidat : ${currentUser.pseudo} (${currentUser.whatsapp}) · Jour concours actuel : Jour ${currentDay}`;
+
+    const container = document.getElementById("sessions-list");
+    container.innerHTML = "";
+
+    SESSIONS.forEach(sess => {
+      const isDone = prog.completed.includes(sess.id);
+      const prevDone = sess.id === 1 || prog.completed.includes(sess.id - 1);
+      const dayMatches = currentDay >= sess.day;
+      const alreadyPlayedToday = prog.lastPlayDay === currentDay && !isDone;
+      const canPlay = !isDone && prevDone && dayMatches && !alreadyPlayedToday;
+
+      let statusLabel = "Verrouillée";
+      let pillClass = "locked";
+      let reason = "";
+
+      if (isDone) {
+        statusLabel = "Terminée (1/1)";
+        pillClass = "done";
+        reason = "Tentative officielle déjà enregistrée.";
+      } else if (canPlay) {
+        statusLabel = "Disponible";
+        pillClass = "open";
+        reason = `${sess.timePerQ}s / question · 1 tentative unique`;
+      } else {
+        if (!prevDone) reason = `Termine d'abord la Session ${sess.id - 1}.`;
+        else if (!dayMatches) reason = `Ouverture prévue le Jour ${sess.day}.`;
+        else if (alreadyPlayedToday) reason = "Une session a déjà été jouée aujourd'hui.";
       }
-    };
 
-    let currentSessionId = 1;
-    let activeQuestions = [];
-    let index = 0;
-    let score = 0;
-    let timeLeft = 15;
-    let timerId = null;
-    let locked = false;
-    let adCountShown = 0;
+      const card = document.createElement("div");
+      card.className = "session-card";
+      card.innerHTML = `
+        <div class="session-top">
+          <div class="session-title">${sess.title}</div>
+          <span class="pill ${pillClass}">${statusLabel}</span>
+        </div>
+        <div class="meta">${reason}</div>
+      `;
 
-    const homeScreen = document.getElementById("home-screen");
-    const quizScreen = document.getElementById("quiz-screen");
-    const breakScreen = document.getElementById("level-break-screen");
-    const endScreen = document.getElementById("end-screen");
-
-    function getBest() {
-      return Number(localStorage.getItem("novaroot_quiz_best_v3") || 0);
-    }
-    function setBest(val) {
-      localStorage.setItem("novaroot_quiz_best_v3", String(val));
-    }
-    function refreshBestDisplay() {
-      const best = getBest();
-      document.getElementById("best-score-home").textContent = best;
-      document.getElementById("best-score-end").textContent = best;
-    }
-
-    function showScreen(screen) {
-      [homeScreen, quizScreen, breakScreen, endScreen].forEach(s => s.classList.add("hidden"));
-      screen.classList.remove("hidden");
-    }
-
-    function buildSessionQuestions(sessionId) {
-      const session = SESSIONS[sessionId];
-      const randomIndex = Math.floor(Math.random() * session.randomPool.length);
-      const randomQuestion = { ...session.randomPool[randomIndex], isBonus: true };
-      return [...session.fixedQuestions, randomQuestion];
-    }
-
-    function startSession(sessionId) {
-      currentSessionId = sessionId;
-      activeQuestions = buildSessionQuestions(sessionId);
-      index = 0;
-      score = 0;
-      adCountShown = 0;
-      refreshBestDisplay();
-      showScreen(quizScreen);
-      loadQuestion();
-    }
-
-    function loadQuestion() {
-      clearInterval(timerId);
-      locked = false;
-
-      const session = SESSIONS[currentSessionId];
-      const current = activeQuestions[index];
-      timeLeft = session.timePerQuestion;
-
-      document.getElementById("session-label").textContent = session.name;
-      const pill = document.getElementById("level-pill");
-      pill.textContent = `${current.level} • ${index + 1}/10`;
-      pill.classList.toggle("bonus", Boolean(current.isBonus));
-
-      const catTag = document.getElementById("category-tag");
-      catTag.textContent = `${current.category} • ${current.level}`;
-      catTag.classList.toggle("bonus", Boolean(current.isBonus));
-
-      document.getElementById("timer").textContent = `${timeLeft}s`;
-      document.getElementById("progress-bar").style.width = `${(index / activeQuestions.length) * 100}%`;
-      document.getElementById("question-text").textContent = current.q;
-
-      const box = document.getElementById("options-box");
-      box.innerHTML = "";
-      current.options.forEach((opt, i) => {
+      if (canPlay) {
         const btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.textContent = opt;
-        btn.onclick = () => selectAnswer(i, btn);
-        box.appendChild(btn);
-      });
-
-      timerId = setInterval(() => {
-        timeLeft--;
-        document.getElementById("timer").textContent = `${timeLeft}s`;
-        if (timeLeft <= 0) {
-          clearInterval(timerId);
-          selectAnswer(-1, null);
-        }
-      }, 1000);
-    }
-
-    function selectAnswer(choice, btn) {
-      if (locked) return;
-      locked = true;
-      clearInterval(timerId);
-
-      const current = activeQuestions[index];
-      const buttons = document.querySelectorAll(".option-btn");
-      buttons[current.answer].classList.add("correct");
-
-      if (choice === current.answer) {
-        const multiplier = current.isBonus ? 2 : 1;
-        score += (100 + Math.max(0, timeLeft * 3)) * multiplier;
-      } else if (btn) {
-        btn.classList.add("wrong");
+        btn.className = "btn";
+        btn.textContent = `Lancer la Session ${sess.id}`;
+        btn.addEventListener("click", () => startSession(sess));
+        card.appendChild(btn);
       }
 
-      setTimeout(() => {
-        index++;
-        if (index === 3 || index === 6) {
-          showLevelBreak(index === 3 ? "Facile" : "Moyen");
-        } else if (index >= activeQuestions.length) {
-          finishSession();
-        } else {
-          loadQuestion();
-        }
-      }, 750);
+      container.appendChild(card);
+    });
+  }
+
+  function startSession(sess) {
+    const prog = getProgress();
+    const currentDay = getCurrentConcoursDay();
+    if (prog.completed.includes(sess.id)) {
+      renderSessions();
+      return;
     }
+    prog.completed.push(sess.id);
+    prog.lastPlayDay = currentDay;
+    saveProgress(prog);
 
-    function showLevelBreak(completedLevel) {
-      adCountShown++;
-      const nextLevel = completedLevel === "Facile" ? "Moyen" : "Difficile + Question Hasard";
-      document.getElementById("break-badge").textContent = `Fin du niveau ${completedLevel}`;
-      document.getElementById("break-title").textContent = `Niveau ${completedLevel} terminé !`;
-      document.getElementById("break-subtitle").textContent = `Score actuel : ${score} pts • Suite : ${nextLevel}`;
-      document.getElementById("break-ad-label").textContent = `Publicité • Bannière ${adCountShown}/3 (Fin niveau ${completedLevel})`;
-      showScreen(breakScreen);
-    }
+    activeSession = sess;
+    score = 0;
+    qIndex = 0;
 
-    function finishSession() {
-      document.getElementById("progress-bar").style.width = "100%";
-      const prevBest = getBest();
-      const newBest = Math.max(prevBest, score);
-      setBest(newBest);
-
-      document.getElementById("final-score").textContent = score;
-      document.getElementById("best-score-end").textContent = newBest;
-      document.getElementById("end-message").textContent =
-        score >= 1100 ? "Score légendaire ! Prêt pour le Concours Otaku." :
-        score >= 700 ? "Très belle partie ! Tu peux encore viser plus haut." :
-        "Bon début ! Relance une session pour tenter une nouvelle question surprise.";
-      document.getElementById("share-status").textContent = "";
-      showScreen(endScreen);
-    }
-
-    document.querySelectorAll(".session-card").forEach(card => {
-      card.onclick = () => startSession(Number(card.dataset.session));
+    sessionQuestions = shuffle(QUESTION_BANK).slice(0, sess.count).map(item => {
+      const indexed = item.opts.map((text, idx) => ({ text, isCorrect: idx === item.ans }));
+      return {
+        q: item.q,
+        pts: item.pts,
+        opts: shuffle(indexed)
+      };
     });
 
-    document.getElementById("next-level-btn").onclick = () => {
-      showScreen(quizScreen);
-      loadQuestion();
+    document.getElementById("game-session-title").textContent = sess.title;
+    document.getElementById("game-sub").textContent = `${currentUser.pseudo} · Tentative officielle en cours`;
+    showScreen("screen-game");
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    clearInterval(timerId);
+    const currentQ = sessionQuestions[qIndex];
+    timeLeft = activeSession.timePerQ;
+
+    document.getElementById("q-counter").textContent = `Question ${qIndex + 1}/${sessionQuestions.length}`;
+    document.getElementById("q-timer").textContent = `${timeLeft}s`;
+    document.getElementById("q-text").textContent = currentQ.q;
+
+    const optsBox = document.getElementById("q-options");
+    optsBox.innerHTML = "";
+
+    currentQ.opts.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.className = "opt";
+      btn.textContent = opt.text;
+      btn.addEventListener("click", () => handleAnswer(opt.isCorrect));
+      optsBox.appendChild(btn);
+    });
+
+    timerId = setInterval(() => {
+      timeLeft -= 1;
+      document.getElementById("q-timer").textContent = `${timeLeft}s`;
+      if (timeLeft <= 0) {
+        clearInterval(timerId);
+        handleAnswer(false);
+      }
+    }, 1000);
+  }
+
+  function handleAnswer(isCorrect) {
+    clearInterval(timerId);
+    if (isCorrect) {
+      score += sessionQuestions[qIndex].pts;
+    }
+    qIndex += 1;
+    if (qIndex < sessionQuestions.length) {
+      renderQuestion();
+    } else {
+      finishSession();
+    }
+  }
+
+  async function finishSession() {
+    const currentDay = getCurrentConcoursDay();
+    document.getElementById("res-score").textContent = `${score} pts`;
+    document.getElementById("res-detail").textContent =
+      `${currentUser.pseudo} (${currentUser.whatsapp}) · Session ${activeSession.id} · Jour ${currentDay}`;
+    showScreen("screen-result");
+
+    const syncBox = document.getElementById("sync-status");
+    const payload = {
+      pseudo: currentUser.pseudo,
+      whatsapp: currentUser.whatsapp,
+      session: `Session ${activeSession.id}`,
+      score,
+      total: sessionQuestions.length * 100,
+      status: "TERMINE_1_TENTATIVE",
+      dayNumber: `Jour ${currentDay}`
     };
 
-    document.getElementById("replay-session-btn").onclick = () => startSession(currentSessionId);
-    document.getElementById("home-btn").onclick = () => {
-      refreshBestDisplay();
-      showScreen(homeScreen);
-    };
+    if (!APPS_SCRIPT_URL) {
+      syncBox.textContent = "Tentative verrouillée en local (1/1). Ajoute l'URL Apps Script /exec dans APPS_SCRIPT_URL pour pousser les scores vers la Google Sheet.";
+      return;
+    }
 
-    refreshBestDisplay();
-  </script>
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      syncBox.textContent = "Score envoyé au tableau admin (Google Sheet).";
+    } catch (e) {
+      syncBox.textContent = "Connexion instable : réessaie depuis ton réseau ou contacte un admin.";
+    }
+  }
+</script>
 </body>
 </html>
