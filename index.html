@@ -54,6 +54,10 @@
       font-size: 22px;
       line-height: 1.25;
     }
+    h2 {
+      margin: 16px 0 8px;
+      font-size: 16px;
+    }
     p.sub {
       margin: 0 0 16px;
       color: var(--muted);
@@ -100,6 +104,12 @@
       background: var(--card-2);
       border: 1px solid var(--border);
       color: var(--text);
+    }
+    .btn-small {
+      padding: 8px 12px;
+      font-size: 12px;
+      width: auto;
+      margin-top: 0;
     }
     .session-card {
       background: var(--card-2);
@@ -204,6 +214,32 @@
       margin: 14px 0;
     }
     .stat-num { font-size: 32px; font-weight: 800; color: var(--accent-2); }
+    .leaderboard-box {
+      margin-top: 16px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .leaderboard-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .leaderboard-list {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 13px;
+    }
+    .leaderboard-list li {
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .leaderboard-list li:last-child {
+      border-bottom: none;
+    }
     .ad-slot {
       margin-top: 14px;
       border: 1px dashed rgba(255,255,255,0.16);
@@ -243,6 +279,17 @@
       Règle stricte : 1 session par jour (Session 1 = Jour 1, Session 2 = Jour 2, Session 3 = Jour 3), ordre obligatoire, 1 seule tentative par session.
     </div>
     <div id="sessions-list"></div>
+
+    <div class="leaderboard-box">
+      <div class="leaderboard-head">
+        <h2 style="margin:0;">Classement général</h2>
+        <button class="btn btn-secondary btn-small" id="btn-refresh-lb" type="button">Actualiser</button>
+      </div>
+      <ol class="leaderboard-list" id="leaderboard-sessions">
+        <li>Chargement du classement...</li>
+      </ol>
+    </div>
+
     <button class="btn btn-secondary" id="btn-logout">Changer de candidat</button>
     <div class="ad-slot" id="ad-slot-home">Emplacement Publicitaire · Niveau 1 (Bannière)</div>
   </div>
@@ -273,6 +320,17 @@
       <div class="meta" id="res-detail"></div>
     </div>
     <div id="sync-status" class="alert" aria-live="polite">Vérification de la synchronisation...</div>
+
+    <div class="leaderboard-box">
+      <div class="leaderboard-head">
+        <h2 style="margin:0;">Classement des candidats</h2>
+        <button class="btn btn-secondary btn-small" id="btn-refresh-res-lb" type="button">Actualiser</button>
+      </div>
+      <ol class="leaderboard-list" id="leaderboard-result">
+        <li>Chargement du classement...</li>
+      </ol>
+    </div>
+
     <button class="btn" id="btn-back-sessions">Retour aux sessions</button>
     <div class="ad-slot" id="ad-slot-result">Emplacement Publicitaire · Niveau 3 (Fin de session)</div>
   </div>
@@ -281,8 +339,15 @@
 <script>
   // ====== CONFIGURATION ADMIN ======
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhTpFMHXzNp-PXxOu-YH7ClRngbzLuk0QeHNi3kiqVT2FccEVFJA4cU3gGoINKTbgr/exec";
-  // Date du Jour 1 du concours (format AAAA-MM-JJ)
   const CONCOURS_START_DATE = "2026-11-14";
+
+  // Configuration JSONBin (Classement partagé Quiz Otaku 2027)
+  const JSONBIN_CONFIG = {
+    binId: "6afb142bac6210605a8c1bbe",
+    masterKey: "$2a$10$qqFqEmhKV6Zomekro.Gt2uBwaEUpph7OokA8/aujm2HfW.V22rsWK",
+    localCacheKey: "nr_quiz_otaku_2027_lb_cache"
+  };
+  const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`;
 
   // Banque de questions (mélange automatique à chaque session)
   const QUESTION_BANK = [
@@ -360,6 +425,92 @@
     });
   }
 
+  // ====== FONCTIONS CLASSEMENT PARTAGÉ (JSONBIN) ======
+  function trierScores(scores) {
+    return [...scores].sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return (a.date || 0) - (b.date || 0);
+    });
+  }
+
+  function sauvegarderCacheClassement(scores) {
+    try {
+      localStorage.setItem(JSONBIN_CONFIG.localCacheKey, JSON.stringify(scores));
+    } catch (_) {}
+  }
+
+  function lireCacheClassement() {
+    try {
+      const brut = localStorage.getItem(JSONBIN_CONFIG.localCacheKey);
+      return brut ? trierScores(JSON.parse(brut)) : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function afficherClassementDans(elementId, scores) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    if (!scores || !scores.length) {
+      el.innerHTML = "<li>Aucun score enregistré pour le moment.</li>";
+      return;
+    }
+    el.innerHTML = scores
+      .map(item => `<li><strong>${item.nom}</strong> — ${item.score}/${item.total} pts <span class="meta">(${item.sessionLabel || ""})</span></li>`)
+      .join("");
+  }
+
+  async function chargerClassementPartage() {
+    try {
+      const rep = await fetch(`${JSONBIN_URL}/latest`, {
+        method: "GET",
+        headers: {
+          "X-Master-Key": JSONBIN_CONFIG.masterKey
+        }
+      });
+      if (!rep.ok) throw new Error("HTTP " + rep.status);
+      const data = await rep.json();
+      const liste = Array.isArray(data?.record?.scores) ? trierScores(data.record.scores) : [];
+      sauvegarderCacheClassement(liste);
+      return liste;
+    } catch (_) {
+      return lireCacheClassement();
+    }
+  }
+
+  async function rafraichirClassementsAffichage() {
+    const scores = await chargerClassementPartage();
+    afficherClassementDans("leaderboard-sessions", scores);
+    afficherClassementDans("leaderboard-result", scores);
+    return scores;
+  }
+
+  async function enregistrerDansJsonBin(entry) {
+    const existants = await chargerClassementPartage();
+    const misAJour = trierScores([...existants, entry]);
+    sauvegarderCacheClassement(misAJour);
+
+    const rep = await fetch(JSONBIN_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": JSONBIN_CONFIG.masterKey
+      },
+      body: JSON.stringify({
+        concours: "Quiz Otaku 2027",
+        scores: misAJour
+      })
+    });
+    if (!rep.ok) throw new Error("HTTP " + rep.status);
+    const data = await rep.json();
+    const synchronises = Array.isArray(data?.record?.scores)
+      ? trierScores(data.record.scores)
+      : misAJour;
+    sauvegarderCacheClassement(synchronises);
+    return synchronises;
+  }
+
+  // ====== NAVIGATION & SESSIONS ======
   document.getElementById("btn-login").addEventListener("click", () => {
     const pseudo = document.getElementById("pseudo").value.trim();
     const whatsapp = document.getElementById("whatsapp").value.trim();
@@ -374,6 +525,7 @@
     currentUser = { pseudo, whatsapp };
     renderSessions();
     showScreen("screen-sessions");
+    rafraichirClassementsAffichage();
   });
 
   document.getElementById("btn-logout").addEventListener("click", () => {
@@ -384,7 +536,11 @@
   document.getElementById("btn-back-sessions").addEventListener("click", () => {
     renderSessions();
     showScreen("screen-sessions");
+    rafraichirClassementsAffichage();
   });
+
+  document.getElementById("btn-refresh-lb").addEventListener("click", rafraichirClassementsAffichage);
+  document.getElementById("btn-refresh-res-lb").addEventListener("click", rafraichirClassementsAffichage);
 
   function renderSessions() {
     const prog = getProgress();
@@ -538,6 +694,9 @@
 
   async function finishSession() {
     const currentDay = getCurrentConcoursDay();
+    const totalPoints = sessionQuestions.length * 100;
+    const sessionLabel = `Jour ${currentDay} · S${activeSession.id}`;
+
     document.getElementById("res-score").textContent = `${score} pts`;
     document.getElementById("res-detail").textContent =
       `${currentUser.pseudo} (${currentUser.whatsapp}) · Session ${activeSession.id} · Jour ${currentDay}`;
@@ -545,7 +704,7 @@
 
     const syncBox = document.getElementById("sync-status");
     syncBox.className = "alert";
-    syncBox.textContent = "Synchronisation du score avec NovaRoot...";
+    syncBox.textContent = "Synchronisation du score avec NovaRoot & classement...";
 
     if (enCoursEnvoi) return;
     enCoursEnvoi = true;
@@ -554,19 +713,32 @@
       name: `${currentUser.pseudo} (${currentUser.whatsapp})`,
       day: `Jour ${currentDay} - Session ${activeSession.id}`,
       score: Number(score) || 0,
-      total: sessionQuestions.length * 100,
+      total: totalPoints,
       sessionId: `${genererSessionId()}-S${activeSession.id}`
     };
 
+    const leaderboardEntry = {
+      nom: currentUser.pseudo,
+      score: Number(score) || 0,
+      total: totalPoints,
+      sessionLabel,
+      date: Date.now()
+    };
+
     try {
-      await fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload)
-      });
+      await Promise.all([
+        fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        }),
+        enregistrerDansJsonBin(leaderboardEntry)
+      ]);
+
+      await rafraichirClassementsAffichage();
       syncBox.className = "alert ok";
-      syncBox.textContent = "Score enregistré dans le suivi NovaRoot Impact (Google Sheet).";
+      syncBox.textContent = "Score enregistré chez les organisateurs et ajouté au classement partagé.";
     } catch (e) {
       syncBox.className = "alert err";
       syncBox.textContent = "Connexion instable : réessaie depuis ton réseau ou contacte un admin.";
