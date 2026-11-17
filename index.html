@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NOVAROOT IMPACT · Quiz Otaku 2027</title>
+  <title>NOVAROOT IMPACT · Quiz Otaku 2026</title>
   <style>
     :root {
       --bg: #0b1020;
@@ -253,15 +253,15 @@
 </head>
 <body>
 <div class="app">
-  <span class="badge">Novaroot Impact · Quiz Otaku 2027</span>
+  <span class="badge">Novaroot Impact · Quiz Otaku 2026</span>
 
   <!-- ÉCRAN 1 : IDENTIFICATION -->
   <div id="screen-login">
     <h1>Identification candidat</h1>
-    <p class="sub">Entre ton pseudo et ton numéro WhatsApp. Chaque session est ouverte 1 jour précis (Jour 1, Jour 2, Jour 3) avec 1 seule tentative officielle.</p>
+    <p class="sub">Entre ton pseudo et ton numéro WhatsApp. Les sessions se débloquent progressivement : termine la Session 1 pour ouvrir la 2, puis la 3.</p>
     <div class="field">
       <label for="pseudo">Pseudo</label>
-      <input id="pseudo" type="text" placeholder="Ex. Kenjiro_2027" maxlength="30" />
+      <input id="pseudo" type="text" placeholder="Ex. Kenjiro_2026" maxlength="30" />
     </div>
     <div class="field">
       <label for="whatsapp">Numéro Téléphone (WhatsApp)</label>
@@ -276,13 +276,13 @@
     <h1>Sessions du concours</h1>
     <p class="sub" id="candidate-summary"></p>
     <div class="alert">
-      Règle stricte : 1 session par jour (Session 1 = Jour 1, Session 2 = Jour 2, Session 3 = Jour 3), ordre obligatoire, 1 seule tentative par session.
+      Mode progressif actif : Session 1 → Session 2 → Session 3. Dès qu'une session est terminée, la suivante s'ouvre directement.
     </div>
     <div id="sessions-list"></div>
 
     <div class="leaderboard-box">
       <div class="leaderboard-head">
-        <h2 style="margin:0;">Classement général</h2>
+        <h2 style="margin:0;">Classement général (Cumul)</h2>
         <button class="btn btn-secondary btn-small" id="btn-refresh-lb" type="button">Actualiser</button>
       </div>
       <ol class="leaderboard-list" id="leaderboard-sessions">
@@ -298,7 +298,7 @@
   <div id="screen-game" class="hidden">
     <h1 id="game-session-title">Session</h1>
     <p class="sub" id="game-sub"></p>
-    <div class="alert">Attention : quitter ou rafraîchir la page consomme ta tentative officielle.</div>
+    <div class="alert">Attention : quitter ou rafraîchir la page consomme ta tentative pour cette session.</div>
     <div class="q-box">
       <div class="q-head">
         <span id="q-counter">Question 1/10</span>
@@ -313,9 +313,9 @@
   <!-- ÉCRAN 4 : FIN DE SESSION -->
   <div id="screen-result" class="hidden">
     <h1>Session enregistrée</h1>
-    <p class="sub">Ton résultat a été enregistré pour cette tentative officielle. Les corrections détaillées ne sont pas affichées.</p>
+    <p class="sub">Ton résultat a été enregistré et cumulé à ton total. La session suivante est maintenant disponible.</p>
     <div class="stat-box">
-      <div class="meta">SCORE OBTENU</div>
+      <div class="meta">SCORE DE LA SESSION</div>
       <div class="stat-num" id="res-score">0</div>
       <div class="meta" id="res-detail"></div>
     </div>
@@ -323,7 +323,7 @@
 
     <div class="leaderboard-box">
       <div class="leaderboard-head">
-        <h2 style="margin:0;">Classement des candidats</h2>
+        <h2 style="margin:0;">Classement général (Cumul)</h2>
         <button class="btn btn-secondary btn-small" id="btn-refresh-res-lb" type="button">Actualiser</button>
       </div>
       <ol class="leaderboard-list" id="leaderboard-result">
@@ -331,7 +331,7 @@
       </ol>
     </div>
 
-    <button class="btn" id="btn-back-sessions">Retour aux sessions</button>
+    <button class="btn" id="btn-back-sessions">Voir la session suivante</button>
     <div class="ad-slot" id="ad-slot-result">Emplacement Publicitaire · Niveau 3 (Fin de session)</div>
   </div>
 </div>
@@ -339,13 +339,13 @@
 <script>
   // ====== CONFIGURATION ADMIN ======
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhTpFMHXzNp-PXxOu-YH7ClRngbzLuk0QeHNi3kiqVT2FccEVFJA4cU3gGoINKTbgr/exec";
-  const CONCOURS_START_DATE = "2026-11-14";
+  const CONCOURS_START_DATE = "2026-11-21"; // Samedi 21 novembre 2026
 
-  // Configuration JSONBin (Classement partagé Quiz Otaku 2027)
+  // Configuration JSONBin (Classement partagé Quiz Otaku 2026)
   const JSONBIN_CONFIG = {
     binId: "6afb142bac6210605a8c1bbe",
     masterKey: "$2a$10$qqFqEmhKV6Zomekro.Gt2uBwaEUpph7OokA8/aujm2HfW.V22rsWK",
-    localCacheKey: "nr_quiz_otaku_2027_lb_cache"
+    localCacheKey: "nr_quiz_otaku_2026_lb_cache"
   };
   const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`;
 
@@ -366,9 +366,9 @@
   ];
 
   const SESSIONS = [
-    { id: 1, day: 1, title: "Session 1 — Chronométrée Classique", timePerQ: 15, count: 10 },
-    { id: 2, day: 2, title: "Session 2 — Chronométrée Rapide", timePerQ: 10, count: 10 },
-    { id: 3, day: 3, title: "Session 3 — Openings, Devinettes & Citations", timePerQ: 12, count: 10 }
+    { id: 1, title: "Session 1 — Chronométrée Classique", timePerQ: 15, count: 10 },
+    { id: 2, title: "Session 2 — Chronométrée Rapide", timePerQ: 10, count: 10 },
+    { id: 3, title: "Session 3 — Openings, Devinettes & Citations", timePerQ: 12, count: 10 }
   ];
 
   let currentUser = null;
@@ -397,22 +397,14 @@
     return copy;
   }
 
-  function getCurrentConcoursDay() {
-    const start = new Date(CONCOURS_START_DATE + "T00:00:00");
-    const now = new Date();
-    const diffMs = now - start;
-    const day = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
-    return Math.max(1, day);
-  }
-
   function userKey() {
     return currentUser ? `${currentUser.pseudo.toLowerCase()}__${currentUser.whatsapp.replace(/\D/g, "")}` : "";
   }
 
   function getProgress() {
-    if (!currentUser) return { completed: [], lastPlayDay: null };
+    if (!currentUser) return { completed: [] };
     const raw = localStorage.getItem("nr_quiz_prog_" + userKey());
-    return raw ? JSON.parse(raw) : { completed: [], lastPlayDay: null };
+    return raw ? JSON.parse(raw) : { completed: [] };
   }
 
   function saveProgress(prog) {
@@ -425,9 +417,48 @@
     });
   }
 
-  // ====== FONCTIONS CLASSEMENT PARTAGÉ (JSONBIN) ======
-  function trierScores(scores) {
-    return [...scores].sort((a, b) => {
+  // ====== FONCTIONS CLASSEMENT PARTAGÉ AVEC CUMUL (JSONBIN) ======
+  function normaliserCleCandidat(nom, whatsapp) {
+    const cleanPhone = (whatsapp || "").replace(/\D/g, "");
+    const cleanName = (nom || "").trim().toLowerCase();
+    return cleanPhone ? `${cleanName}__${cleanPhone}` : cleanName;
+  }
+
+  function fusionnerScoresCandidats(scores) {
+    const map = new Map();
+
+    scores.forEach(item => {
+      const key = item.candidatId || normaliserCleCandidat(item.nom, item.whatsapp);
+      const pts = Number(item.score) || 0;
+      const tot = Number(item.total) || 0;
+      const sessions = Array.isArray(item.sessions)
+        ? [...item.sessions]
+        : item.sessionLabel
+          ? [item.sessionLabel]
+          : [];
+
+      if (!map.has(key)) {
+        map.set(key, {
+          candidatId: key,
+          nom: item.nom,
+          whatsapp: item.whatsapp || "",
+          score: pts,
+          total: tot,
+          sessions,
+          date: item.date || Date.now()
+        });
+      } else {
+        const existant = map.get(key);
+        existant.score += pts;
+        existant.total += tot;
+        sessions.forEach(s => {
+          if (s && !existant.sessions.includes(s)) existant.sessions.push(s);
+        });
+        existant.date = Math.max(existant.date || 0, item.date || 0);
+      }
+    });
+
+    return Array.from(map.values()).sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       return (a.date || 0) - (b.date || 0);
     });
@@ -442,7 +473,7 @@
   function lireCacheClassement() {
     try {
       const brut = localStorage.getItem(JSONBIN_CONFIG.localCacheKey);
-      return brut ? trierScores(JSON.parse(brut)) : [];
+      return brut ? fusionnerScoresCandidats(JSON.parse(brut)) : [];
     } catch (_) {
       return [];
     }
@@ -456,7 +487,12 @@
       return;
     }
     el.innerHTML = scores
-      .map(item => `<li><strong>${item.nom}</strong> — ${item.score}/${item.total} pts <span class="meta">(${item.sessionLabel || ""})</span></li>`)
+      .map(item => {
+        const detailSessions = Array.isArray(item.sessions) && item.sessions.length
+          ? item.sessions.join(", ")
+          : (item.sessionLabel || "");
+        return `<li><strong>${item.nom}</strong> — ${item.score}/${item.total} pts <span class="meta">(${detailSessions})</span></li>`;
+      })
       .join("");
   }
 
@@ -470,9 +506,10 @@
       });
       if (!rep.ok) throw new Error("HTTP " + rep.status);
       const data = await rep.json();
-      const liste = Array.isArray(data?.record?.scores) ? trierScores(data.record.scores) : [];
-      sauvegarderCacheClassement(liste);
-      return liste;
+      const brute = Array.isArray(data?.record?.scores) ? data.record.scores : [];
+      const fusionnee = fusionnerScoresCandidats(brute);
+      sauvegarderCacheClassement(fusionnee);
+      return fusionnee;
     } catch (_) {
       return lireCacheClassement();
     }
@@ -485,10 +522,49 @@
     return scores;
   }
 
-  async function enregistrerDansJsonBin(entry) {
+  async function enregistrerDansJsonBin(nouvelleSession) {
     const existants = await chargerClassementPartage();
-    const misAJour = trierScores([...existants, entry]);
-    sauvegarderCacheClassement(misAJour);
+    const candidatId = normaliserCleCandidat(nouvelleSession.nom, nouvelleSession.whatsapp);
+    const sessionCode = `S${nouvelleSession.sessionId}`;
+
+    let trouve = false;
+    const misAJour = existants.map(item => {
+      const itemId = item.candidatId || normaliserCleCandidat(item.nom, item.whatsapp);
+      if (itemId === candidatId || item.nom.trim().toLowerCase() === nouvelleSession.nom.trim().toLowerCase()) {
+        trouve = true;
+        const sessionsDejaValidees = Array.isArray(item.sessions) ? [...item.sessions] : [];
+        if (sessionsDejaValidees.includes(sessionCode)) {
+          return item;
+        }
+        sessionsDejaValidees.push(sessionCode);
+        return {
+          ...item,
+          candidatId,
+          nom: nouvelleSession.nom,
+          whatsapp: nouvelleSession.whatsapp,
+          score: (Number(item.score) || 0) + (Number(nouvelleSession.score) || 0),
+          total: (Number(item.total) || 0) + (Number(nouvelleSession.total) || 0),
+          sessions: sessionsDejaValidees,
+          date: Date.now()
+        };
+      }
+      return item;
+    });
+
+    if (!trouve) {
+      misAJour.push({
+        candidatId,
+        nom: nouvelleSession.nom,
+        whatsapp: nouvelleSession.whatsapp,
+        score: Number(nouvelleSession.score) || 0,
+        total: Number(nouvelleSession.total) || 0,
+        sessions: [sessionCode],
+        date: Date.now()
+      });
+    }
+
+    const tries = fusionnerScoresCandidats(misAJour);
+    sauvegarderCacheClassement(tries);
 
     const rep = await fetch(JSONBIN_URL, {
       method: "PUT",
@@ -497,20 +573,20 @@
         "X-Master-Key": JSONBIN_CONFIG.masterKey
       },
       body: JSON.stringify({
-        concours: "Quiz Otaku 2027",
-        scores: misAJour
+        concours: "Quiz Otaku 2026",
+        scores: tries
       })
     });
     if (!rep.ok) throw new Error("HTTP " + rep.status);
     const data = await rep.json();
     const synchronises = Array.isArray(data?.record?.scores)
-      ? trierScores(data.record.scores)
-      : misAJour;
+      ? fusionnerScoresCandidats(data.record.scores)
+      : tries;
     sauvegarderCacheClassement(synchronises);
     return synchronises;
   }
 
-  // ====== NAVIGATION & SESSIONS ======
+  // ====== NAVIGATION & SESSIONS (MODE PROGRESSIF) ======
   document.getElementById("btn-login").addEventListener("click", () => {
     const pseudo = document.getElementById("pseudo").value.trim();
     const whatsapp = document.getElementById("whatsapp").value.trim();
@@ -544,9 +620,9 @@
 
   function renderSessions() {
     const prog = getProgress();
-    const currentDay = getCurrentConcoursDay();
+    const nbTerminees = prog.completed.length;
     document.getElementById("candidate-summary").textContent =
-      `Candidat : ${currentUser.pseudo} (${currentUser.whatsapp}) · Jour concours actuel : Jour ${currentDay}`;
+      `Candidat : ${currentUser.pseudo} (${currentUser.whatsapp}) · Progression : ${nbTerminees}/${SESSIONS.length} sessions`;
 
     const container = document.getElementById("sessions-list");
     container.innerHTML = "";
@@ -554,26 +630,22 @@
     SESSIONS.forEach(sess => {
       const isDone = prog.completed.includes(sess.id);
       const prevDone = sess.id === 1 || prog.completed.includes(sess.id - 1);
-      const dayMatches = currentDay >= sess.day;
-      const alreadyPlayedToday = prog.lastPlayDay === currentDay && !isDone;
-      const canPlay = !isDone && prevDone && dayMatches && !alreadyPlayedToday;
+      const canPlay = !isDone && prevDone;
 
       let statusLabel = "Verrouillée";
       let pillClass = "locked";
       let reason = "";
 
       if (isDone) {
-        statusLabel = "Terminée (1/1)";
+        statusLabel = "Terminée";
         pillClass = "done";
-        reason = "Tentative officielle déjà enregistrée.";
+        reason = "Session validée et ajoutée au cumul.";
       } else if (canPlay) {
         statusLabel = "Disponible";
         pillClass = "open";
-        reason = `${sess.timePerQ}s / question · 1 tentative unique`;
+        reason = `${sess.timePerQ}s / question · Débloquée`;
       } else {
-        if (!prevDone) reason = `Termine d'abord la Session ${sess.id - 1}.`;
-        else if (!dayMatches) reason = `Ouverture prévue le Jour ${sess.day}.`;
-        else if (alreadyPlayedToday) reason = "Une session a déjà été jouée aujourd'hui.";
+        reason = `Termine d'abord la Session ${sess.id - 1} pour débloquer celle-ci.`;
       }
 
       const card = document.createElement("div");
@@ -600,14 +672,15 @@
 
   function startSession(sess) {
     const prog = getProgress();
-    const currentDay = getCurrentConcoursDay();
-    if (prog.completed.includes(sess.id)) {
+    const prevDone = sess.id === 1 || prog.completed.includes(sess.id - 1);
+    if (prog.completed.includes(sess.id) || !prevDone) {
       renderSessions();
       return;
     }
-    prog.completed.push(sess.id);
-    prog.lastPlayDay = currentDay;
-    saveProgress(prog);
+    if (!prog.completed.includes(sess.id)) {
+      prog.completed.push(sess.id);
+      saveProgress(prog);
+    }
 
     activeSession = sess;
     score = 0;
@@ -624,7 +697,7 @@
     });
 
     document.getElementById("game-session-title").textContent = sess.title;
-    document.getElementById("game-sub").textContent = `${currentUser.pseudo} · Tentative officielle en cours`;
+    document.getElementById("game-sub").textContent = `${currentUser.pseudo} · Session en cours`;
     showScreen("screen-game");
     renderQuestion();
   }
@@ -693,25 +766,23 @@
   }
 
   async function finishSession() {
-    const currentDay = getCurrentConcoursDay();
     const totalPoints = sessionQuestions.length * 100;
-    const sessionLabel = `Jour ${currentDay} · S${activeSession.id}`;
 
     document.getElementById("res-score").textContent = `${score} pts`;
     document.getElementById("res-detail").textContent =
-      `${currentUser.pseudo} (${currentUser.whatsapp}) · Session ${activeSession.id} · Jour ${currentDay}`;
+      `${currentUser.pseudo} (${currentUser.whatsapp}) · Session ${activeSession.id}`;
     showScreen("screen-result");
 
     const syncBox = document.getElementById("sync-status");
     syncBox.className = "alert";
-    syncBox.textContent = "Synchronisation du score avec NovaRoot & classement...";
+    syncBox.textContent = "Synchronisation et cumul du score avec NovaRoot...";
 
     if (enCoursEnvoi) return;
     enCoursEnvoi = true;
 
     const payload = {
       name: `${currentUser.pseudo} (${currentUser.whatsapp})`,
-      day: `Jour ${currentDay} - Session ${activeSession.id}`,
+      day: `Session ${activeSession.id}`,
       score: Number(score) || 0,
       total: totalPoints,
       sessionId: `${genererSessionId()}-S${activeSession.id}`
@@ -719,10 +790,10 @@
 
     const leaderboardEntry = {
       nom: currentUser.pseudo,
+      whatsapp: currentUser.whatsapp,
       score: Number(score) || 0,
       total: totalPoints,
-      sessionLabel,
-      date: Date.now()
+      sessionId: activeSession.id
     };
 
     try {
@@ -738,7 +809,7 @@
 
       await rafraichirClassementsAffichage();
       syncBox.className = "alert ok";
-      syncBox.textContent = "Score enregistré chez les organisateurs et ajouté au classement partagé.";
+      syncBox.textContent = "Score enregistré et cumulé. La session suivante est débloquée.";
     } catch (e) {
       syncBox.className = "alert err";
       syncBox.textContent = "Connexion instable : réessaie depuis ton réseau ou contacte un admin.";
