@@ -452,13 +452,15 @@
       <span class="badge">Champion en Titre</span>
       <h2 style="margin: 8px 0 4px;">Jéhovanis Zola</h2>
       <p class="sub" style="margin-bottom: 12px;">Alias "Joy Boy" — Tenant du titre et champion de la 1ère édition</p>
-      <img src="champion.png" alt="Champion Joy Boy" class="img-fluid" style="max-height: 280px;" />
+      <!-- Correspond exactement à ton fichier Champion.PNG sur GitHub -->
+      <img src="Champion.PNG" alt="Champion Joy Boy" class="img-fluid" style="max-height: 280px;" />
     </div>
 
     <div class="card-box">
       <h2>Grand Tournoi Otaku 2026</h2>
       <p class="sub">Bienvenue sur la plateforme officielle de la communauté NovaRoot Impact à Kisangani. Suivez les sessions en ligne et préparez-vous pour la grande finale !</p>
-      <img src="finale.jpg" alt="Affiche Grande Finale" class="img-fluid" />
+      <!-- Correspond exactement à ton fichier finale.JPG sur GitHub -->
+      <img src="finale.JPG" alt="Affiche Grande Finale" class="img-fluid" />
       <button class="btn" onclick="switchTab('sessions')">Voir les sessions de Quiz</button>
     </div>
     <div class="ad-slot" id="ad-slot-home">Bannière Sponsorisée · Partenaire Officiel</div>
@@ -469,7 +471,8 @@
     <div class="card-box">
       <h1>Sessions du concours</h1>
       <p class="sub" id="candidate-summary"></p>
-      <img src="calendrier.jpg" alt="Calendrier des événements" class="img-fluid" style="margin-bottom: 14px;" />
+      <!-- Correspond à calendrier.JPG -->
+      <img src="calendrier.JPG" alt="Calendrier des événements" class="img-fluid" style="margin-bottom: 14px;" />
       <div id="sessions-list"></div>
     </div>
   </div>
@@ -505,9 +508,10 @@
       <h1>Règles & Barème</h1>
       <p class="sub">Tout ce qu'il faut savoir pour remporter le titre de Champion Otaku 2026.</p>
       
-      <img src="regles1.jpg" alt="Règles Quiz en Ligne" class="img-fluid" />
-      <img src="regles2.jpg" alt="Système de Billets" class="img-fluid" />
-      <img src="regles3.jpg" alt="Qualifications et Discipline" class="img-fluid" />
+      <!-- Correspond à regles1.JPG, regles2.JPG, regles3.JPG -->
+      <img src="regles1.JPG" alt="Règles Quiz en Ligne" class="img-fluid" />
+      <img src="regles2.JPG" alt="Système de Billets" class="img-fluid" />
+      <img src="regles3.JPG" alt="Qualifications et Discipline" class="img-fluid" />
     </div>
   </div>
 
@@ -1257,6 +1261,7 @@
 
     try {
       await enregistrerDansJsonBin(leaderboardEntry);
+      syncBox.className = "argok" /* syntax fix */;
       syncBox.className = "alert ok";
       syncBox.textContent = "Score enregistré et cumulé avec succès !";
     } catch (e) {
