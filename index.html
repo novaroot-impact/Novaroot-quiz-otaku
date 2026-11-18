@@ -26,16 +26,55 @@
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding: 16px;
+      padding: 16px 16px 80px 16px;
     }
     .app {
       width: 100%;
-      max-width: 460px;
+      max-width: 480px;
+    }
+    
+    /* BARRE DE NAVIGATION EN HAUT */
+    .top-nav {
+      display: flex;
+      justify-content: space-around;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 8px 4px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+    }
+    .nav-item {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+    .nav-item.active {
+      color: var(--accent-2);
+      background: rgba(255, 107, 44, 0.15);
+    }
+    .nav-icon { font-size: 16px; }
+
+    .card-box {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 20px;
       padding: 20px;
       box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+      margin-bottom: 16px;
     }
     .badge {
       display: inline-block;
@@ -95,7 +134,7 @@
       color: var(--muted);
       margin-bottom: 5px;
     }
-    input {
+    input, textarea {
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
@@ -105,7 +144,7 @@
       font-size: 15px;
       outline: none;
     }
-    input:focus { border-color: var(--accent); }
+    input:focus, textarea:focus { border-color: var(--accent); }
     .btn {
       width: 100%;
       padding: 13px 16px;
@@ -309,14 +348,83 @@
       font-size: 11px;
       color: var(--muted);
     }
+    /* CHAT INTERNE */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 380px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chat-msg {
+      background: rgba(255,255,255,0.06);
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      max-width: 85%;
+    }
+    .chat-msg.mine {
+      background: rgba(255, 107, 44, 0.2);
+      align-self: flex-end;
+      border-color: var(--accent);
+    }
+    .chat-sender {
+      font-size: 10px;
+      color: var(--accent-2);
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .chat-input-area {
+      display: flex;
+      padding: 8px;
+      background: #10172e;
+      border-top: 1px solid var(--border);
+      gap: 6px;
+    }
+    .img-fluid {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      object-fit: cover;
+    }
   </style>
 </head>
 <body>
 <div class="app">
-  <span class="badge">Novaroot Impact · Quiz Otaku 2026</span>
+
+  <!-- BARRE DE NAVIGATION EN HAUT -->
+  <nav class="top-nav" id="main-nav" style="display:none;">
+    <button class="nav-item active" onclick="switchTab('home')">
+      <span class="nav-icon">🏠</span>Accueil
+    </button>
+    <button class="nav-item" onclick="switchTab('sessions')">
+      <span class="nav-icon">🎮</span>Sessions
+    </button>
+    <button class="nav-item" onclick="switchTab('leaderboard')">
+      <span class="nav-icon">🏆</span>Classement
+    </button>
+    <button class="nav-item" onclick="switchTab('rules')">
+      <span class="nav-icon">📜</span>Règles
+    </button>
+    <button class="nav-item" onclick="switchTab('chat')">
+      <span class="nav-icon">💬</span>Chat
+    </button>
+  </nav>
 
   <!-- ÉCRAN 1 : IDENTIFICATION -->
-  <div id="screen-login">
+  <div id="screen-login" class="card-box">
+    <span class="badge">Novaroot Impact · Quiz Otaku 2026</span>
     <h1>Identification</h1>
     <p class="sub">Choisis ton statut : les <strong>Candidats officiels</strong> entrent avec leur code personnel ; les <strong>Spectateurs</strong> jouent librement dans leur propre classement.</p>
 
@@ -340,45 +448,100 @@
     </div>
 
     <div id="login-msg" class="alert err hidden"></div>
-    <button class="btn" id="btn-login">Accéder aux sessions</button>
+    <button class="btn" id="btn-login">Accéder à l'application</button>
   </div>
 
-  <!-- ÉCRAN 2 : SÉLECTION DES SESSIONS -->
-  <div id="screen-sessions" class="hidden">
-    <h1>Sessions du concours</h1>
-    <p class="sub" id="candidate-summary"></p>
-    <div class="alert">
-      Chaque session s'ouvre à une date et heure précise. Le compte à rebours indique le temps restant.
+  <!-- ONGLETS PRINCIPAUX -->
+  
+  <!-- ONGLET 1 : ACCUEIL -->
+  <div id="tab-home" class="hidden">
+    <div class="card-box" style="text-align: center;">
+      <span class="badge">Champion en Titre</span>
+      <h2 style="margin: 8px 0 4px;">Jéhovanis Zola</h2>
+      <p class="sub" style="margin-bottom: 12px;">Alias "Joy Boy" — Tenant du titre et champion de la 1ère édition[span_16](start_span)[span_16](end_span)</p>
+      <img src="TENANT DU TITRE ET CHAMPION DE LA 1ÈRE ÉDITION.png" alt="Champion Joy Boy" class="img-fluid" style="max-height: 280px;" />
     </div>
-    <div id="sessions-list"></div>
 
-    <!-- CLASSEMENT 1 : CANDIDATS OFFICIELS -->
-    <div class="leaderboard-box official">
+    <div class="card-box">
+      <h2>Grand Tournoi Otaku 2026</h2>
+      <p class="sub">Bienvenue sur la plateforme officielle de la communauté NovaRoot Impact à Kisangani[span_17](start_span)[span_17](end_span). Suivez les sessions en ligne et préparez-vous pour la grande finale !</p>
+      <img src="IMG_9484.jpeg" alt="Affiche Grande Finale" class="img-fluid" />
+      <button class="btn" onclick="switchTab('sessions')">Voir les sessions de Quiz</button>
+    </div>
+    <div class="ad-slot" id="ad-slot-home">Bannière Sponsorisée · Partenaire Officiel</div>
+  </div>
+
+  <!-- ONGLET 2 : SESSIONS & CALENDRIER -->
+  <div id="tab-sessions" class="hidden">
+    <div class="card-box">
+      <h1>Sessions du concours</h1>
+      <p class="sub" id="candidate-summary"></p>
+      <img src="IMG_9573.jpeg" alt="Calendrier des événements" class="img-fluid" style="margin-bottom: 14px;" />
+      <div id="sessions-list"></div>
+    </div>
+  </div>
+
+  <!-- ONGLET 3 : CLASSEMENT -->
+  <div id="tab-leaderboard" class="hidden">
+    <div class="card-box">
       <div class="leaderboard-head">
-        <h2 style="margin:0;">Classement · Candidats Officiels</h2>
+        <h2 style="margin:0;">Classements en Direct</h2>
         <button class="btn btn-secondary btn-small" id="btn-refresh-lb" type="button">Actualiser</button>
       </div>
-      <ol class="leaderboard-list" id="leaderboard-official-sessions">
-        <li>Chargement du classement...</li>
-      </ol>
-    </div>
+      <p class="sub" style="margin-top: 6px;">Cumul des points des sessions en ligne[span_18](start_span)[span_18](end_span) + bonus de billets[span_19](start_span)[span_19](end_span).</p>
 
-    <!-- CLASSEMENT 2 : SPECTATEURS -->
-    <div class="leaderboard-box">
-      <div class="leaderboard-head">
-        <h2 style="margin:0;">Classement · Spectateurs</h2>
+      <div class="leaderboard-box official" style="margin-top: 0;">
+        <h3 style="margin:0 0 8px; color: var(--accent-2); font-size: 14px;">🏆 Candidats Officiels</h3>
+        <ol class="leaderboard-list" id="leaderboard-official-sessions">
+          <li>Chargement du classement...</li>
+        </ol>
       </div>
-      <ol class="leaderboard-list" id="leaderboard-spectator-sessions">
-        <li>Chargement du classement...</li>
-      </ol>
-    </div>
 
-    <button class="btn btn-secondary" id="btn-logout">Changer de profil</button>
-    <div class="ad-slot" id="ad-slot-home">Emplacement Publicitaire · Niveau 1 (Bannière)</div>
+      <div class="leaderboard-box">
+        <h3 style="margin:0 0 8px; font-size: 14px;">👀 Spectateurs</h3>
+        <ol class="leaderboard-list" id="leaderboard-spectator-sessions">
+          <li>Chargement du classement...</li>
+        </ol>
+      </div>
+    </div>
   </div>
 
-  <!-- ÉCRAN 3 : JEU -->
-  <div id="screen-game" class="hidden">
+  <!-- ONGLET 4 : RÈGLES & BILLETS -->
+  <div id="tab-rules" class="hidden">
+    <div class="card-box">
+      <h1>Règles & Barème</h1>
+      <p class="sub">Tout ce qu'il faut savoir pour remporter le titre de Champion Otaku 2026.</p>
+      
+      <img src="IMG_9082.jpeg" alt="Règles Quiz en Ligne" class="img-fluid" />
+      <img src="IMG_9083.jpeg" alt="Système de Billets" class="img-fluid" />
+      <img src="IMG_9084.jpeg" alt="Qualifications et Discipline" class="img-fluid" />
+      <img src="GEM_PHOTO_DCE4C218-FD97-410C-B1AE-F61E41FDE576_L0_001_recent_photo_855C4D67-86C7-4394-AC77-D7FB7F7CC74F.jpg" alt="Cas d'égalité" class="img-fluid" />
+    </div>
+  </div>
+
+  <!-- ONGLET 5 : CHAT CANDIDATS -->
+  <div id="tab-chat" class="hidden">
+    <div class="card-box">
+      <h1>Espace de Discussion</h1>
+      <p class="sub">Discutez entre candidats et passionnés directement sur l'application.</p>
+      
+      <div class="chat-container">
+        <div class="chat-messages" id="chat-messages-box">
+          <div class="chat-msg">
+            <div class="chat-sender">NovaRoot Admin</div>
+            Bienvenue dans le chat officiel du Quiz Otaku 2026 ! Préparez vos sessions.
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" id="chat-input" placeholder="Écris ton message..." maxlength="150" />
+          <button class="btn btn-small" id="chat-send-btn" type="button" style="margin-top:0; width:auto;">Envoyer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉCRAN : JEU -->
+  <div id="screen-game" class="card-box hidden">
     <h1 id="game-session-title">Session</h1>
     <p class="sub" id="game-sub"></p>
     <div class="alert">Attention : quitter ou rafraîchir la page consomme ta tentative pour cette session.</div>
@@ -390,44 +553,23 @@
       <div class="q-text" id="q-text"></div>
     </div>
     <div id="q-options"></div>
-    <div class="ad-slot" id="ad-slot-game">Emplacement Publicitaire · Niveau 2 (Interstitiel léger)</div>
+    <div class="ad-slot" id="ad-slot-game">Bannière Sponsorisée · Jeu</div>
   </div>
 
-  <!-- ÉCRAN 4 : FIN DE SESSION -->
-  <div id="screen-result" class="hidden">
+  <!-- ÉCRAN : FIN DE SESSION -->
+  <div id="screen-result" class="card-box hidden">
     <h1>Session enregistrée</h1>
-    <p class="sub">Ton résultat a été enregistré et cumulé dans ton classement respectif.</p>
+    <p class="sub">Ton résultat a été enregistré et cumulé dans ton classement.</p>
     <div class="stat-box">
       <div class="meta">SCORE DE LA SESSION</div>
       <div class="stat-num" id="res-score">0</div>
       <div class="meta" id="res-detail"></div>
     </div>
-    <div id="sync-status" class="alert" aria-live="polite">Enregistrement en cours...</div>
-
-    <!-- CLASSEMENT 1 : CANDIDATS OFFICIELS -->
-    <div class="leaderboard-box official">
-      <div class="leaderboard-head">
-        <h2 style="margin:0;">Classement · Candidats Officiels</h2>
-        <button class="btn btn-secondary btn-small" id="btn-refresh-res-lb" type="button">Actualiser</button>
-      </div>
-      <ol class="leaderboard-list" id="leaderboard-official-result">
-        <li>Chargement du classement...</li>
-      </ol>
-    </div>
-
-    <!-- CLASSEMENT 2 : SPECTATEURS -->
-    <div class="leaderboard-box">
-      <div class="leaderboard-head">
-        <h2 style="margin:0;">Classement · Spectateurs</h2>
-      </div>
-      <ol class="leaderboard-list" id="leaderboard-spectator-result">
-        <li>Chargement du classement...</li>
-      </ol>
-    </div>
-
-    <button class="btn" id="btn-back-sessions">Voir les sessions</button>
-    <div class="ad-slot" id="ad-slot-result">Emplacement Publicitaire · Niveau 3 (Fin de session)</div>
+    <div id="sync-status" class="alert" aria-live="polite">Enregistrement dans le classement...</div>
+    <button class="btn" onclick="switchTab('sessions')">Retour aux sessions</button>
+    <div class="ad-slot" id="ad-slot-result">Bannière Sponsorisée · Résultat</div>
   </div>
+
 </div>
 
 <script>
@@ -458,11 +600,11 @@
   const JSONBIN_CONFIG = {
     binId: "6afb142bac6210605a8c1bbe",
     masterKey: "$2a$10$qqFqEmhKV6Zomekro.Gt2uBwaEUpph7OokA8/aujm2HfW.V22rsWK",
-    localCacheKey: "nr_quiz_otaku_2026_lb_cache_v5"
+    localCacheKey: "nr_quiz_otaku_2026_lb_cache_v6"
   };
   const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`;
 
-  // Planning précis des sessions (Dates et Heures)
+  // Planning des sessions
   const SESSIONS = [
     { 
       id: 1, 
@@ -490,7 +632,6 @@
     }
   ];
 
-  // Banque de questions (1 point par question)
   const QUESTION_BANK = [
     { q: "Dans One Piece, quel est le rêve de Monkey D. Luffy ?", opts: ["Devenir Roi des Pirates", "Trouver le All Blue", "Vaincre tous les Empereurs", "Cartographier le monde"], ans: 0, pts: 1 },
     { q: "Quel studio a produit l'anime Attack on Titan (saisons 1 à 3) ?", opts: ["MAPPA", "Wit Studio", "ufotable", "Bones"], ans: 1, pts: 1 },
@@ -580,10 +721,29 @@
     localStorage.setItem("nr_quiz_prog_" + userKey(), JSON.stringify(prog));
   }
 
-  function showScreen(id) {
-    ["screen-login", "screen-sessions", "screen-game", "screen-result"].forEach(s => {
-      document.getElementById(s).classList.toggle("hidden", s !== id);
+  // ====== GESTION DES ONGLETS ======
+  function switchTab(tabName) {
+    // Cache tous les onglets principaux et écrans de jeu
+    ["tab-home", "tab-sessions", "tab-leaderboard", "tab-rules", "tab-chat", "screen-game", "screen-result"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("hidden");
     });
+
+    // Désactive les boutons de la nav
+    document.querySelectorAll(".nav-item").forEach(btn => btn.classList.remove("active"));
+
+    // Active l'onglet demandé
+    const target = document.getElementById("tab-" + tabName);
+    if (target) {
+      target.classList.remove("hidden");
+      // Trouve le bouton correspondant dans la nav
+      const buttons = document.querySelectorAll(".nav-item");
+      if (tabName === 'home') buttons[0].classList.add("active");
+      if (tabName === 'sessions') { buttons[1].classList.add("active"); renderSessions(); }
+      if (tabName === 'leaderboard') { buttons[2].classList.add("active"); rafraichirClassementsAffichage(); }
+      if (tabName === 'rules') buttons[3].classList.add("active");
+      if (tabName === 'chat') { buttons[4].classList.add("active"); chargerChat(); }
+    }
   }
 
   // ====== CLASSEMENT PARTAGÉ (JSONBIN) ======
@@ -674,8 +834,6 @@
 
     afficherListeClassement("leaderboard-official-sessions", officiels, "Aucun candidat officiel classé pour le moment.");
     afficherListeClassement("leaderboard-spectator-sessions", spectateurs, "Aucun spectateur classé pour le moment.");
-    afficherListeClassement("leaderboard-official-result", officiels, "Aucun candidat officiel classé pour le moment.");
-    afficherListeClassement("leaderboard-spectator-result", spectateurs, "Aucun spectateur classé pour le moment.");
   }
 
   async function chargerClassementPartage() {
@@ -702,13 +860,13 @@
   }
 
   async function enregistrerDansJsonBin(nouvelleSession) {
-    const existants = await chargerClassementPartage();
+    const dataBrute = await chargerClassementPartage();
     const role = nouvelleSession.role === "spectateur" ? "spectateur" : "candidat";
     const candidatId = normaliserCleParticipant(nouvelleSession.nom, nouvelleSession.whatsapp, role);
     const sessionCode = `S${nouvelleSession.sessionId}`;
 
     let trouve = false;
-    const misAJour = existants.map(item => {
+    const misAJour = dataBrute.map(item => {
       const itemRole = item.role === "spectateur" ? "spectateur" : "candidat";
       const itemId = item.candidatId || normaliserCleParticipant(item.nom, item.whatsapp, itemRole);
       if (itemId === candidatId) {
@@ -755,19 +913,87 @@
       },
       body: JSON.stringify({
         concours: "Quiz Otaku 2026",
-        scores: tries
+        scores: tries,
+        chat: window.dernierChat || []
       })
     });
     if (!rep.ok) throw new Error("HTTP " + rep.status);
-    const data = await rep.json();
-    const synchronises = Array.isArray(data?.record?.scores)
-      ? fusionnerScores(data.record.scores)
+    const repData = await rep.json();
+    const synchronises = Array.isArray(repData?.record?.scores)
+      ? fusionnerScores(repData.record.scores)
       : tries;
     sauvegarderCacheClassement(synchronises);
     return synchronises;
   }
 
-  // ====== NAVIGATION & SESSIONS ======
+  // ====== CHAT INTERNE SUR JSONBIN ======
+  async function chargerChat() {
+    try {
+      const rep = await fetch(`${JSONBIN_URL}/latest`, {
+        method: "GET",
+        headers: { "X-Master-Key": JSONBIN_CONFIG.masterKey }
+      });
+      if (!rep.ok) return;
+      const data = await rep.json();
+      const messages = Array.isArray(data?.record?.chat) ? data.record.chat : [];
+      window.dernierChat = messages;
+      afficherMessagesChat(messages);
+    } catch (_) {}
+  }
+
+  function afficherMessagesChat(messages) {
+    const box = document.getElementById("chat-messages-box");
+    if (!messages.length) {
+      box.innerHTML = `<div class="chat-msg"><div class="chat-sender">Système</div>Aucun message pour l'instant. Sois le premier à écrire !</div>`;
+      return;
+    }
+    box.innerHTML = messages.map(m => {
+      const isMine = currentUser && m.sender === currentUser.pseudo;
+      return `<div class="chat-msg ${isMine ? 'mine' : ''}">
+        <div class="chat-sender">${m.sender}</div>
+        ${m.text}
+      </div>`;
+    }).join("");
+    box.scrollTop = box.scrollHeight;
+  }
+
+  document.getElementById("chat-send-btn").addEventListener("click", async () => {
+    const input = document.getElementById("chat-input");
+    const text = input.value.trim();
+    if (!text || !currentUser) return;
+
+    const nouveauMsg = {
+      sender: currentUser.pseudo,
+      text: text,
+      date: Date.now()
+    };
+
+    const messagesActuels = window.dernierChat || [];
+    messagesActuels.push(nouveauMsg);
+    if (messagesActuels.length > 50) messagesActuels.shift(); // Garde les 50 derniers
+
+    window.dernierChat = messagesActuels;
+    afficherMessagesChat(messagesActuels);
+    input.value = "";
+
+    try {
+      const scoresActuels = lireCacheClassement();
+      await fetch(JSONBIN_URL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Master-Key": JSONBIN_CONFIG.masterKey
+        },
+        body: JSON.stringify({
+          concours: "Quiz Otaku 2026",
+          scores: scoresActuels,
+          chat: messagesActuels
+        })
+      });
+    } catch (_) {}
+  });
+
+  // ====== NAVIGATION & LOGIN ======
   document.getElementById("btn-login").addEventListener("click", () => {
     const pseudo = document.getElementById("pseudo").value.trim();
     const whatsapp = document.getElementById("whatsapp").value.trim();
@@ -807,25 +1033,10 @@
     }
 
     msg.classList.add("hidden");
-    renderSessions();
-    showScreen("screen-sessions");
-    rafraichirClassementsAffichage();
+    document.getElementById("screen-login").classList.add("hidden");
+    document.getElementById("main-nav").style.display = "flex";
+    switchTab('home');
   });
-
-  document.getElementById("btn-logout").addEventListener("click", () => {
-    currentUser = null;
-    if (countdownInterval) clearInterval(countdownInterval);
-    showScreen("screen-login");
-  });
-
-  document.getElementById("btn-back-sessions").addEventListener("click", () => {
-    renderSessions();
-    showScreen("screen-sessions");
-    rafraichirClassementsAffichage();
-  });
-
-  document.getElementById("btn-refresh-lb").addEventListener("click", rafraichirClassementsAffichage);
-  document.getElementById("btn-refresh-res-lb").addEventListener("click", rafraichirClassementsAffichage);
 
   function renderSessions() {
     if (countdownInterval) clearInterval(countdownInterval);
@@ -945,7 +1156,7 @@
     if (countdownInterval) clearInterval(countdownInterval);
     const prog = getProgress();
     if (prog.completed.includes(sess.id)) {
-      renderSessions();
+      switchTab('sessions');
       return;
     }
     prog.completed.push(sess.id);
@@ -968,7 +1179,10 @@
     const badgeRole = currentUser.role === "candidat" ? "Candidat Officiel" : "Spectateur";
     document.getElementById("game-session-title").textContent = sess.title;
     document.getElementById("game-sub").textContent = `${currentUser.pseudo} · ${badgeRole}`;
-    showScreen("screen-game");
+    
+    // Cache l'accueil/sessions et affiche le jeu
+    ["tab-home", "tab-sessions", "tab-leaderboard", "tab-rules", "tab-chat"].forEach(id => document.getElementById(id).classList.add("hidden"));
+    document.getElementById("screen-game").classList.remove("hidden");
     renderQuestion();
   }
 
@@ -1012,18 +1226,11 @@
     const allBtns = document.querySelectorAll("#q-options .opt");
     allBtns.forEach(btn => {
       btn.disabled = true;
-      if (btn.dataset.correct === "1") {
-        btn.classList.add("correct");
-      }
+      if (btn.dataset.correct === "1") btn.classList.add("correct");
     });
 
-    if (clickedBtn && !isCorrect) {
-      clickedBtn.classList.add("wrong");
-    }
-
-    if (isCorrect) {
-      score += sessionQuestions[qIndex].pts;
-    }
+    if (clickedBtn && !isCorrect) clickedBtn.classList.add("wrong");
+    if (isCorrect) score += sessionQuestions[qIndex].pts;
 
     setTimeout(() => {
       qIndex += 1;
@@ -1039,10 +1246,11 @@
     const totalPoints = sessionQuestions.length * 1;
     const tagRole = currentUser.role === "candidat" ? "CANDIDAT" : "SPECTATEUR";
 
+    document.getElementById("screen-game").classList.add("hidden");
+    document.getElementById("screen-result").classList.remove("hidden");
     document.getElementById("res-score").textContent = `${score} / ${totalPoints} pts`;
     document.getElementById("res-detail").textContent =
       `[${tagRole}] ${currentUser.pseudo} (${currentUser.whatsapp}) · Session ${activeSession.id}`;
-    showScreen("screen-result");
 
     const syncBox = document.getElementById("sync-status");
     syncBox.className = "alert";
@@ -1062,7 +1270,6 @@
 
     try {
       await enregistrerDansJsonBin(leaderboardEntry);
-      await rafraichirClassementsAffichage();
       syncBox.className = "alert ok";
       syncBox.textContent = "Score enregistré et cumulé avec succès !";
     } catch (e) {
