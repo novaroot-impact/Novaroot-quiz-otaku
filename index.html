@@ -385,13 +385,6 @@
       font-weight: 700;
       margin-bottom: 2px;
     }
-    .chat-input-area {
-      display: flex;
-      padding: 8px;
-      background: #10172e;
-      border-top: 1px solid var(--border);
-      gap: 6px;
-    }
     .img-fluid {
       width: 100%;
       border-radius: 12px;
@@ -458,14 +451,15 @@
     <div class="card-box" style="text-align: center;">
       <span class="badge">Champion en Titre</span>
       <h2 style="margin: 8px 0 4px;">Jéhovanis Zola</h2>
-      <p class="sub" style="margin-bottom: 12px;">Alias "Joy Boy" — Tenant du titre et champion de la 1ère édition[span_16](start_span)[span_16](end_span)</p>
-      <img src="TENANT DU TITRE ET CHAMPION DE LA 1ÈRE ÉDITION.png" alt="Champion Joy Boy" class="img-fluid" style="max-height: 280px;" />
+      <p class="sub" style="margin-bottom: 12px;">Alias "Joy Boy" — Tenant du titre et champion de la 1ère édition[span_5](start_span)[span_5](end_span)</p>
+      <!-- Assure-toi de renommer ton image champion en champion.png sur GitHub -->
+      <img src="champion.png" alt="Champion Joy Boy" class="img-fluid" style="max-height: 280px;" />
     </div>
 
     <div class="card-box">
       <h2>Grand Tournoi Otaku 2026</h2>
-      <p class="sub">Bienvenue sur la plateforme officielle de la communauté NovaRoot Impact à Kisangani[span_17](start_span)[span_17](end_span). Suivez les sessions en ligne et préparez-vous pour la grande finale !</p>
-      <img src="IMG_9484.jpeg" alt="Affiche Grande Finale" class="img-fluid" />
+      <p class="sub">Bienvenue sur la plateforme officielle de la communauté NovaRoot Impact à Kisangani[span_6](start_span)[span_6](end_span). Suivez les sessions en ligne et préparez-vous pour la grande finale !</p>
+      <img src="finale.jpg" alt="Affiche Grande Finale" class="img-fluid" />
       <button class="btn" onclick="switchTab('sessions')">Voir les sessions de Quiz</button>
     </div>
     <div class="ad-slot" id="ad-slot-home">Bannière Sponsorisée · Partenaire Officiel</div>
@@ -476,7 +470,7 @@
     <div class="card-box">
       <h1>Sessions du concours</h1>
       <p class="sub" id="candidate-summary"></p>
-      <img src="IMG_9573.jpeg" alt="Calendrier des événements" class="img-fluid" style="margin-bottom: 14px;" />
+      <img src="calendrier.jpg" alt="Calendrier des événements" class="img-fluid" style="margin-bottom: 14px;" />
       <div id="sessions-list"></div>
     </div>
   </div>
@@ -488,7 +482,7 @@
         <h2 style="margin:0;">Classements en Direct</h2>
         <button class="btn btn-secondary btn-small" id="btn-refresh-lb" type="button">Actualiser</button>
       </div>
-      <p class="sub" style="margin-top: 6px;">Cumul des points des sessions en ligne[span_18](start_span)[span_18](end_span) + bonus de billets[span_19](start_span)[span_19](end_span).</p>
+      <p class="sub" style="margin-top: 6px;">Cumul des points des sessions en ligne[span_7](start_span)[span_7](end_span) + bonus de billets[span_8](start_span)[span_8](end_span).</p>
 
       <div class="leaderboard-box official" style="margin-top: 0;">
         <h3 style="margin:0 0 8px; color: var(--accent-2); font-size: 14px;">🏆 Candidats Officiels</h3>
@@ -512,10 +506,9 @@
       <h1>Règles & Barème</h1>
       <p class="sub">Tout ce qu'il faut savoir pour remporter le titre de Champion Otaku 2026.</p>
       
-      <img src="IMG_9082.jpeg" alt="Règles Quiz en Ligne" class="img-fluid" />
-      <img src="IMG_9083.jpeg" alt="Système de Billets" class="img-fluid" />
-      <img src="IMG_9084.jpeg" alt="Qualifications et Discipline" class="img-fluid" />
-      <img src="GEM_PHOTO_DCE4C218-FD97-410C-B1AE-F61E41FDE576_L0_001_recent_photo_855C4D67-86C7-4394-AC77-D7FB7F7CC74F.jpg" alt="Cas d'égalité" class="img-fluid" />
+      <img src="regles1.jpg" alt="Règles Quiz en Ligne" class="img-fluid" />
+      <img src="regles2.jpg" alt="Système de Billets" class="img-fluid" />
+      <img src="regles3.jpg" alt="Qualifications et Discipline" class="img-fluid" />
     </div>
   </div>
 
@@ -532,7 +525,7 @@
             Bienvenue dans le chat officiel du Quiz Otaku 2026 ! Préparez vos sessions.
           </div>
         </div>
-        <div class="chat-input-area">
+        <div class="chat-input-area" style="display:flex; padding:8px; background:#10172e; border-top:1px solid var(--border); gap:6px;">
           <input type="text" id="chat-input" placeholder="Écris ton message..." maxlength="150" />
           <button class="btn btn-small" id="chat-send-btn" type="button" style="margin-top:0; width:auto;">Envoyer</button>
         </div>
@@ -723,20 +716,16 @@
 
   // ====== GESTION DES ONGLETS ======
   function switchTab(tabName) {
-    // Cache tous les onglets principaux et écrans de jeu
     ["tab-home", "tab-sessions", "tab-leaderboard", "tab-rules", "tab-chat", "screen-game", "screen-result"].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.add("hidden");
     });
 
-    // Désactive les boutons de la nav
     document.querySelectorAll(".nav-item").forEach(btn => btn.classList.remove("active"));
 
-    // Active l'onglet demandé
     const target = document.getElementById("tab-" + tabName);
     if (target) {
       target.classList.remove("hidden");
-      // Trouve le bouton correspondant dans la nav
       const buttons = document.querySelectorAll(".nav-item");
       if (tabName === 'home') buttons[0].classList.add("active");
       if (tabName === 'sessions') { buttons[1].classList.add("active"); renderSessions(); }
@@ -970,7 +959,7 @@
 
     const messagesActuels = window.dernierChat || [];
     messagesActuels.push(nouveauMsg);
-    if (messagesActuels.length > 50) messagesActuels.shift(); // Garde les 50 derniers
+    if (messagesActuels.length > 50) messagesActuels.shift();
 
     window.dernierChat = messagesActuels;
     afficherMessagesChat(messagesActuels);
@@ -1180,7 +1169,6 @@
     document.getElementById("game-session-title").textContent = sess.title;
     document.getElementById("game-sub").textContent = `${currentUser.pseudo} · ${badgeRole}`;
     
-    // Cache l'accueil/sessions et affiche le jeu
     ["tab-home", "tab-sessions", "tab-leaderboard", "tab-rules", "tab-chat"].forEach(id => document.getElementById(id).classList.add("hidden"));
     document.getElementById("screen-game").classList.remove("hidden");
     renderQuestion();
