@@ -56,13 +56,35 @@
     }
     h2 {
       margin: 16px 0 8px;
-      font-size: 16px;
+      font-size: 15px;
     }
     p.sub {
       margin: 0 0 16px;
       color: var(--muted);
       font-size: 13px;
       line-height: 1.45;
+    }
+    .role-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .role-btn {
+      padding: 11px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card-2);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .role-btn.active {
+      background: rgba(255, 107, 44, 0.18);
+      border-color: var(--accent);
+      color: #fff;
     }
     .field {
       margin-bottom: 12px;
@@ -215,11 +237,14 @@
     }
     .stat-num { font-size: 32px; font-weight: 800; color: var(--accent-2); }
     .leaderboard-box {
-      margin-top: 16px;
+      margin-top: 14px;
       background: var(--card-2);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 14px;
+    }
+    .leaderboard-box.official {
+      border-color: rgba(255, 107, 44, 0.35);
     }
     .leaderboard-head {
       display: flex;
@@ -257,17 +282,29 @@
 
   <!-- ÉCRAN 1 : IDENTIFICATION -->
   <div id="screen-login">
-    <h1>Identification candidat</h1>
-    <p class="sub">Entre ton pseudo et ton numéro WhatsApp. Les sessions se débloquent progressivement : termine la Session 1 pour ouvrir la 2, puis la 3.</p>
+    <h1>Identification</h1>
+    <p class="sub">Choisis ton statut : les <strong>Candidats officiels</strong> entrent avec leur code personnel ; les <strong>Spectateurs</strong> jouent librement dans leur propre classement.</p>
+
+    <label>Tu participes en tant que :</label>
+    <div class="role-switch">
+      <button type="button" class="role-btn active" id="role-candidat">Candidat officiel</button>
+      <button type="button" class="role-btn" id="role-spectateur">Spectateur</button>
+    </div>
+
     <div class="field">
       <label for="pseudo">Pseudo</label>
-      <input id="pseudo" type="text" placeholder="Ex. Kenjiro_2026" maxlength="30" />
+      <input id="pseudo" type="text" placeholder="Ex. LARGØ LA STREET" maxlength="30" />
     </div>
     <div class="field">
       <label for="whatsapp">Numéro Téléphone (WhatsApp)</label>
-      <input id="whatsapp" type="tel" placeholder="Ex. +243 81 000 0000" maxlength="25" />
+      <input id="whatsapp" type="tel" placeholder="Ex. 0810330270" maxlength="25" />
     </div>
-    <div id="login-msg" class="alert hidden"></div>
+    <div class="field" id="code-field-wrapper">
+      <label for="candidat-code">Code personnel candidat</label>
+      <input id="candidat-code" type="text" placeholder="Ex. 01-2c-2026" maxlength="20" autocapitalize="none" />
+    </div>
+
+    <div id="login-msg" class="alert err hidden"></div>
     <button class="btn" id="btn-login">Accéder aux sessions</button>
   </div>
 
@@ -276,21 +313,32 @@
     <h1>Sessions du concours</h1>
     <p class="sub" id="candidate-summary"></p>
     <div class="alert">
-      Mode progressif actif : Session 1 → Session 2 → Session 3. Dès qu'une session est terminée, la suivante s'ouvre directement.
+      Chaque session s'ouvre à une date et heure précise. Un compte à rebours indique le temps restant.
     </div>
     <div id="sessions-list"></div>
 
-    <div class="leaderboard-box">
+    <!-- CLASSEMENT 1 : CANDIDATS OFFICIELS -->
+    <div class="leaderboard-box official">
       <div class="leaderboard-head">
-        <h2 style="margin:0;">Classement général (Cumul)</h2>
+        <h2 style="margin:0;">Classement · Candidats Officiels</h2>
         <button class="btn btn-secondary btn-small" id="btn-refresh-lb" type="button">Actualiser</button>
       </div>
-      <ol class="leaderboard-list" id="leaderboard-sessions">
+      <ol class="leaderboard-list" id="leaderboard-official-sessions">
         <li>Chargement du classement...</li>
       </ol>
     </div>
 
-    <button class="btn btn-secondary" id="btn-logout">Changer de candidat</button>
+    <!-- CLASSEMENT 2 : SPECTATEURS -->
+    <div class="leaderboard-box">
+      <div class="leaderboard-head">
+        <h2 style="margin:0;">Classement · Spectateurs</h2>
+      </div>
+      <ol class="leaderboard-list" id="leaderboard-spectator-sessions">
+        <li>Chargement du classement...</li>
+      </ol>
+    </div>
+
+    <button class="btn btn-secondary" id="btn-logout">Changer de profil</button>
     <div class="ad-slot" id="ad-slot-home">Emplacement Publicitaire · Niveau 1 (Bannière)</div>
   </div>
 
@@ -313,7 +361,7 @@
   <!-- ÉCRAN 4 : FIN DE SESSION -->
   <div id="screen-result" class="hidden">
     <h1>Session enregistrée</h1>
-    <p class="sub">Ton résultat a été enregistré et cumulé à ton total. La session suivante est maintenant disponible.</p>
+    <p class="sub">Ton résultat a été enregistré et cumulé dans ton classement respectif.</p>
     <div class="stat-box">
       <div class="meta">SCORE DE LA SESSION</div>
       <div class="stat-num" id="res-score">0</div>
@@ -321,65 +369,154 @@
     </div>
     <div id="sync-status" class="alert" aria-live="polite">Vérification de la synchronisation...</div>
 
-    <div class="leaderboard-box">
+    <!-- CLASSEMENT 1 : CANDIDATS OFFICIELS -->
+    <div class="leaderboard-box official">
       <div class="leaderboard-head">
-        <h2 style="margin:0;">Classement général (Cumul)</h2>
+        <h2 style="margin:0;">Classement · Candidats Officiels</h2>
         <button class="btn btn-secondary btn-small" id="btn-refresh-res-lb" type="button">Actualiser</button>
       </div>
-      <ol class="leaderboard-list" id="leaderboard-result">
+      <ol class="leaderboard-list" id="leaderboard-official-result">
         <li>Chargement du classement...</li>
       </ol>
     </div>
 
-    <button class="btn" id="btn-back-sessions">Voir la session suivante</button>
+    <!-- CLASSEMENT 2 : SPECTATEURS -->
+    <div class="leaderboard-box">
+      <div class="leaderboard-head">
+        <h2 style="margin:0;">Classement · Spectateurs</h2>
+      </div>
+      <ol class="leaderboard-list" id="leaderboard-spectator-result">
+        <li>Chargement du classement...</li>
+      </ol>
+    </div>
+
+    <button class="btn" id="btn-back-sessions">Voir les sessions</button>
     <div class="ad-slot" id="ad-slot-result">Emplacement Publicitaire · Niveau 3 (Fin de session)</div>
   </div>
 </div>
 
 <script>
+  // ====== LISTE DES CANDIDATS OFFICIELS INSCRITS ======
+  const CANDIDATS_OFFICIELS = [
+    { pseudo: "LARGØ LA STREET", whatsapp: "0810330270", code: "01-2c-2026" },
+    { pseudo: "Sasuke", whatsapp: "0895724931", code: "02-2c-2026" },
+    { pseudo: "Manassé", whatsapp: "0893501862", code: "03-2c-2026" },
+    { pseudo: "Genki", whatsapp: "0813456006", code: "04-2c-2026" },
+    { pseudo: "Andertaker", whatsapp: "0835660946", code: "05-2c-2026" },
+    { pseudo: "Shadow garden", whatsapp: "0802560532", code: "06-2c-2026" },
+    { pseudo: "Jerem's wam's", whatsapp: "0855569950", code: "07-2c-2026" },
+    { pseudo: "Scott", whatsapp: "0837799713", code: "08-2c-2026" },
+    { pseudo: "Evans", whatsapp: "0989611622", code: "09-2c-2026" },
+    { pseudo: "Pro Yeager", whatsapp: "0855629874", code: "10-2c-2026" },
+    { pseudo: "WANIAS", whatsapp: "0849687213", code: "11-2c-2026" },
+    { pseudo: "Rudeus", whatsapp: "0893976217", code: "12-2c-2026" },
+    { pseudo: "Momo Aki", whatsapp: "0969682502", code: "13-2c-2026" },
+    { pseudo: "VERMITHOR", whatsapp: "0844157494", code: "14-2c-2026" },
+    { pseudo: "ASTA", whatsapp: "0858811566", code: "15-2c-2026" },
+    { pseudo: "ZENIN", whatsapp: "0894787163", code: "16-2c-2026" },
+    { pseudo: "Jonathan", whatsapp: "0891637262", code: "17-2c-2026" },
+    { pseudo: "Jaybee", whatsapp: "0858822773", code: "18-2c-2026" },
+    { pseudo: "Nova_test", whatsapp: "0803025518", code: "19-2s-2026" }
+  ];
+
   // ====== CONFIGURATION ADMIN ======
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhTpFMHXzNp-PXxOu-YH7ClRngbzLuk0QeHNi3kiqVT2FccEVFJA4cU3gGoINKTbgr/exec";
-  const CONCOURS_START_DATE = "2026-11-21"; // Samedi 21 novembre 2026
 
-  // Configuration JSONBin (Classement partagé Quiz Otaku 2026)
+  // Configuration JSONBin
   const JSONBIN_CONFIG = {
     binId: "6afb142bac6210605a8c1bbe",
     masterKey: "$2a$10$qqFqEmhKV6Zomekro.Gt2uBwaEUpph7OokA8/aujm2HfW.V22rsWK",
-    localCacheKey: "nr_quiz_otaku_2026_lb_cache"
+    localCacheKey: "nr_quiz_otaku_2026_lb_cache_v3"
   };
   const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`;
 
-  // Banque de questions (mélange automatique à chaque session)
-  const QUESTION_BANK = [
-    { q: "Dans One Piece, quel est le rêve de Monkey D. Luffy ?", opts: ["Devenir Roi des Pirates", "Trouver le All Blue", "Vaincre tous les Empereurs", "Cartographier le monde"], ans: 0, pts: 100 },
-    { q: "Quel studio a produit l'anime Attack on Titan (saisons 1 à 3) ?", opts: ["MAPPA", "Wit Studio", "ufotable", "Bones"], ans: 1, pts: 100 },
-    { q: "Dans Naruto, quel clan possède le Sharingan ?", opts: ["Hyuga", "Senju", "Uchiha", "Uzumaki"], ans: 2, pts: 100 },
-    { q: "Quel est le nom du Death Note de Light Yagami ?", opts: ["Ryuk", "Rem", "Sidoh", "Gelus"], ans: 0, pts: 100 },
-    { q: "Dans Demon Slayer, quel souffle utilise Tanjiro Kamado à l'origine ?", opts: ["Souffle de la Flamme", "Souffle de l'Eau", "Souffle du Soleil", "Souffle de la Foudre"], ans: 1, pts: 100 },
-    { q: "Quel auteur a créé Fullmetal Alchemist ?", opts: ["Hiromu Arakawa", "Eiichiro Oda", "Kohei Horikoshi", "Gege Akutami"], ans: 0, pts: 100 },
-    { q: "Dans Jujutsu Kaisen, quel est le nom du fléau qui vit en Yuji Itadori ?", opts: ["Mahito", "Jogo", "Ryomen Sukuna", "Geto"], ans: 2, pts: 100 },
-    { q: "Quel objet permet d'invoquer Shenron dans Dragon Ball ?", opts: ["7 Dragon Balls", "5 Dragon Balls", "6 Dragon Balls", "8 Dragon Balls"], ans: 0, pts: 100 },
-    { q: "Dans Hunter x Hunter, quel est l'examen que passe Gon au début ?", opts: ["Examen Chuunin", "Examen Hunter", "Examen des Ombres", "Examen Nen"], ans: 1, pts: 100 },
-    { q: "Quel studio anime Jujutsu Kaisen ?", opts: ["Madhouse", "MAPPA", "CloverWorks", "A-1 Pictures"], ans: 1, pts: 100 },
-    { q: "Dans Death Note, quel est l'alias du détective principal ?", opts: ["Near", "Mello", "L", "Watari"], ans: 2, pts: 100 },
-    { q: "Dans My Hero Academia, quel est le nom du pouvoir de Deku ?", opts: ["All For One", "One For All", "Explosion", "Half-Cold Half-Hot"], ans: 1, pts: 100 }
-  ];
-
+  // Planning précis des sessions (Dates et Heures)
   const SESSIONS = [
-    { id: 1, title: "Session 1 — Chronométrée Classique", timePerQ: 15, count: 10 },
-    { id: 2, title: "Session 2 — Chronométrée Rapide", timePerQ: 10, count: 10 },
-    { id: 3, title: "Session 3 — Openings, Devinettes & Citations", timePerQ: 12, count: 10 }
+    { 
+      id: 1, 
+      title: "Session 1 — Chronométrée Classique", 
+      timePerQ: 15, 
+      count: 10,
+      start: new Date("2026-11-18T17:57:00"),
+      end: new Date("2026-11-18T18:30:00")
+    },
+    { 
+      id: 2, 
+      title: "Session 2 — Chronométrée Rapide", 
+      timePerQ: 10, 
+      count: 10,
+      start: new Date("2026-11-21T21:00:00"),
+      end: new Date("2026-11-28T00:00:00") // Laisse large ou ajuste si besoin
+    },
+    { 
+      id: 3, 
+      title: "Session 3 — Openings, Devinettes & Citations", 
+      timePerQ: 12, 
+      count: 10,
+      start: new Date("2026-11-28T00:00:00"),
+      end: new Date("2026-12-31T23:59:59")
+    }
   ];
 
+  // Banque de questions (1 point par question)
+  const QUESTION_BANK = [
+    { q: "Dans One Piece, quel est le rêve de Monkey D. Luffy ?", opts: ["Devenir Roi des Pirates", "Trouver le All Blue", "Vaincre tous les Empereurs", "Cartographier le monde"], ans: 0, pts: 1 },
+    { q: "Quel studio a produit l'anime Attack on Titan (saisons 1 à 3) ?", opts: ["MAPPA", "Wit Studio", "ufotable", "Bones"], ans: 1, pts: 1 },
+    { q: "Dans Naruto, quel clan possède le Sharingan ?", opts: ["Hyuga", "Senju", "Uchiha", "Uzumaki"], ans: 2, pts: 1 },
+    { q: "Quel est le nom du Death Note de Light Yagami ?", opts: ["Ryuk", "Rem", "Sidoh", "Gelus"], ans: 0, pts: 1 },
+    { q: "Dans Demon Slayer, quel souffle utilise Tanjiro Kamado à l'origine ?", opts: ["Souffle de la Flamme", "Souffle de l'Eau", "Souffle du Soleil", "Souffle de la Foudre"], ans: 1, pts: 1 },
+    { q: "Quel auteur a créé Fullmetal Alchemist ?", opts: ["Hiromu Arakawa", "Eiichiro Oda", "Kohei Horikoshi", "Gege Akutami"], ans: 0, pts: 1 },
+    { q: "Dans Jujutsu Kaisen, quel est le nom du fléau qui vit en Yuji Itadori ?", opts: ["Mahito", "Jogo", "Ryomen Sukuna", "Geto"], ans: 2, pts: 1 },
+    { q: "Quel objet permet d'invoquer Shenron dans Dragon Ball ?", opts: ["7 Dragon Balls", "5 Dragon Balls", "6 Dragon Balls", "8 Dragon Balls"], ans: 0, pts: 1 },
+    { q: "Dans Hunter x Hunter, quel est l'examen que passe Gon au début ?", opts: ["Examen Chuunin", "Examen Hunter", "Examen des Ombres", "Examen Nen"], ans: 1, pts: 1 },
+    { q: "Quel studio anime Jujutsu Kaisen ?", opts: ["Madhouse", "MAPPA", "CloverWorks", "A-1 Pictures"], ans: 1, pts: 1 },
+    { q: "Dans Death Note, quel est l'alias du détective principal ?", opts: ["Near", "Mello", "L", "Watari"], ans: 2, pts: 1 },
+    { q: "Dans My Hero Academia, quel est le nom du pouvoir de Deku ?", opts: ["All For One", "One For All", "Explosion", "Half-Cold Half-Hot"], ans: 1, pts: 1 }
+  ];
+
+  let selectedRole = "candidat";
   let currentUser = null;
   let activeSession = null;
   let sessionQuestions = [];
   let qIndex = 0;
   let score = 0;
   let timerId = null;
+  let countdownInterval = null;
   let timeLeft = 15;
   let enCoursEnvoi = false;
   let isAnswering = false;
+
+  const btnRoleCandidat = document.getElementById("role-candidat");
+  const btnRoleSpectateur = document.getElementById("role-spectateur");
+  const codeFieldWrapper = document.getElementById("code-field-wrapper");
+
+  function setRole(role) {
+    selectedRole = role;
+    btnRoleCandidat.classList.toggle("active", role === "candidat");
+    btnRoleSpectateur.classList.toggle("active", role === "spectateur");
+    codeFieldWrapper.classList.toggle("hidden", role !== "candidat");
+    document.getElementById("login-msg").classList.add("hidden");
+  }
+
+  btnRoleCandidat.addEventListener("click", () => setRole("candidat"));
+  btnRoleSpectateur.addEventListener("click", () => setRole("spectateur"));
+
+  function normaliserTelephone(tel) {
+    const digits = (tel || "").replace(/\D/g, "");
+    return digits.length >= 9 ? digits.slice(-9) : digits;
+  }
+
+  function verifierCandidatOfficiel(pseudo, whatsapp, code) {
+    const cleanPseudo = pseudo.trim().toLowerCase();
+    const cleanPhone = normaliserTelephone(whatsapp);
+    const cleanCode = code.trim();
+
+    return CANDIDATS_OFFICIELS.find(c =>
+      c.pseudo.trim().toLowerCase() === cleanPseudo &&
+      normaliserTelephone(c.whatsapp) === cleanPhone &&
+      c.code.trim() === cleanCode
+    );
+  }
 
   function genererSessionId() {
     if (window.crypto && typeof window.crypto.randomUUID === "function") {
@@ -398,7 +535,9 @@
   }
 
   function userKey() {
-    return currentUser ? `${currentUser.pseudo.toLowerCase()}__${currentUser.whatsapp.replace(/\D/g, "")}` : "";
+    return currentUser
+      ? `${currentUser.role}__${currentUser.pseudo.toLowerCase()}__${normaliserTelephone(currentUser.whatsapp)}`
+      : "";
   }
 
   function getProgress() {
@@ -417,18 +556,35 @@
     });
   }
 
-  // ====== FONCTIONS CLASSEMENT PARTAGÉ AVEC CUMUL (JSONBIN) ======
-  function normaliserCleCandidat(nom, whatsapp) {
-    const cleanPhone = (whatsapp || "").replace(/\D/g, "");
-    const cleanName = (nom || "").trim().toLowerCase();
-    return cleanPhone ? `${cleanName}__${cleanPhone}` : cleanName;
+  function formatTempsRestant(ms) {
+    if (ms <= 0) return "Ouvert";
+    const totalSec = Math.floor(ms / 1000);
+    const jours = Math.floor(totalSec / (3600 * 24));
+    const heures = Math.floor((totalSec % (3600 * 24)) / 3600);
+    const minutes = Math.floor((totalSec % 3600) / 60);
+    const secondes = totalSec % 60;
+
+    let res = "";
+    if (jours > 0) res += `${jours}j `;
+    if (heures > 0 || jours > 0) res += `${heures}h `;
+    res += `${minutes}m ${secondes}s`;
+    return res;
   }
 
-  function fusionnerScoresCandidats(scores) {
+  // ====== DOUBLE CLASSEMENT PARTAGÉ (JSONBIN) ======
+  function normaliserCleParticipant(nom, whatsapp, role) {
+    const cleanPhone = normaliserTelephone(whatsapp);
+    const cleanName = (nom || "").trim().toLowerCase();
+    const cleanRole = role === "spectateur" ? "spectateur" : "candidat";
+    return `${cleanRole}__${cleanName}__${cleanPhone}`;
+  }
+
+  function fusionnerScores(scores) {
     const map = new Map();
 
     scores.forEach(item => {
-      const key = item.candidatId || normaliserCleCandidat(item.nom, item.whatsapp);
+      const role = item.role === "spectateur" ? "spectateur" : "candidat";
+      const key = item.candidatId || normaliserCleParticipant(item.nom, item.whatsapp, role);
       const pts = Number(item.score) || 0;
       const tot = Number(item.total) || 0;
       const sessions = Array.isArray(item.sessions)
@@ -440,6 +596,7 @@
       if (!map.has(key)) {
         map.set(key, {
           candidatId: key,
+          role,
           nom: item.nom,
           whatsapp: item.whatsapp || "",
           score: pts,
@@ -473,20 +630,20 @@
   function lireCacheClassement() {
     try {
       const brut = localStorage.getItem(JSONBIN_CONFIG.localCacheKey);
-      return brut ? fusionnerScoresCandidats(JSON.parse(brut)) : [];
+      return brut ? fusionnerScores(JSON.parse(brut)) : [];
     } catch (_) {
       return [];
     }
   }
 
-  function afficherClassementDans(elementId, scores) {
+  function afficherListeClassement(elementId, liste, videMsg) {
     const el = document.getElementById(elementId);
     if (!el) return;
-    if (!scores || !scores.length) {
-      el.innerHTML = "<li>Aucun score enregistré pour le moment.</li>";
+    if (!liste || !liste.length) {
+      el.innerHTML = `<li>${videMsg}</li>`;
       return;
     }
-    el.innerHTML = scores
+    el.innerHTML = liste
       .map(item => {
         const detailSessions = Array.isArray(item.sessions) && item.sessions.length
           ? item.sessions.join(", ")
@@ -496,18 +653,26 @@
       .join("");
   }
 
+  function afficherDoubleClassement(tousLesScores) {
+    const officiels = tousLesScores.filter(s => s.role !== "spectateur");
+    const spectateurs = tousLesScores.filter(s => s.role === "spectateur");
+
+    afficherListeClassement("leaderboard-official-sessions", officiels, "Aucun candidat officiel classé pour le moment.");
+    afficherListeClassement("leaderboard-spectator-sessions", spectateurs, "Aucun spectateur classé pour le moment.");
+    afficherListeClassement("leaderboard-official-result", officiels, "Aucun candidat officiel classé pour le moment.");
+    afficherListeClassement("leaderboard-spectator-result", spectateurs, "Aucun spectateur classé pour le moment.");
+  }
+
   async function chargerClassementPartage() {
     try {
       const rep = await fetch(`${JSONBIN_URL}/latest`, {
         method: "GET",
-        headers: {
-          "X-Master-Key": JSONBIN_CONFIG.masterKey
-        }
+        headers: { "X-Master-Key": JSONBIN_CONFIG.masterKey }
       });
       if (!rep.ok) throw new Error("HTTP " + rep.status);
       const data = await rep.json();
       const brute = Array.isArray(data?.record?.scores) ? data.record.scores : [];
-      const fusionnee = fusionnerScoresCandidats(brute);
+      const fusionnee = fusionnerScores(brute);
       sauvegarderCacheClassement(fusionnee);
       return fusionnee;
     } catch (_) {
@@ -517,29 +682,29 @@
 
   async function rafraichirClassementsAffichage() {
     const scores = await chargerClassementPartage();
-    afficherClassementDans("leaderboard-sessions", scores);
-    afficherClassementDans("leaderboard-result", scores);
+    afficherDoubleClassement(scores);
     return scores;
   }
 
   async function enregistrerDansJsonBin(nouvelleSession) {
     const existants = await chargerClassementPartage();
-    const candidatId = normaliserCleCandidat(nouvelleSession.nom, nouvelleSession.whatsapp);
+    const role = nouvelleSession.role === "spectateur" ? "spectateur" : "candidat";
+    const candidatId = normaliserCleParticipant(nouvelleSession.nom, nouvelleSession.whatsapp, role);
     const sessionCode = `S${nouvelleSession.sessionId}`;
 
     let trouve = false;
     const misAJour = existants.map(item => {
-      const itemId = item.candidatId || normaliserCleCandidat(item.nom, item.whatsapp);
-      if (itemId === candidatId || item.nom.trim().toLowerCase() === nouvelleSession.nom.trim().toLowerCase()) {
+      const itemRole = item.role === "spectateur" ? "spectateur" : "candidat";
+      const itemId = item.candidatId || normaliserCleParticipant(item.nom, item.whatsapp, itemRole);
+      if (itemId === candidatId) {
         trouve = true;
         const sessionsDejaValidees = Array.isArray(item.sessions) ? [...item.sessions] : [];
-        if (sessionsDejaValidees.includes(sessionCode)) {
-          return item;
-        }
+        if (sessionsDejaValidees.includes(sessionCode)) return item;
         sessionsDejaValidees.push(sessionCode);
         return {
           ...item,
           candidatId,
+          role,
           nom: nouvelleSession.nom,
           whatsapp: nouvelleSession.whatsapp,
           score: (Number(item.score) || 0) + (Number(nouvelleSession.score) || 0),
@@ -554,6 +719,7 @@
     if (!trouve) {
       misAJour.push({
         candidatId,
+        role,
         nom: nouvelleSession.nom,
         whatsapp: nouvelleSession.whatsapp,
         score: Number(nouvelleSession.score) || 0,
@@ -563,7 +729,7 @@
       });
     }
 
-    const tries = fusionnerScoresCandidats(misAJour);
+    const tries = fusionnerScores(misAJour);
     sauvegarderCacheClassement(tries);
 
     const rep = await fetch(JSONBIN_URL, {
@@ -580,16 +746,17 @@
     if (!rep.ok) throw new Error("HTTP " + rep.status);
     const data = await rep.json();
     const synchronises = Array.isArray(data?.record?.scores)
-      ? fusionnerScoresCandidats(data.record.scores)
+      ? fusionnerScores(data.record.scores)
       : tries;
     sauvegarderCacheClassement(synchronises);
     return synchronises;
   }
 
-  // ====== NAVIGATION & SESSIONS (MODE PROGRESSIF) ======
+  // ====== NAVIGATION & SESSIONS ======
   document.getElementById("btn-login").addEventListener("click", () => {
     const pseudo = document.getElementById("pseudo").value.trim();
     const whatsapp = document.getElementById("whatsapp").value.trim();
+    const code = document.getElementById("candidat-code").value.trim();
     const msg = document.getElementById("login-msg");
 
     if (pseudo.length < 2 || whatsapp.replace(/\D/g, "").length < 7) {
@@ -597,8 +764,34 @@
       msg.classList.remove("hidden");
       return;
     }
+
+    if (selectedRole === "candidat") {
+      if (!code) {
+        msg.textContent = "Entre ton code personnel candidat, ou sélectionne « Spectateur ».";
+        msg.classList.remove("hidden");
+        return;
+      }
+      const candidatValide = verifierCandidatOfficiel(pseudo, whatsapp, code);
+      if (!candidatValide) {
+        msg.textContent = "Accès refusé : le pseudo, le numéro WhatsApp ou le code personnel ne correspond pas à la liste officielle.";
+        msg.classList.remove("hidden");
+        return;
+      }
+      currentUser = {
+        role: "candidat",
+        pseudo: candidatValide.pseudo,
+        whatsapp: whatsapp,
+        code: candidatValide.code
+      };
+    } else {
+      currentUser = {
+        role: "spectateur",
+        pseudo,
+        whatsapp
+      };
+    }
+
     msg.classList.add("hidden");
-    currentUser = { pseudo, whatsapp };
     renderSessions();
     showScreen("screen-sessions");
     rafraichirClassementsAffichage();
@@ -606,6 +799,7 @@
 
   document.getElementById("btn-logout").addEventListener("click", () => {
     currentUser = null;
+    if (countdownInterval) clearInterval(countdownInterval);
     showScreen("screen-login");
   });
 
@@ -619,33 +813,56 @@
   document.getElementById("btn-refresh-res-lb").addEventListener("click", rafraichirClassementsAffichage);
 
   function renderSessions() {
+    if (countdownInterval) clearInterval(countdownInterval);
+
     const prog = getProgress();
+    const now = new Date();
     const nbTerminees = prog.completed.length;
+    const labelStatut = currentUser.role === "candidat" ? "Candidat Officiel" : "Spectateur";
     document.getElementById("candidate-summary").textContent =
-      `Candidat : ${currentUser.pseudo} (${currentUser.whatsapp}) · Progression : ${nbTerminees}/${SESSIONS.length} sessions`;
+      `${labelStatut} : ${currentUser.pseudo} (${currentUser.whatsapp}) · ${nbTerminees}/${SESSIONS.length} sessions validées`;
 
     const container = document.getElementById("sessions-list");
     container.innerHTML = "";
 
     SESSIONS.forEach(sess => {
       const isDone = prog.completed.includes(sess.id);
-      const prevDone = sess.id === 1 || prog.completed.includes(sess.id - 1);
-      const canPlay = !isDone && prevDone;
+      const nowTime = now.getTime();
+      const startTime = sess.start.getTime();
+      const endTime = sess.end.getTime();
+
+      const started = nowTime >= startTime;
+      const notExpired = nowTime <= endTime;
+      const timeToStart = startTime - nowTime;
 
       let statusLabel = "Verrouillée";
       let pillClass = "locked";
       let reason = "";
+      let canPlay = false;
 
       if (isDone) {
         statusLabel = "Terminée";
         pillClass = "done";
-        reason = "Session validée et ajoutée au cumul.";
-      } else if (canPlay) {
-        statusLabel = "Disponible";
-        pillClass = "open";
-        reason = `${sess.timePerQ}s / question · Débloquée`;
+        reason = "Session validée et enregistrée.";
+      } else if (!started) {
+        statusLabel = "À venir";
+        pillClass = "locked";
+        reason = `Ouverture dans : <span class="countdown" data-start="${startTime}">calcul...</span>`;
+      } else if (!notExpired) {
+        statusLabel = "Expirée";
+        pillClass = "locked";
+        reason = "La session est terminée.";
       } else {
-        reason = `Termine d'abord la Session ${sess.id - 1} pour débloquer celle-ci.`;
+        // La session est ouverte, on vérifie l'ordre (Session 1 d'abord, puis 2, puis 3)
+        const prevDone = sess.id === 1 || prog.completed.includes(sess.id - 1);
+        if (prevDone) {
+          statusLabel = "Disponible";
+          pillClass = "open";
+          reason = `${sess.timePerQ}s / question · En cours`;
+          canPlay = true;
+        } else {
+          reason = `Termine d'abord la Session ${sess.id - 1}.`;
+        }
       }
 
       const card = document.createElement("div");
@@ -668,19 +885,35 @@
 
       container.appendChild(card);
     });
+
+    // Active le compte à rebours visuel en direct chaque seconde
+    countdownInterval = setInterval(updateCountdowns, 1000);
+    updateCountdowns();
+  }
+
+  function updateCountdowns() {
+    const now = new Date().getTime();
+    document.querySelectorAll(".countdown").forEach(el => {
+      const startTime = Number(el.dataset.start);
+      const diff = startTime - now;
+      if (diff <= 0) {
+        // Si l'heure est atteinte, on rafraîchit l'écran pour débloquer le bouton
+        renderSessions();
+      } else {
+        el.textContent = formatTempsRestant(diff);
+      }
+    });
   }
 
   function startSession(sess) {
+    if (countdownInterval) clearInterval(countdownInterval);
     const prog = getProgress();
-    const prevDone = sess.id === 1 || prog.completed.includes(sess.id - 1);
-    if (prog.completed.includes(sess.id) || !prevDone) {
+    if (prog.completed.includes(sess.id)) {
       renderSessions();
       return;
     }
-    if (!prog.completed.includes(sess.id)) {
-      prog.completed.push(sess.id);
-      saveProgress(prog);
-    }
+    prog.completed.push(sess.id);
+    saveProgress(prog);
 
     activeSession = sess;
     score = 0;
@@ -696,8 +929,9 @@
       };
     });
 
+    const badgeRole = currentUser.role === "candidat" ? "Candidat Officiel" : "Spectateur";
     document.getElementById("game-session-title").textContent = sess.title;
-    document.getElementById("game-sub").textContent = `${currentUser.pseudo} · Session en cours`;
+    document.getElementById("game-sub").textContent = `${currentUser.pseudo} · ${badgeRole}`;
     showScreen("screen-game");
     renderQuestion();
   }
@@ -766,11 +1000,12 @@
   }
 
   async function finishSession() {
-    const totalPoints = sessionQuestions.length * 100;
+    const totalPoints = sessionQuestions.length * 1; // 1 point par question -> total 10 pts
+    const tagRole = currentUser.role === "candidat" ? "CANDIDAT" : "SPECTATEUR";
 
-    document.getElementById("res-score").textContent = `${score} pts`;
+    document.getElementById("res-score").textContent = `${score} / ${totalPoints} pts`;
     document.getElementById("res-detail").textContent =
-      `${currentUser.pseudo} (${currentUser.whatsapp}) · Session ${activeSession.id}`;
+      `[${tagRole}] ${currentUser.pseudo} (${currentUser.whatsapp}) · Session ${activeSession.id}`;
     showScreen("screen-result");
 
     const syncBox = document.getElementById("sync-status");
@@ -781,7 +1016,7 @@
     enCoursEnvoi = true;
 
     const payload = {
-      name: `${currentUser.pseudo} (${currentUser.whatsapp})`,
+      name: `[${tagRole}] ${currentUser.pseudo} (${currentUser.whatsapp})`,
       day: `Session ${activeSession.id}`,
       score: Number(score) || 0,
       total: totalPoints,
@@ -789,6 +1024,7 @@
     };
 
     const leaderboardEntry = {
+      role: currentUser.role,
       nom: currentUser.pseudo,
       whatsapp: currentUser.whatsapp,
       score: Number(score) || 0,
@@ -809,10 +1045,10 @@
 
       await rafraichirClassementsAffichage();
       syncBox.className = "alert ok";
-      syncBox.textContent = "Score enregistré et cumulé. La session suivante est débloquée.";
+      syncBox.textContent = "Score enregistré et cumulé avec succès.";
     } catch (e) {
       syncBox.className = "alert err";
-      syncBox.textContent = "Connexion instable : réessaie depuis ton réseau ou contacte un admin.";
+      syncBox.textContent = "Connexion instable : réessaie depuis ton réseau.";
     } finally {
       enCoursEnvoi = false;
     }
