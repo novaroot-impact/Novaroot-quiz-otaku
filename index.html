@@ -11,6 +11,7 @@
       --card-2: #192444;
       --accent: #ff6b2c;
       --accent-2: #ff8f5e;
+      --gold: #f5b942;
       --text: #f3f6ff;
       --muted: #9aa7cc;
       --ok: #27c47d;
@@ -33,7 +34,7 @@
       max-width: 480px;
     }
     
-    /* BARRE DE NAVIGATION EN HAUT */
+    /* BARRE DE NAVIGATION */
     .top-nav {
       display: flex;
       justify-content: space-around;
@@ -51,14 +52,14 @@
       background: transparent;
       border: none;
       color: var(--muted);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 2px;
-      padding: 6px 8px;
+      padding: 6px 6px;
       border-radius: 10px;
       transition: all 0.2s ease;
     }
@@ -88,35 +89,29 @@
       letter-spacing: 0.05em;
       text-transform: uppercase;
     }
-    h1 {
-      margin: 12px 0 6px;
-      font-size: 22px;
-      line-height: 1.25;
+    .badge.founder {
+      background: rgba(245, 185, 66, 0.18);
+      color: var(--gold);
+      border-color: rgba(245, 185, 66, 0.45);
     }
-    h2 {
-      margin: 16px 0 8px;
-      font-size: 15px;
-    }
-    p.sub {
-      margin: 0 0 16px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-    }
+    h1 { margin: 12px 0 6px; font-size: 22px; line-height: 1.25; }
+    h2 { margin: 16px 0 8px; font-size: 15px; }
+    p.sub { margin: 0 0 16px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
     .role-switch {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
       margin-bottom: 14px;
     }
     .role-btn {
-      padding: 11px 10px;
+      padding: 10px 6px;
       border-radius: 12px;
       border: 1px solid var(--border);
       background: var(--card-2);
       color: var(--muted);
       font-weight: 700;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       transition: all 0.18s ease;
     }
@@ -125,70 +120,66 @@
       border-color: var(--accent);
       color: #fff;
     }
-    .field {
-      margin-bottom: 12px;
-    }
-    label {
-      display: block;
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 5px;
-    }
-    input, textarea {
+    .field { margin-bottom: 12px; }
+    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+    input, select {
       width: 100%;
-      padding: 12px 14px;
+      padding: 11px 13px;
       border-radius: 12px;
       border: 1px solid var(--border);
       background: var(--card-2);
       color: var(--text);
-      font-size: 15px;
+      font-size: 14px;
       outline: none;
     }
-    input:focus, textarea:focus { border-color: var(--accent); }
+    input:focus, select:focus { border-color: var(--accent); }
     .btn {
       width: 100%;
-      padding: 13px 16px;
+      padding: 12px 16px;
       border: none;
       border-radius: 12px;
       background: var(--accent);
       color: #fff;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 14px;
       cursor: pointer;
       margin-top: 6px;
     }
-    .btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .btn-secondary {
       background: var(--card-2);
       border: 1px solid var(--border);
       color: var(--text);
     }
-    .btn-small {
-      padding: 8px 12px;
-      font-size: 12px;
-      width: auto;
-      margin-top: 0;
+    .btn-danger {
+      background: rgba(255, 77, 109, 0.2);
+      border: 1px solid var(--err);
+      color: #ffb3c1;
     }
-    .session-card {
+    .btn-ok {
+      background: rgba(39, 196, 125, 0.2);
+      border: 1px solid var(--ok);
+      color: #9bf6cb;
+    }
+    .btn-small { padding: 7px 11px; font-size: 12px; width: auto; margin-top: 0; }
+
+    .session-card, .admin-row {
       background: var(--card-2);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 12px;
+      padding: 13px;
+      margin-bottom: 10px;
     }
     .session-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 8px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
-    .session-title { font-weight: 700; font-size: 15px; }
+    .session-title { font-weight: 700; font-size: 14px; }
     .pill {
-      font-size: 11px;
+      font-size: 10px;
       padding: 3px 8px;
       border-radius: 999px;
       font-weight: 700;
@@ -202,233 +193,96 @@
     .meta { font-size: 12px; color: var(--muted); }
     
     /* COMPTE À REBOURS */
-    .countdown-date {
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 8px;
-      text-align: center;
-    }
-    .countdown-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-top: 6px;
-    }
-    .countdown-box {
-      background: #10172e;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
-      padding: 8px 4px;
-      text-align: center;
-    }
-    .countdown-num {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--accent-2);
-      line-height: 1.1;
-    }
-    .countdown-label {
-      font-size: 9px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 2px;
-      letter-spacing: 0.03em;
-    }
+    .countdown-date { font-size: 11px; color: var(--muted); margin-bottom: 8px; text-align: center; }
+    .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; }
+    .countdown-box { background: #10172e; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 8px 4px; text-align: center; }
+    .countdown-num { font-size: 18px; font-weight: 800; color: var(--accent-2); line-height: 1.1; }
+    .countdown-label { font-size: 9px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
 
-    .q-box {
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 14px;
-    }
-    .q-head {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-    .q-text {
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 1.4;
-    }
+    /* JEU */
+    .q-box { background: var(--card-2); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+    .q-head { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+    .q-text { font-size: 16px; font-weight: 600; line-height: 1.4; }
     .opt {
-      width: 100%;
-      text-align: left;
-      padding: 12px 14px;
-      margin-bottom: 8px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--card-2);
-      color: var(--text);
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+      width: 100%; text-align: left; padding: 12px 14px; margin-bottom: 8px;
+      border-radius: 12px; border: 1px solid var(--border); background: var(--card-2);
+      color: var(--text); font-size: 14px; cursor: pointer;
     }
     .opt:hover:not(:disabled) { border-color: var(--accent); }
-    .opt.correct {
-      background: rgba(39, 196, 125, 0.22);
-      border-color: var(--ok);
-      color: #b7f9da;
-      font-weight: 700;
-    }
-    .opt.wrong {
-      background: rgba(255, 77, 109, 0.22);
-      border-color: var(--err);
-      color: #ffc2ce;
-      font-weight: 700;
-    }
+    .opt.correct { background: rgba(39, 196, 125, 0.22); border-color: var(--ok); color: #b7f9da; font-weight: 700; }
+    .opt.wrong { background: rgba(255, 77, 109, 0.22); border-color: var(--err); color: #ffc2ce; font-weight: 700; }
+
     .alert {
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      line-height: 1.4;
-      margin-bottom: 12px;
-      background: rgba(255, 107, 44, 0.12);
-      border: 1px solid rgba(255, 107, 44, 0.3);
-      color: #ffd8c7;
+      padding: 10px 12px; border-radius: 12px; font-size: 12px; line-height: 1.4;
+      margin-bottom: 12px; background: rgba(255, 107, 44, 0.12);
+      border: 1px solid rgba(255, 107, 44, 0.3); color: #ffd8c7;
     }
-    .alert.ok {
-      background: rgba(39, 196, 125, 0.14);
-      border-color: rgba(39, 196, 125, 0.38);
-      color: #9bf6cb;
-    }
-    .alert.err {
-      background: rgba(255, 77, 109, 0.14);
-      border-color: rgba(255, 77, 109, 0.38);
-      color: #ffb3c1;
-    }
-    .hidden { display: none; }
-    .stat-box {
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      text-align: center;
-      margin: 14px 0;
-    }
+    .alert.ok { background: rgba(39, 196, 125, 0.14); border-color: rgba(39, 196, 125, 0.38); color: #9bf6cb; }
+    .alert.err { background: rgba(255, 77, 109, 0.14); border-color: rgba(255, 77, 109, 0.38); color: #ffb3c1; }
+    .hidden { display: none !important; }
+
+    .stat-box { background: var(--card-2); border: 1px solid var(--border); border-radius: 14px; padding: 16px; text-align: center; margin: 14px 0; }
     .stat-num { font-size: 32px; font-weight: 800; color: var(--accent-2); }
-    .leaderboard-box {
-      margin-top: 14px;
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-    }
-    .leaderboard-box.official {
-      border-color: rgba(255, 107, 44, 0.35);
-    }
-    .leaderboard-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .leaderboard-list {
-      margin: 0;
-      padding-left: 20px;
-      font-size: 13px;
-    }
-    .leaderboard-list li {
-      padding: 5px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .leaderboard-list li:last-child {
-      border-bottom: none;
-    }
-    .ad-slot {
-      margin-top: 14px;
-      border: 1px dashed rgba(255,255,255,0.16);
-      border-radius: 12px;
-      padding: 10px;
-      text-align: center;
+
+    /* CLASSEMENT DÉTAILLÉ */
+    .leaderboard-box { margin-top: 14px; background: var(--card-2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+    .leaderboard-box.official { border-color: rgba(255, 107, 44, 0.35); }
+    .leaderboard-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .leaderboard-list { margin: 0; padding-left: 20px; font-size: 13px; }
+    .leaderboard-list li { padding: 7px 0; border-bottom: 1px solid var(--border); }
+    .leaderboard-list li:last-child { border-bottom: none; }
+    .score-breakdown {
+      display: inline-block;
+      margin-top: 3px;
       font-size: 11px;
       color: var(--muted);
+      background: rgba(255,255,255,0.05);
+      padding: 2px 7px;
+      border-radius: 6px;
     }
-    /* CHAT INTERNE */
-    .chat-container {
-      display: flex;
-      flex-direction: column;
-      height: 380px;
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-      margin-bottom: 12px;
-    }
-    .chat-messages {
-      flex: 1;
-      padding: 12px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .chat-msg {
-      background: rgba(255,255,255,0.06);
-      padding: 8px 10px;
-      border-radius: 10px;
-      font-size: 13px;
-      max-width: 85%;
-    }
-    .chat-msg.mine {
-      background: rgba(255, 107, 44, 0.2);
-      align-self: flex-end;
-      border-color: var(--accent);
-    }
-    .chat-sender {
-      font-size: 10px;
-      color: var(--accent-2);
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-    .img-fluid {
-      width: 100%;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      object-fit: cover;
-    }
+
+    /* CHAT */
+    .chat-container { display: flex; flex-direction: column; height: 380px; background: var(--card-2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 12px; }
+    .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    .chat-msg { background: rgba(255,255,255,0.06); padding: 8px 10px; border-radius: 10px; font-size: 13px; max-width: 88%; position: relative; }
+    .chat-msg.mine { background: rgba(255, 107, 44, 0.2); align-self: flex-end; border: 1px solid rgba(255, 107, 44, 0.35); }
+    .chat-msg.staff { background: rgba(245, 185, 66, 0.14); border: 1px solid rgba(245, 185, 66, 0.35); }
+    .chat-sender { font-size: 10px; color: var(--accent-2); font-weight: 700; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .chat-del-btn { background: none; border: none; color: var(--err); font-size: 11px; cursor: pointer; padding: 0 3px; font-weight: 800; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .img-fluid { width: 100%; border-radius: 12px; margin-bottom: 10px; object-fit: cover; }
+    .ad-slot { margin-top: 14px; border: 1px dashed rgba(255,255,255,0.16); border-radius: 12px; padding: 10px; text-align: center; font-size: 11px; color: var(--muted); }
   </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- BARRE DE NAVIGATION EN HAUT -->
-  <nav class="top-nav" id="main-nav" style="display:none;">
-    <button class="nav-item active" onclick="switchTab('home')">
-      <span class="nav-icon">🏠</span>Accueil
-    </button>
-    <button class="nav-item" onclick="switchTab('sessions')">
-      <span class="nav-icon">🎮</span>Sessions
-    </button>
-    <button class="nav-item" onclick="switchTab('leaderboard')">
-      <span class="nav-icon">🏆</span>Classement
-    </button>
-    <button class="nav-item" onclick="switchTab('rules')">
-      <span class="nav-icon">📜</span>Règles
-    </button>
-    <button class="nav-item" onclick="switchTab('chat')">
-      <span class="nav-icon">💬</span>Chat
-    </button>
+  <!-- BARRE DE NAVIGATION -->
+  <nav class="top-nav hidden" id="main-nav">
+    <button class="nav-item active" onclick="switchTab('home')"><span class="nav-icon">🏠</span>Accueil</button>
+    <button class="nav-item" onclick="switchTab('sessions')"><span class="nav-icon">🎮</span>Sessions</button>
+    <button class="nav-item" onclick="switchTab('leaderboard')"><span class="nav-icon">🏆</span>Classement</button>
+    <button class="nav-item" onclick="switchTab('rules')"><span class="nav-icon">📜</span>Règles</button>
+    <button class="nav-item" onclick="switchTab('chat')"><span class="nav-icon">💬</span>Chat</button>
+    <button class="nav-item hidden" id="nav-admin-btn" onclick="switchTab('admin')"><span class="nav-icon">⚙️</span>Admin</button>
   </nav>
 
   <!-- ÉCRAN 1 : IDENTIFICATION -->
   <div id="screen-login" class="card-box">
     <span class="badge">Novaroot Impact · Quiz Otaku 2026</span>
     <h1>Identification</h1>
-    <p class="sub">Choisis ton statut : les <strong>Candidats officiels</strong> entrent avec leur code personnel ; les <strong>Spectateurs</strong> jouent librement dans leur propre classement.</p>
+    <p class="sub">Sélectionne ton profil d'accès à la plateforme officielle.</p>
 
-    <label>Tu participes en tant que :</label>
+    <label>Tu te connectes en tant que :</label>
     <div class="role-switch">
-      <button type="button" class="role-btn active" id="role-candidat">Candidat officiel</button>
+      <button type="button" class="role-btn active" id="role-candidat">Candidat</button>
       <button type="button" class="role-btn" id="role-spectateur">Spectateur</button>
+      <button type="button" class="role-btn" id="role-staff">Staff / Admin</button>
     </div>
 
     <div class="field">
-      <label for="pseudo">Pseudo</label>
+      <label for="pseudo">Pseudo / Nom officiel</label>
       <input id="pseudo" type="text" placeholder="Ex. LARGØ LA STREET" maxlength="30" />
     </div>
     <div class="field">
@@ -436,42 +290,37 @@
       <input id="whatsapp" type="tel" placeholder="Ex. 0810330270" maxlength="25" />
     </div>
     <div class="field" id="code-field-wrapper">
-      <label for="candidat-code">Code personnel candidat</label>
-      <input id="candidat-code" type="text" placeholder="Ex. 01-2c-2026" maxlength="20" autocapitalize="none" />
+      <label for="candidat-code" id="code-label">Code personnel candidat</label>
+      <input id="candidat-code" type="text" placeholder="Ex. 01-2c-2026" maxlength="25" autocapitalize="none" />
     </div>
 
     <div id="login-msg" class="alert err hidden"></div>
     <button class="btn" id="btn-login">Accéder à l'application</button>
   </div>
 
-  <!-- ONGLETS PRINCIPAUX -->
-  
   <!-- ONGLET 1 : ACCUEIL -->
   <div id="tab-home" class="hidden">
     <div class="card-box" style="text-align: center;">
       <span class="badge">Champion en Titre</span>
       <h2 style="margin: 8px 0 4px;">Jéhovanis Zola</h2>
       <p class="sub" style="margin-bottom: 12px;">Alias "Joy Boy" — Tenant du titre et champion de la 1ère édition</p>
-      <!-- Correspond exactement à ton fichier Champion.PNG sur GitHub -->
       <img src="Champion.PNG" alt="Champion Joy Boy" class="img-fluid" style="max-height: 280px;" />
     </div>
 
     <div class="card-box">
       <h2>Grand Tournoi Otaku 2026</h2>
       <p class="sub">Bienvenue sur la plateforme officielle de la communauté NovaRoot Impact à Kisangani. Suivez les sessions en ligne et préparez-vous pour la grande finale !</p>
-      <!-- Correspond exactement à ton fichier finale.JPG sur GitHub -->
       <img src="finale.JPG" alt="Affiche Grande Finale" class="img-fluid" />
       <button class="btn" onclick="switchTab('sessions')">Voir les sessions de Quiz</button>
     </div>
-    <div class="ad-slot" id="ad-slot-home">Bannière Sponsorisée · Partenaire Officiel</div>
+    <div class="ad-slot">Bannière Sponsorisée · Partenaire Officiel</div>
   </div>
 
-  <!-- ONGLET 2 : SESSIONS & CALENDRIER -->
+  <!-- ONGLET 2 : SESSIONS -->
   <div id="tab-sessions" class="hidden">
     <div class="card-box">
       <h1>Sessions du concours</h1>
       <p class="sub" id="candidate-summary"></p>
-      <!-- Correspond à calendrier.JPG -->
       <img src="calendrier.JPG" alt="Calendrier des événements" class="img-fluid" style="margin-bottom: 14px;" />
       <div id="sessions-list"></div>
     </div>
@@ -482,9 +331,9 @@
     <div class="card-box">
       <div class="leaderboard-head">
         <h2 style="margin:0;">Classements en Direct</h2>
-        <button class="btn btn-secondary btn-small" id="btn-refresh-lb" type="button">Actualiser</button>
+        <button class="btn btn-secondary btn-small" id="btn-refresh-lb" type="button" onclick="rafraichirToutDepuisServeur()">Actualiser</button>
       </div>
-      <p class="sub" style="margin-top: 6px;">Cumul des points des sessions en ligne + bonus de billets.</p>
+      <p class="sub" style="margin-top: 6px;">Barème : <strong>Quiz</strong> (sessions en ligne) + <strong>Billets</strong> (30 pts max) = <strong>Total</strong>.</p>
 
       <div class="leaderboard-box official" style="margin-top: 0;">
         <h3 style="margin:0 0 8px; color: var(--accent-2); font-size: 14px;">🏆 Candidats Officiels</h3>
@@ -502,35 +351,115 @@
     </div>
   </div>
 
-  <!-- ONGLET 4 : RÈGLES & BILLETS -->
+  <!-- ONGLET 4 : RÈGLES -->
   <div id="tab-rules" class="hidden">
     <div class="card-box">
       <h1>Règles & Barème</h1>
       <p class="sub">Tout ce qu'il faut savoir pour remporter le titre de Champion Otaku 2026.</p>
-      
-      <!-- Correspond à regles1.JPG, regles2.JPG, regles3.JPG -->
       <img src="regles1.JPG" alt="Règles Quiz en Ligne" class="img-fluid" />
       <img src="regles2.JPG" alt="Système de Billets" class="img-fluid" />
       <img src="regles3.JPG" alt="Qualifications et Discipline" class="img-fluid" />
     </div>
   </div>
 
-  <!-- ONGLET 5 : CHAT CANDIDATS -->
+  <!-- ONGLET 5 : CHAT -->
   <div id="tab-chat" class="hidden">
     <div class="card-box">
-      <h1>Espace de Discussion</h1>
-      <p class="sub">Discutez entre candidats et passionnés directement sur l'application.</p>
+      <div class="leaderboard-head">
+        <h1 style="margin:0;">Espace de Discussion</h1>
+        <button class="btn btn-secondary btn-small" type="button" onclick="chargerEtatServeur()">Actualiser</button>
+      </div>
+      <p class="sub" style="margin-top:6px;">Discutez entre candidats et passionnés directement sur l'application.</p>
       
+      <div id="chat-locked-banner" class="alert err hidden">🔒 Le chat est temporairement verrouillé par l'administration. Seuls les administrateurs peuvent écrire.</div>
+
       <div class="chat-container">
         <div class="chat-messages" id="chat-messages-box">
           <div class="chat-msg">
             <div class="chat-sender">NovaRoot Admin</div>
-            Bienvenue dans le chat officiel du Quiz Otaku 2026 ! Préparez vos sessions.
+            Bienvenue dans le chat officiel du Quiz Otaku 2026 !
           </div>
         </div>
-        <div class="chat-input-area" style="display:flex; padding:8px; background:#10172e; border-top:1px solid var(--border); gap:6px;">
+        <div class="chat-input-area" id="chat-input-wrapper" style="display:flex; padding:8px; background:#10172e; border-top:1px solid var(--border); gap:6px;">
           <input type="text" id="chat-input" placeholder="Écris ton message..." maxlength="150" />
           <button class="btn btn-small" id="chat-send-btn" type="button" style="margin-top:0; width:auto;">Envoyer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONGLET 6 : PANNEAU ADMINISTRATION & FONDATEUR -->
+  <div id="tab-admin" class="hidden">
+    <div class="card-box">
+      <div class="leaderboard-head">
+        <span class="badge" id="admin-role-badge">Espace Staff</span>
+        <button class="btn btn-secondary btn-small" type="button" onclick="chargerEtatServeur()">Synchroniser</button>
+      </div>
+      <h1 id="admin-welcome-title">Panneau de Contrôle</h1>
+      <p class="sub" id="admin-welcome-sub"></p>
+
+      <div id="admin-feedback" class="alert ok hidden"></div>
+
+      <!-- 1. CONTRÔLE DU CHAT (Admins + Fondateur) -->
+      <div class="admin-row">
+        <div class="session-top">
+          <div class="session-title">💬 Contrôle du Chat</div>
+          <span class="pill" id="chat-status-pill">Ouvert</span>
+        </div>
+        <p class="meta" style="margin-bottom:10px;">Bloque temporairement l'envoi de messages aux candidats et spectateurs.</p>
+        <div class="grid-2">
+          <button class="btn btn-danger btn-small" type="button" onclick="toggleChatLock(true)">🔒 Bloquer le chat</button>
+          <button class="btn btn-ok btn-small" type="button" onclick="toggleChatLock(false)">🔓 Débloquer</button>
+        </div>
+      </div>
+
+      <!-- 2. GESTION DES POINTS DE BILLETS (Admins + Fondateur - MAX 30 PTS) -->
+      <div class="admin-row">
+        <div class="session-title" style="margin-bottom:6px;">🎟️ Points de Billets (Max 30 pts)</div>
+        <p class="meta" style="margin-bottom:10px;">Attribue ou modifie les points de billets d'un candidat officiel (plafonné à 30 points).</p>
+        <div class="field">
+          <label>Candidat officiel</label>
+          <select id="admin-ticket-candidat"></select>
+        </div>
+        <div class="field">
+          <label>Points de billets (entre 0 et 30)</label>
+          <input type="number" id="admin-ticket-pts" min="0" max="30" placeholder="Ex. 12" />
+        </div>
+        <button class="btn" type="button" onclick="sauvegarderPointsBillets()">Enregistrer les points de billets</button>
+      </div>
+
+      <!-- 3. POUVOIRS EXCLUSIFS FONDATEUR -->
+      <div id="founder-only-section" class="hidden">
+        <hr style="border:0; border-top:1px solid var(--border); margin:18px 0;">
+        <span class="badge founder">Pouvoirs Exclusifs Fondateur</span>
+
+        <!-- Modification directe des points de Quiz et Pseudos -->
+        <div class="admin-row" style="margin-top:12px;">
+          <div class="session-title" style="margin-bottom:6px;">👑 Modifier Points Quiz & Pseudo</div>
+          <p class="meta" style="margin-bottom:10px;">Réservé au Fondateur : corrige les points de quiz ou renomme un participant.</p>
+          <div class="field">
+            <label>Participant</label>
+            <select id="founder-edit-user" onchange="preRemplirEditionFondateur()"></select>
+          </div>
+          <div class="field">
+            <label>Nouveau Pseudo</label>
+            <input type="text" id="founder-new-pseudo" placeholder="Pseudo du candidat" />
+          </div>
+          <div class="field">
+            <label>Points de Quiz</label>
+            <input type="number" id="founder-new-quiz-pts" min="0" max="500" placeholder="Points quiz" />
+          </div>
+          <div class="grid-2">
+            <button class="btn" type="button" onclick="sauvegarderEditionFondateur()">Appliquer</button>
+            <button class="btn btn-danger" type="button" onclick="reinitialiserScoreParticipant()">Réinitialiser à 0</button>
+          </div>
+        </div>
+
+        <!-- Suspension temporaire des administrateurs -->
+        <div class="admin-row">
+          <div class="session-title" style="margin-bottom:6px;">🛡️ Gestion & Suspension des Admins</div>
+          <p class="meta" style="margin-bottom:10px;">Suspends temporairement un administrateur de ses fonctions.</p>
+          <div id="founder-admins-list"></div>
         </div>
       </div>
     </div>
@@ -549,7 +478,6 @@
       <div class="q-text" id="q-text"></div>
     </div>
     <div id="q-options"></div>
-    <div class="ad-slot" id="ad-slot-game">Bannière Sponsorisée · Jeu</div>
   </div>
 
   <!-- ÉCRAN : FIN DE SESSION -->
@@ -561,15 +489,50 @@
       <div class="stat-num" id="res-score">0</div>
       <div class="meta" id="res-detail"></div>
     </div>
-    <div id="sync-status" class="alert" aria-live="polite">Enregistrement dans le classement...</div>
+    <div id="sync-status" class="alert">Enregistrement dans le classement...</div>
     <button class="btn" onclick="switchTab('sessions')">Retour aux sessions</button>
-    <div class="ad-slot" id="ad-slot-result">Bannière Sponsorisée · Résultat</div>
   </div>
 
 </div>
 
 <script>
-  // ====== LISTE DES CANDIDATS OFFICIELS INSCRITS ======
+  // ====== CONFIGURATION STAFF (FONDATEUR & ADMINISTRATEURS) ======
+  const STAFF_LIST = [
+    {
+      id: "founder_plamedi",
+      pseudo: "Plamedi Mutelay",
+      whatsapp: "0993024299",
+      code: "1-D09-2008",
+      role: "fondateur",
+      titre: "Fondateur"
+    },
+    {
+      id: "admin_leon",
+      pseudo: "Leon",
+      whatsapp: "0854426758",
+      code: "01-cno-21s",
+      role: "admin",
+      titre: "DGA · Secrétaire"
+    },
+    {
+      id: "admin_ruben",
+      pseudo: "Ruben",
+      whatsapp: "0833631069",
+      code: "02-cno-21s",
+      role: "admin",
+      titre: "Secrétaire · Admin"
+    },
+    {
+      id: "admin_joyboy",
+      pseudo: "Joyboy",
+      whatsapp: "0986876305",
+      code: "03-cno-2026",
+      role: "admin",
+      titre: "Admin"
+    }
+  ];
+
+  // ====== LISTE DES CANDIDATS OFFICIELS ======
   const CANDIDATS_OFFICIELS = [
     { pseudo: "LARGØ LA STREET", whatsapp: "0810330270", code: "01-2c-2026" },
     { pseudo: "Sasuke", whatsapp: "0895724931", code: "02-2c-2026" },
@@ -595,37 +558,15 @@
   // ====== CONFIGURATION JSONBIN ======
   const JSONBIN_CONFIG = {
     binId: "6afb142bac6210605a8c1bbe",
-    masterKey: "$2a$10$qqFqEmhKV6Zomekro.Gt2uBwaEUpph7OokA8/aujm2HfW.V22rsWK",
-    localCacheKey: "nr_quiz_otaku_2026_lb_cache_v6"
+    masterKey: "$2a$10$qqFqEmhKV6Zomekro.Gt2uBwaEUpph7OokA8/aujm2HfW.V22rsWK"
   };
   const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`;
 
   // Planning des sessions
   const SESSIONS = [
-    { 
-      id: 1, 
-      title: "Session 1 — Chronométrée Classique", 
-      timePerQ: 15, 
-      count: 10,
-      start: new Date("2026-11-18T17:57:00"),
-      end: new Date("2026-11-18T18:30:00")
-    },
-    { 
-      id: 2, 
-      title: "Session 2 — Chronométrée Rapide", 
-      timePerQ: 10, 
-      count: 10,
-      start: new Date("2026-11-21T21:00:00"),
-      end: new Date("2026-11-28T00:00:00")
-    },
-    { 
-      id: 3, 
-      title: "Session 3 — Openings, Devinettes & Citations", 
-      timePerQ: 12, 
-      count: 10,
-      start: new Date("2026-11-28T00:00:00"),
-      end: new Date("2026-12-31T23:59:59")
-    }
+    { id: 1, title: "Session 1 — Chronométrée Classique", timePerQ: 15, count: 10, start: new Date("2026-11-18T17:57:00"), end: new Date("2026-11-18T18:30:00") },
+    { id: 2, title: "Session 2 — Chronométrée Rapide", timePerQ: 10, count: 10, start: new Date("2026-11-21T21:00:00"), end: new Date("2026-11-28T00:00:00") },
+    { id: 3, title: "Session 3 — Openings, Devinettes & Citations", timePerQ: 12, count: 10, start: new Date("2026-11-28T00:00:00"), end: new Date("2026-12-31T23:59:59") }
   ];
 
   const QUESTION_BANK = [
@@ -643,6 +584,15 @@
     { q: "Dans My Hero Academia, quel est le nom du pouvoir de Deku ?", opts: ["All For One", "One For All", "Explosion", "Half-Cold Half-Hot"], ans: 1, pts: 1 }
   ];
 
+  // État global synchronisé avec JSONBin
+  let serverState = {
+    concours: "Quiz Otaku 2026",
+    scores: [],
+    chat: [],
+    chatLocked: false,
+    suspensions: {} // ex: { "admin_leon": 1795000000000 }
+  };
+
   let selectedRole = "candidat";
   let currentUser = null;
   let activeSession = null;
@@ -655,71 +605,206 @@
   let enCoursEnvoi = false;
   let isAnswering = false;
 
+  // Sélecteurs connexion
   const btnRoleCandidat = document.getElementById("role-candidat");
   const btnRoleSpectateur = document.getElementById("role-spectateur");
+  const btnRoleStaff = document.getElementById("role-staff");
   const codeFieldWrapper = document.getElementById("code-field-wrapper");
+  const codeLabel = document.getElementById("code-label");
 
   function setRole(role) {
     selectedRole = role;
     btnRoleCandidat.classList.toggle("active", role === "candidat");
     btnRoleSpectateur.classList.toggle("active", role === "spectateur");
-    codeFieldWrapper.classList.toggle("hidden", role !== "candidat");
+    btnRoleStaff.classList.toggle("active", role === "staff");
+    codeFieldWrapper.classList.toggle("hidden", role === "spectateur");
+    codeLabel.textContent = role === "staff" ? "Code secret Administrateur / Fondateur" : "Code personnel candidat";
     document.getElementById("login-msg").classList.add("hidden");
   }
 
   btnRoleCandidat.addEventListener("click", () => setRole("candidat"));
   btnRoleSpectateur.addEventListener("click", () => setRole("spectateur"));
+  btnRoleStaff.addEventListener("click", () => setRole("staff"));
 
   function normaliserTelephone(tel) {
     const digits = (tel || "").replace(/\D/g, "");
     return digits.length >= 9 ? digits.slice(-9) : digits;
   }
 
+  function normaliserCode(code) {
+    return (code || "").trim().replace(/[–—]/g, "-");
+  }
+
   function verifierCandidatOfficiel(pseudo, whatsapp, code) {
     const cleanPseudo = pseudo.trim().toLowerCase();
     const cleanPhone = normaliserTelephone(whatsapp);
-    const cleanCode = code.trim();
+    const cleanCode = normaliserCode(code);
 
     return CANDIDATS_OFFICIELS.find(c =>
       c.pseudo.trim().toLowerCase() === cleanPseudo &&
       normaliserTelephone(c.whatsapp) === cleanPhone &&
-      c.code.trim() === cleanCode
+      normaliserCode(c.code) === cleanCode
     );
   }
 
-  function formaterDateLisible(dateObj) {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return dateObj.toLocaleDateString('fr-FR', options);
+  function verifierStaff(pseudo, whatsapp, code) {
+    const cleanPseudo = pseudo.trim().toLowerCase();
+    const cleanPhone = normaliserTelephone(whatsapp);
+    const cleanCode = normaliserCode(code);
+
+    return STAFF_LIST.find(s =>
+      s.pseudo.trim().toLowerCase() === cleanPseudo &&
+      normaliserTelephone(s.whatsapp) === cleanPhone &&
+      normaliserCode(s.code) === cleanCode
+    );
   }
 
-  function shuffle(arr) {
-    const copy = [...arr];
-    for (let i = copy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copy[i], copy[j]] = [copy[j], copy[i]];
+  function estAdminSuspendu(staffId) {
+    const until = serverState.suspensions?.[staffId];
+    return until && Number(until) > Date.now();
+  }
+
+  function isStaffActive() {
+    if (!currentUser) return false;
+    if (currentUser.role === "fondateur") return true;
+    if (currentUser.role === "admin") return !estAdminSuspendu(currentUser.staffId);
+    return false;
+  }
+
+  // ====== SYNCHRONISATION JSONBIN ======
+  async function chargerEtatServeur() {
+    try {
+      const rep = await fetch(`${JSONBIN_URL}/latest`, {
+        method: "GET",
+        headers: { "X-Master-Key": JSONBIN_CONFIG.masterKey }
+      });
+      if (!rep.ok) throw new Error("HTTP " + rep.status);
+      const data = await rep.json();
+      const rec = data?.record || {};
+
+      serverState.concours = rec.concours || "Quiz Otaku 2026";
+      serverState.scores = normaliserListeScores(Array.isArray(rec.scores) ? rec.scores : []);
+      serverState.chat = Array.isArray(rec.chat) ? rec.chat : [];
+      serverState.chatLocked = Boolean(rec.chatLocked);
+      serverState.suspensions = rec.suspensions && typeof rec.suspensions === "object" ? rec.suspensions : {};
+
+      // Vérification suspension en temps réel si l'utilisateur est un admin
+      if (currentUser?.role === "admin" && estAdminSuspendu(currentUser.staffId)) {
+        document.getElementById("nav-admin-btn").classList.add("hidden");
+        if (!document.getElementById("tab-admin").classList.contains("hidden")) {
+          switchTab("home");
+          alert("Ton accès administrateur a été temporairement suspendu par le Fondateur.");
+        }
+      }
+
+      afficherDoubleClassement();
+      afficherMessagesChat();
+      appliquerEtatVerrouillageChat();
+      if (isStaffActive()) rafraichirPanneauAdmin();
+      return serverState;
+    } catch (_) {
+      return serverState;
     }
-    return copy;
   }
 
-  function userKey() {
-    return currentUser
-      ? `${currentUser.role}__${currentUser.pseudo.toLowerCase()}__${normaliserTelephone(currentUser.whatsapp)}`
-      : "";
+  async function sauvegarderEtatServeur() {
+    const rep = await fetch(JSONBIN_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": JSONBIN_CONFIG.masterKey
+      },
+      body: JSON.stringify(serverState)
+    });
+    if (!rep.ok) throw new Error("HTTP " + rep.status);
+    return serverState;
   }
 
-  function getProgress() {
-    if (!currentUser) return { completed: [] };
-    const raw = localStorage.getItem("nr_quiz_prog_" + userKey());
-    return raw ? JSON.parse(raw) : { completed: [] };
+  function normaliserCleParticipant(nom, whatsapp, role) {
+    const cleanPhone = normaliserTelephone(whatsapp);
+    const cleanName = (nom || "").trim().toLowerCase();
+    const cleanRole = role === "spectateur" ? "spectateur" : "candidat";
+    return `${cleanRole}__${cleanName}__${cleanPhone}`;
   }
 
-  function saveProgress(prog) {
-    localStorage.setItem("nr_quiz_prog_" + userKey(), JSON.stringify(prog));
+  function normaliserListeScores(scores) {
+    const map = new Map();
+    scores.forEach(item => {
+      const role = item.role === "spectateur" ? "spectateur" : "candidat";
+      const key = item.candidatId || normaliserCleParticipant(item.nom, item.whatsapp, role);
+      const quizPts = item.quizScore !== undefined ? Number(item.quizScore) : (Number(item.score) || 0);
+      const ticketPts = Math.min(30, Math.max(0, Number(item.ticketScore) || 0));
+      const sessions = Array.isArray(item.sessions) ? [...item.sessions] : [];
+
+      if (!map.has(key)) {
+        map.set(key, {
+          candidatId: key,
+          role,
+          nom: item.nom,
+          whatsapp: item.whatsapp || "",
+          quizScore: quizPts,
+          ticketScore: role === "candidat" ? ticketPts : 0,
+          score: quizPts + (role === "candidat" ? ticketPts : 0),
+          total: Number(item.total) || 0,
+          sessions,
+          date: item.date || Date.now()
+        });
+      } else {
+        const ex = map.get(key);
+        ex.quizScore += quizPts;
+        if (role === "candidat") ex.ticketScore = Math.min(30, Math.max(ex.ticketScore, ticketPts));
+        ex.score = ex.quizScore + ex.ticketScore;
+        ex.total += Number(item.total) || 0;
+        sessions.forEach(s => { if (s && !ex.sessions.includes(s)) ex.sessions.push(s); });
+      }
+    });
+
+    return Array.from(map.values()).sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return (a.date || 0) - (b.date || 0);
+    });
+  }
+
+  async function rafraichirToutDepuisServeur() {
+    await chargerEtatServeur();
+  }
+
+  // ====== AFFICHAGE CLASSEMENT ======
+  function afficherDoubleClassement() {
+    const scores = serverState.scores || [];
+    const officiels = scores.filter(s => s.role !== "spectateur");
+    const spectateurs = scores.filter(s => s.role === "spectateur");
+
+    const elOff = document.getElementById("leaderboard-official-sessions");
+    if (elOff) {
+      elOff.innerHTML = officiels.length
+        ? officiels.map(item => {
+            const qPts = Number(item.quizScore) || 0;
+            const bPts = Number(item.ticketScore) || 0;
+            const totPts = qPts + bPts;
+            const sessTxt = item.sessions?.length ? ` · ${item.sessions.join(", ")}` : "";
+            return `<li>
+              <strong>${item.nom}</strong> — <strong style="color:var(--accent-2);">${totPts} pts</strong><br>
+              <span class="score-breakdown">Quiz : ${qPts} pts | Billets : ${bPts}/30 pts${sessTxt}</span>
+            </li>`;
+          }).join("")
+        : "<li>Aucun candidat officiel classé pour le moment.</li>";
+    }
+
+    const elSpec = document.getElementById("leaderboard-spectator-sessions");
+    if (elSpec) {
+      elSpec.innerHTML = spectateurs.length
+        ? spectateurs.map(item => {
+            const qPts = Number(item.quizScore) || 0;
+            return `<li><strong>${item.nom}</strong> — ${qPts} pts <span class="meta">(Quiz)</span></li>`;
+          }).join("")
+        : "<li>Aucun spectateur classé pour le moment.</li>";
+    }
   }
 
   // ====== GESTION DES ONGLETS ======
   function switchTab(tabName) {
-    ["tab-home", "tab-sessions", "tab-leaderboard", "tab-rules", "tab-chat", "screen-game", "screen-result"].forEach(id => {
+    ["tab-home", "tab-sessions", "tab-leaderboard", "tab-rules", "tab-chat", "tab-admin", "screen-game", "screen-result"].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.add("hidden");
     });
@@ -732,273 +817,50 @@
       const buttons = document.querySelectorAll(".nav-item");
       if (tabName === 'home') buttons[0].classList.add("active");
       if (tabName === 'sessions') { buttons[1].classList.add("active"); renderSessions(); }
-      if (tabName === 'leaderboard') { buttons[2].classList.add("active"); rafraichirClassementsAffichage(); }
+      if (tabName === 'leaderboard') { buttons[2].classList.add("active"); chargerEtatServeur(); }
       if (tabName === 'rules') buttons[3].classList.add("active");
-      if (tabName === 'chat') { buttons[4].classList.add("active"); chargerChat(); }
+      if (tabName === 'chat') { buttons[4].classList.add("active"); chargerEtatServeur(); }
+      if (tabName === 'admin' && isStaffActive()) { buttons[5].classList.add("active"); chargerEtatServeur(); }
     }
   }
 
-  // ====== CLASSEMENT PARTAGÉ (JSONBIN) ======
-  function normaliserCleParticipant(nom, whatsapp, role) {
-    const cleanPhone = normaliserTelephone(whatsapp);
-    const cleanName = (nom || "").trim().toLowerCase();
-    const cleanRole = role === "spectateur" ? "spectateur" : "candidat";
-    return `${cleanRole}__${cleanName}__${cleanPhone}`;
-  }
-
-  function fusionnerScores(scores) {
-    const map = new Map();
-
-    scores.forEach(item => {
-      const role = item.role === "spectateur" ? "spectateur" : "candidat";
-      const key = item.candidatId || normaliserCleParticipant(item.nom, item.whatsapp, role);
-      const pts = Number(item.score) || 0;
-      const tot = Number(item.total) || 0;
-      const sessions = Array.isArray(item.sessions)
-        ? [...item.sessions]
-        : item.sessionLabel
-          ? [item.sessionLabel]
-          : [];
-
-      if (!map.has(key)) {
-        map.set(key, {
-          candidatId: key,
-          role,
-          nom: item.nom,
-          whatsapp: item.whatsapp || "",
-          score: pts,
-          total: tot,
-          sessions,
-          date: item.date || Date.now()
-        });
-      } else {
-        const existant = map.get(key);
-        existant.score += pts;
-        existant.total += tot;
-        sessions.forEach(s => {
-          if (s && !existant.sessions.includes(s)) existant.sessions.push(s);
-        });
-        existant.date = Math.max(existant.date || 0, item.date || 0);
-      }
-    });
-
-    return Array.from(map.values()).sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      return (a.date || 0) - (b.date || 0);
-    });
-  }
-
-  function sauvegarderCacheClassement(scores) {
-    try {
-      localStorage.setItem(JSONBIN_CONFIG.localCacheKey, JSON.stringify(scores));
-    } catch (_) {}
-  }
-
-  function lireCacheClassement() {
-    try {
-      const brut = localStorage.getItem(JSONBIN_CONFIG.localCacheKey);
-      return brut ? fusionnerScores(JSON.parse(brut)) : [];
-    } catch (_) {
-      return [];
-    }
-  }
-
-  function afficherListeClassement(elementId, liste, videMsg) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-    if (!liste || !liste.length) {
-      el.innerHTML = `<li>${videMsg}</li>`;
-      return;
-    }
-    el.innerHTML = liste
-      .map(item => {
-        const detailSessions = Array.isArray(item.sessions) && item.sessions.length
-          ? item.sessions.join(", ")
-          : (item.sessionLabel || "");
-        return `<li><strong>${item.nom}</strong> — ${item.score}/${item.total} pts <span class="meta">(${detailSessions})</span></li>`;
-      })
-      .join("");
-  }
-
-  function afficherDoubleClassement(tousLesScores) {
-    const officiels = tousLesScores.filter(s => s.role !== "spectateur");
-    const spectateurs = tousLesScores.filter(s => s.role === "spectateur");
-
-    afficherListeClassement("leaderboard-official-sessions", officiels, "Aucun candidat officiel classé pour le moment.");
-    afficherListeClassement("leaderboard-spectator-sessions", spectateurs, "Aucun spectateur classé pour le moment.");
-  }
-
-  async function chargerClassementPartage() {
-    try {
-      const rep = await fetch(`${JSONBIN_URL}/latest`, {
-        method: "GET",
-        headers: { "X-Master-Key": JSONBIN_CONFIG.masterKey }
-      });
-      if (!rep.ok) throw new Error("HTTP " + rep.status);
-      const data = await rep.json();
-      const brute = Array.isArray(data?.record?.scores) ? data.record.scores : [];
-      const fusionnee = fusionnerScores(brute);
-      sauvegarderCacheClassement(fusionnee);
-      return fusionnee;
-    } catch (_) {
-      return lireCacheClassement();
-    }
-  }
-
-  async function rafraichirClassementsAffichage() {
-    const scores = await chargerClassementPartage();
-    afficherDoubleClassement(scores);
-    return scores;
-  }
-
-  async function enregistrerDansJsonBin(nouvelleSession) {
-    const dataBrute = await chargerClassementPartage();
-    const role = nouvelleSession.role === "spectateur" ? "spectateur" : "candidat";
-    const candidatId = normaliserCleParticipant(nouvelleSession.nom, nouvelleSession.whatsapp, role);
-    const sessionCode = `S${nouvelleSession.sessionId}`;
-
-    let trouve = false;
-    const misAJour = dataBrute.map(item => {
-      const itemRole = item.role === "spectateur" ? "spectateur" : "candidat";
-      const itemId = item.candidatId || normaliserCleParticipant(item.nom, item.whatsapp, itemRole);
-      if (itemId === candidatId) {
-        trouve = true;
-        const sessionsDejaValidees = Array.isArray(item.sessions) ? [...item.sessions] : [];
-        if (sessionsDejaValidees.includes(sessionCode)) return item;
-        sessionsDejaValidees.push(sessionCode);
-        return {
-          ...item,
-          candidatId,
-          role,
-          nom: nouvelleSession.nom,
-          whatsapp: nouvelleSession.whatsapp,
-          score: (Number(item.score) || 0) + (Number(nouvelleSession.score) || 0),
-          total: (Number(item.total) || 0) + (Number(nouvelleSession.total) || 0),
-          sessions: sessionsDejaValidees,
-          date: Date.now()
-        };
-      }
-      return item;
-    });
-
-    if (!trouve) {
-      misAJour.push({
-        candidatId,
-        role,
-        nom: nouvelleSession.nom,
-        whatsapp: nouvelleSession.whatsapp,
-        score: Number(nouvelleSession.score) || 0,
-        total: Number(nouvelleSession.total) || 0,
-        sessions: [sessionCode],
-        date: Date.now()
-      });
-    }
-
-    const tries = fusionnerScores(misAJour);
-    sauvegarderCacheClassement(tries);
-
-    const rep = await fetch(JSONBIN_URL, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Master-Key": JSONBIN_CONFIG.masterKey
-      },
-      body: JSON.stringify({
-        concours: "Quiz Otaku 2026",
-        scores: tries,
-        chat: window.dernierChat || []
-      })
-    });
-    if (!rep.ok) throw new Error("HTTP " + rep.status);
-    const repData = await rep.json();
-    const synchronises = Array.isArray(repData?.record?.scores)
-      ? fusionnerScores(repData.record.scores)
-      : tries;
-    sauvegarderCacheClassement(synchronises);
-    return synchronises;
-  }
-
-  // ====== CHAT INTERNE SUR JSONBIN ======
-  async function chargerChat() {
-    try {
-      const rep = await fetch(`${JSONBIN_URL}/latest`, {
-        method: "GET",
-        headers: { "X-Master-Key": JSONBIN_CONFIG.masterKey }
-      });
-      if (!rep.ok) return;
-      const data = await rep.json();
-      const messages = Array.isArray(data?.record?.chat) ? data.record.chat : [];
-      window.dernierChat = messages;
-      afficherMessagesChat(messages);
-    } catch (_) {}
-  }
-
-  function afficherMessagesChat(messages) {
-    const box = document.getElementById("chat-messages-box");
-    if (!messages.length) {
-      box.innerHTML = `<div class="chat-msg"><div class="chat-sender">Système</div>Aucun message pour l'instant. Sois le premier à écrire !</div>`;
-      return;
-    }
-    box.innerHTML = messages.map(m => {
-      const isMine = currentUser && m.sender === currentUser.pseudo;
-      return `<div class="chat-msg ${isMine ? 'mine' : ''}">
-        <div class="chat-sender">${m.sender}</div>
-        ${m.text}
-      </div>`;
-    }).join("");
-    box.scrollTop = box.scrollHeight;
-  }
-
-  document.getElementById("chat-send-btn").addEventListener("click", async () => {
-    const input = document.getElementById("chat-input");
-    const text = input.value.trim();
-    if (!text || !currentUser) return;
-
-    const nouveauMsg = {
-      sender: currentUser.pseudo,
-      text: text,
-      date: Date.now()
-    };
-
-    const messagesActuels = window.dernierChat || [];
-    messagesActuels.push(nouveauMsg);
-    if (messagesActuels.length > 50) messagesActuels.shift();
-
-    window.dernierChat = messagesActuels;
-    afficherMessagesChat(messagesActuels);
-    input.value = "";
-
-    try {
-      const scoresActuels = lireCacheClassement();
-      await fetch(JSONBIN_URL, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Master-Key": JSONBIN_CONFIG.masterKey
-        },
-        body: JSON.stringify({
-          concours: "Quiz Otaku 2026",
-          scores: scoresActuels,
-          chat: messagesActuels
-        })
-      });
-    } catch (_) {}
-  });
-
-  // ====== NAVIGATION & LOGIN ======
-  document.getElementById("btn-login").addEventListener("click", () => {
+  // ====== LOGIN ======
+  document.getElementById("btn-login").addEventListener("click", async () => {
     const pseudo = document.getElementById("pseudo").value.trim();
     const whatsapp = document.getElementById("whatsapp").value.trim();
     const code = document.getElementById("candidat-code").value.trim();
     const msg = document.getElementById("login-msg");
 
     if (pseudo.length < 2 || whatsapp.replace(/\D/g, "").length < 7) {
-      msg.textContent = "Renseigne un pseudo valide et un numéro WhatsApp complet.";
+      msg.textContent = "Renseigne un nom valide et un numéro WhatsApp complet.";
       msg.classList.remove("hidden");
       return;
     }
 
-    if (selectedRole === "candidat") {
+    await chargerEtatServeur();
+
+    if (selectedRole === "staff") {
+      const staff = verifierStaff(pseudo, whatsapp, code);
+      if (!staff) {
+        msg.textContent = "Accès refusé : identifiants Staff/Fondateur invalides.";
+        msg.classList.remove("hidden");
+        return;
+      }
+      if (staff.role === "admin" && estAdminSuspendu(staff.id)) {
+        const finDate = new Date(serverState.suspensions[staff.id]).toLocaleString("fr-FR");
+        msg.textContent = `Ton compte administrateur est suspendu jusqu'au ${finDate}.`;
+        msg.classList.remove("hidden");
+        return;
+      }
+      currentUser = {
+        role: staff.role,
+        staffId: staff.id,
+        pseudo: staff.pseudo,
+        whatsapp: staff.whatsapp,
+        titre: staff.titre
+      };
+      document.getElementById("nav-admin-btn").classList.remove("hidden");
+    } else if (selectedRole === "candidat") {
       if (!code) {
         msg.textContent = "Entre ton code personnel candidat, ou sélectionne « Spectateur ».";
         msg.classList.remove("hidden");
@@ -1006,7 +868,7 @@
       }
       const candidatValide = verifierCandidatOfficiel(pseudo, whatsapp, code);
       if (!candidatValide) {
-        msg.textContent = "Accès refusé : le pseudo, le numéro WhatsApp ou le code personnel ne correspond pas à la liste officielle.";
+        msg.textContent = "Accès refusé : identifiants candidat introuvables.";
         msg.classList.remove("hidden");
         return;
       }
@@ -1026,19 +888,337 @@
 
     msg.classList.add("hidden");
     document.getElementById("screen-login").classList.add("hidden");
-    document.getElementById("main-nav").style.display = "flex";
+    document.getElementById("main-nav").classList.remove("hidden");
     switchTab('home');
   });
 
+  // ====== CHAT & MODÉRATION ======
+  function appliquerEtatVerrouillageChat() {
+    const banner = document.getElementById("chat-locked-banner");
+    const wrapper = document.getElementById("chat-input-wrapper");
+    const locked = Boolean(serverState.chatLocked);
+
+    if (locked && !isStaffActive()) {
+      banner.classList.remove("hidden");
+      wrapper.classList.add("hidden");
+    } else {
+      banner.classList.toggle("hidden", !locked);
+      wrapper.classList.remove("hidden");
+    }
+  }
+
+  function afficherMessagesChat() {
+    const box = document.getElementById("chat-messages-box");
+    const messages = serverState.chat || [];
+    if (!messages.length) {
+      box.innerHTML = `<div class="chat-msg"><div class="chat-sender">Système</div>Aucun message pour l'instant.</div>`;
+      return;
+    }
+
+    const canModerate = isStaffActive();
+    box.innerHTML = messages.map((m, idx) => {
+      const isMine = currentUser && m.sender === currentUser.pseudo;
+      const isStaffMsg = m.isStaff;
+      const badge = isStaffMsg ? ` [${m.staffTitle || "Staff"}]` : "";
+      const delBtn = canModerate
+        ? `<button class="chat-del-btn" title="Supprimer" onclick="supprimerMessageChat(${idx})">✕</button>`
+        : "";
+      return `<div class="chat-msg ${isMine ? 'mine' : ''} ${isStaffMsg ? 'staff' : ''}">
+        <div class="chat-sender"><span>${m.sender}${badge}</span>${delBtn}</div>
+        <div>${m.text}</div>
+      </div>`;
+    }).join("");
+    box.scrollTop = box.scrollHeight;
+  }
+
+  async function supprimerMessageChat(index) {
+    if (!isStaffActive()) return;
+    await chargerEtatServeur();
+    if (serverState.chat[index]) {
+      serverState.chat.splice(index, 1);
+      await sauvegarderEtatServeur();
+      afficherMessagesChat();
+    }
+  }
+
+  document.getElementById("chat-send-btn").addEventListener("click", async () => {
+    const input = document.getElementById("chat-input");
+    const text = input.value.trim();
+    if (!text || !currentUser) return;
+
+    await chargerEtatServeur();
+    if (serverState.chatLocked && !isStaffActive()) {
+      appliquerEtatVerrouillageChat();
+      return;
+    }
+
+    serverState.chat.push({
+      sender: currentUser.pseudo,
+      isStaff: isStaffActive(),
+      staffTitle: currentUser.titre || "",
+      text: text,
+      date: Date.now()
+    });
+    if (serverState.chat.length > 60) serverState.chat.shift();
+
+    input.value = "";
+    afficherMessagesChat();
+    await sauvegarderEtatServeur();
+  });
+
+  // ====== PANNEAU ADMIN & FONDATEUR ======
+  function afficherFeedbackAdmin(texte, estErreur = false) {
+    const box = document.getElementById("admin-feedback");
+    box.textContent = texte;
+    box.className = `alert ${estErreur ? 'err' : 'ok'}`;
+    box.classList.remove("hidden");
+    setTimeout(() => box.classList.add("hidden"), 4000);
+  }
+
+  function rafraichirPanneauAdmin() {
+    if (!isStaffActive()) return;
+
+    const isFounder = currentUser.role === "fondateur";
+    const badge = document.getElementById("admin-role-badge");
+    badge.textContent = isFounder ? "👑 Fondateur" : `🛡️ ${currentUser.titre}`;
+    badge.className = `badge ${isFounder ? 'founder' : ''}`;
+
+    document.getElementById("admin-welcome-title").textContent = `Bonjour, ${currentUser.pseudo}`;
+    document.getElementById("admin-welcome-sub").textContent = isFounder
+      ? "Tu disposes de tous les droits (billets, points quiz, pseudos, chat et suspension des administrateurs)."
+      : "Tu peux attribuer les points de billets (max 30 pts) et modérer le chat.";
+
+    // État verrouillage chat
+    const chatPill = document.getElementById("chat-status-pill");
+    chatPill.textContent = serverState.chatLocked ? "Verrouillé" : "Ouvert";
+    chatPill.className = `pill ${serverState.chatLocked ? 'locked' : 'open'}`;
+
+    // Liste des candidats pour les billets
+    const selectTicket = document.getElementById("admin-ticket-candidat");
+    selectTicket.innerHTML = CANDIDATS_OFFICIELS.map(c => {
+      const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
+      const existant = serverState.scores.find(s => s.candidatId === id);
+      const bPts = existant ? (existant.ticketScore || 0) : 0;
+      return `<option value="${id}">${c.pseudo} (Billets actuels : ${bPts}/30 pts)</option>`;
+    }).join("");
+
+    // Section exclusive Fondateur
+    const founderSec = document.getElementById("founder-only-section");
+    founderSec.classList.toggle("hidden", !isFounder);
+
+    if (isFounder) {
+      // Liste complète des participants
+      const selectFounder = document.getElementById("founder-edit-user");
+      const tousLesCandidats = CANDIDATS_OFFICIELS.map(c => {
+        const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
+        const ex = serverState.scores.find(s => s.candidatId === id);
+        return {
+          id,
+          nom: ex ? ex.nom : c.pseudo,
+          whatsapp: c.whatsapp,
+          quizScore: ex ? (ex.quizScore || 0) : 0,
+          ticketScore: ex ? (ex.ticketScore || 0) : 0
+        };
+      });
+
+      selectFounder.innerHTML = tousLesCandidats.map(u =>
+        `<option value="${u.id}" data-nom="${u.nom}" data-quiz="${u.quizScore}">${u.nom} (Quiz : ${u.quizScore} pts · Billets : ${u.ticketScore} pts)</option>`
+      ).join("");
+      preRemplirEditionFondateur();
+
+      // Liste des administrateurs à gérer
+      const adminsBox = document.getElementById("founder-admins-list");
+      const admins = STAFF_LIST.filter(s => s.role === "admin");
+      adminsBox.innerHTML = admins.map(adm => {
+        const suspendu = estAdminSuspendu(adm.id);
+        const finStr = suspendu ? new Date(serverState.suspensions[adm.id]).toLocaleString("fr-FR") : "";
+        return `<div class="session-card" style="margin-bottom:8px;">
+          <div class="session-top">
+            <div class="session-title">${adm.pseudo} <span class="meta">(${adm.titre})</span></div>
+            <span class="pill ${suspendu ? 'locked' : 'open'}">${suspendu ? 'Suspendu' : 'Actif'}</span>
+          </div>
+          ${suspendu ? `<div class="meta" style="margin-bottom:8px;">Suspendu jusqu'au : ${finStr}</div>` : ''}
+          <div class="grid-2" style="margin-top:6px;">
+            <button class="btn btn-danger btn-small" type="button" onclick="suspendreAdmin('${adm.id}', 24)">Suspendre 24h</button>
+            <button class="btn btn-ok btn-small" type="button" onclick="reactiverAdmin('${adm.id}')">Réactiver</button>
+          </div>
+        </div>`;
+      }).join("");
+    }
+  }
+
+  async function toggleChatLock(verrouiller) {
+    if (!isStaffActive()) return;
+    await chargerEtatServeur();
+    serverState.chatLocked = verrouiller;
+    await sauvegarderEtatServeur();
+    appliquerEtatVerrouillageChat();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(verrouiller ? "Le chat est maintenant verrouillé pour les candidats." : "Le chat est ouvert à tous.");
+  }
+
+  async function sauvegarderPointsBillets() {
+    if (!isStaffActive()) return;
+    const candidatId = document.getElementById("admin-ticket-candidat").value;
+    const val = Number(document.getElementById("admin-ticket-pts").value);
+
+    if (isNaN(val) || val < 0 || val > 30) {
+      afficherFeedbackAdmin("Erreur : les points de billets doivent être compris entre 0 et 30 maximum.", true);
+      return;
+    }
+
+    await chargerEtatServeur();
+    const candInfo = CANDIDATS_OFFICIELS.find(c => normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat") === candidatId);
+    let entry = serverState.scores.find(s => s.candidatId === candidatId);
+
+    if (!entry && candInfo) {
+      entry = {
+        candidatId,
+        role: "candidat",
+        nom: candInfo.pseudo,
+        whatsapp: candInfo.whatsapp,
+        quizScore: 0,
+        ticketScore: val,
+        score: val,
+        total: 0,
+        sessions: [],
+        date: Date.now()
+      };
+      serverState.scores.push(entry);
+    } else if (entry) {
+      entry.ticketScore = val;
+      entry.score = (Number(entry.quizScore) || 0) + val;
+    }
+
+    serverState.scores = normaliserListeScores(serverState.scores);
+    await sauvegarderEtatServeur();
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`Points de billets mis à jour (${val}/30 pts).`);
+  }
+
+  // Fonctions exclusives Fondateur
+  function preRemplirEditionFondateur() {
+    const sel = document.getElementById("founder-edit-user");
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt) return;
+    document.getElementById("founder-new-pseudo").value = opt.dataset.nom || "";
+    document.getElementById("founder-new-quiz-pts").value = opt.dataset.quiz || 0;
+  }
+
+  async function sauvegarderEditionFondateur() {
+    if (currentUser?.role !== "fondateur") return;
+    const candidatId = document.getElementById("founder-edit-user").value;
+    const nouveauPseudo = document.getElementById("founder-new-pseudo").value.trim();
+    const nouveauxPointsQuiz = Number(document.getElementById("founder-new-quiz-pts").value);
+
+    if (!nouveauPseudo || isNaN(nouveauxPointsQuiz) || nouveauxPointsQuiz < 0) {
+      afficherFeedbackAdmin("Renseigne un pseudo valide et un score positif.", true);
+      return;
+    }
+
+    await chargerEtatServeur();
+    const candInfo = CANDIDATS_OFFICIELS.find(c => normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat") === candidatId);
+    let entry = serverState.scores.find(s => s.candidatId === candidatId);
+
+    if (!entry && candInfo) {
+      entry = {
+        candidatId,
+        role: "candidat",
+        nom: nouveauPseudo,
+        whatsapp: candInfo.whatsapp,
+        quizScore: nouveauxPointsQuiz,
+        ticketScore: 0,
+        score: nouveauxPointsQuiz,
+        total: 0,
+        sessions: [],
+        date: Date.now()
+      };
+      serverState.scores.push(entry);
+    } else if (entry) {
+      entry.nom = nouveauPseudo;
+      entry.quizScore = nouveauxPointsQuiz;
+      entry.score = nouveauxPointsQuiz + (Number(entry.ticketScore) || 0);
+    }
+
+    serverState.scores = normaliserListeScores(serverState.scores);
+    await sauvegarderEtatServeur();
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`Profil et points de quiz mis à jour pour ${nouveauPseudo}.`);
+  }
+
+  async function reinitialiserScoreParticipant() {
+    if (currentUser?.role !== "fondateur") return;
+    const candidatId = document.getElementById("founder-edit-user").value;
+
+    await chargerEtatServeur();
+    const entry = serverState.scores.find(s => s.candidatId === candidatId);
+    if (entry) {
+      entry.quizScore = 0;
+      entry.ticketScore = 0;
+      entry.score = 0;
+      entry.sessions = [];
+      serverState.scores = normaliserListeScores(serverState.scores);
+      await sauvegarderEtatServeur();
+      afficherDoubleClassement();
+      rafraichirPanneauAdmin();
+      afficherFeedbackAdmin("Le score du participant a été réinitialisé à 0.");
+    }
+  }
+
+  async function suspendreAdmin(staffId, heures) {
+    if (currentUser?.role !== "fondateur") return;
+    await chargerEtatServeur();
+    serverState.suspensions[staffId] = Date.now() + heures * 3600 * 1000;
+    await sauvegarderEtatServeur();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`Administrateur suspendu pour ${heures} heures.`);
+  }
+
+  async function reactiverAdmin(staffId) {
+    if (currentUser?.role !== "fondateur") return;
+    await chargerEtatServeur();
+    delete serverState.suspensions[staffId];
+    await sauvegarderEtatServeur();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin("Administrateur réactivé avec succès.");
+  }
+
+  // ====== SESSIONS & JEU ======
+  function formaterDateLisible(dateObj) {
+    return dateObj.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function shuffle(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function userKey() {
+    return currentUser ? `${currentUser.role}__${currentUser.pseudo.toLowerCase()}__${normaliserTelephone(currentUser.whatsapp)}` : "";
+  }
+
+  function getProgress() {
+    if (!currentUser) return { completed: [] };
+    const raw = localStorage.getItem("nr_quiz_prog_" + userKey());
+    return raw ? JSON.parse(raw) : { completed: [] };
+  }
+
+  function saveProgress(prog) {
+    localStorage.setItem("nr_quiz_prog_" + userKey(), JSON.stringify(prog));
+  }
+
   function renderSessions() {
     if (countdownInterval) clearInterval(countdownInterval);
-
     const prog = getProgress();
     const now = new Date();
-    const nbTerminees = prog.completed.length;
-    const labelStatut = currentUser.role === "candidat" ? "Candidat Officiel" : "Spectateur";
-    document.getElementById("candidate-summary").textContent =
-      `${labelStatut} : ${currentUser.pseudo} (${currentUser.whatsapp}) · ${nbTerminees}/${SESSIONS.length} sessions validées`;
+    const labelStatut = currentUser.role === "fondateur" ? "Fondateur" : currentUser.role === "admin" ? "Administrateur" : currentUser.role === "candidat" ? "Candidat Officiel" : "Spectateur";
+    document.getElementById("candidate-summary").textContent = `${labelStatut} : ${currentUser.pseudo} · ${prog.completed.length}/${SESSIONS.length} sessions validées`;
 
     const container = document.getElementById("sessions-list");
     container.innerHTML = "";
@@ -1046,45 +1226,28 @@
     SESSIONS.forEach(sess => {
       const isDone = prog.completed.includes(sess.id);
       const nowTime = now.getTime();
-      const startTime = sess.start.getTime();
-      const endTime = sess.end.getTime();
+      const started = nowTime >= sess.start.getTime();
+      const notExpired = nowTime <= sess.end.getTime();
 
-      const started = nowTime >= startTime;
-      const notExpired = nowTime <= endTime;
-
-      let statusLabel = "Verrouillée";
-      let pillClass = "locked";
-      let reason = "";
-      let canPlay = false;
+      let statusLabel = "Verrouillée", pillClass = "locked", reason = "", canPlay = false;
 
       if (isDone) {
-        statusLabel = "Terminée";
-        pillClass = "done";
-        reason = "Session validée et enregistrée.";
+        statusLabel = "Terminée"; pillClass = "done"; reason = "Session validée et enregistrée.";
       } else if (!started) {
-        statusLabel = "À venir";
-        pillClass = "locked";
-        const dateLisible = formaterDateLisible(sess.start);
-        reason = `
-          <div class="countdown-date">Ouverture le ${dateLisible}</div>
-          <div class="countdown-grid" data-start="${startTime}">
+        statusLabel = "À venir"; pillClass = "locked";
+        reason = `<div class="countdown-date">Ouverture le ${formaterDateLisible(sess.start)}</div>
+          <div class="countdown-grid" data-start="${sess.start.getTime()}">
             <div class="countdown-box"><div class="countdown-num cd-j">00</div><div class="countdown-label">jours</div></div>
             <div class="countdown-box"><div class="countdown-num cd-h">00</div><div class="countdown-label">h</div></div>
             <div class="countdown-box"><div class="countdown-num cd-m">00</div><div class="countdown-label">min</div></div>
             <div class="countdown-box"><div class="countdown-num cd-s">00</div><div class="countdown-label">s</div></div>
-          </div>
-        `;
+          </div>`;
       } else if (!notExpired) {
-        statusLabel = "Expirée";
-        pillClass = "locked";
-        reason = "La session est terminée.";
+        statusLabel = "Expirée"; pillClass = "locked"; reason = "La session est terminée.";
       } else {
         const prevDone = sess.id === 1 || prog.completed.includes(sess.id - 1);
         if (prevDone) {
-          statusLabel = "Disponible";
-          pillClass = "open";
-          reason = `${sess.timePerQ}s / question · En cours`;
-          canPlay = true;
+          statusLabel = "Disponible"; pillClass = "open"; reason = `${sess.timePerQ}s / question · En cours`; canPlay = true;
         } else {
           reason = `Termine d'abord la Session ${sess.id - 1}.`;
         }
@@ -1092,13 +1255,7 @@
 
       const card = document.createElement("div");
       card.className = "session-card";
-      card.innerHTML = `
-        <div class="session-top">
-          <div class="session-title">${sess.title}</div>
-          <span class="pill ${pillClass}">${statusLabel}</span>
-        </div>
-        <div class="meta">${reason}</div>
-      `;
+      card.innerHTML = `<div class="session-top"><div class="session-title">${sess.title}</div><span class="pill ${pillClass}">${statusLabel}</span></div><div class="meta">${reason}</div>`;
 
       if (canPlay) {
         const btn = document.createElement("button");
@@ -1107,7 +1264,6 @@
         btn.addEventListener("click", () => startSession(sess));
         card.appendChild(btn);
       }
-
       container.appendChild(card);
     });
 
@@ -1116,63 +1272,34 @@
   }
 
   function updateCountdowns() {
-    const now = new Date().getTime();
+    const now = Date.now();
     document.querySelectorAll(".countdown-grid").forEach(el => {
-      const startTime = Number(el.dataset.start);
-      const diff = startTime - now;
-
-      if (diff <= 0) {
-        renderSessions();
-        return;
-      }
-
+      const diff = Number(el.dataset.start) - now;
+      if (diff <= 0) { renderSessions(); return; }
       const totalSec = Math.floor(diff / 1000);
-      const jours = Math.floor(totalSec / (3600 * 24));
-      const heures = Math.floor((totalSec % (3600 * 24)) / 3600);
-      const minutes = Math.floor((totalSec % 3600) / 60);
-      const secondes = totalSec % 60;
-
-      const jEl = el.querySelector(".cd-j");
-      const hEl = el.querySelector(".cd-h");
-      const mEl = el.querySelector(".cd-m");
-      const sEl = el.querySelector(".cd-s");
-
-      if (jEl) jEl.textContent = String(jours).padStart(2, '0');
-      if (hEl) hEl.textContent = String(heures).padStart(2, '0');
-      if (mEl) mEl.textContent = String(minutes).padStart(2, '0');
-      if (sEl) sEl.textContent = String(secondes).padStart(2, '0');
+      el.querySelector(".cd-j").textContent = String(Math.floor(totalSec / 86400)).padStart(2, '0');
+      el.querySelector(".cd-h").textContent = String(Math.floor((totalSec % 86400) / 3600)).padStart(2, '0');
+      el.querySelector(".cd-m").textContent = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+      el.querySelector(".cd-s").textContent = String(totalSec % 60).padStart(2, '0');
     });
   }
 
   function startSession(sess) {
     if (countdownInterval) clearInterval(countdownInterval);
     const prog = getProgress();
-    if (prog.completed.includes(sess.id)) {
-      switchTab('sessions');
-      return;
-    }
+    if (prog.completed.includes(sess.id)) { switchTab('sessions'); return; }
     prog.completed.push(sess.id);
     saveProgress(prog);
 
-    activeSession = sess;
-    score = 0;
-    qIndex = 0;
-    isAnswering = false;
+    activeSession = sess; score = 0; qIndex = 0; isAnswering = false;
+    sessionQuestions = shuffle(QUESTION_BANK).slice(0, sess.count).map(item => ({
+      q: item.q, pts: item.pts,
+      opts: shuffle(item.opts.map((text, idx) => ({ text, isCorrect: idx === item.ans })))
+    }));
 
-    sessionQuestions = shuffle(QUESTION_BANK).slice(0, sess.count).map(item => {
-      const indexed = item.opts.map((text, idx) => ({ text, isCorrect: idx === item.ans }));
-      return {
-        q: item.q,
-        pts: item.pts,
-        opts: shuffle(indexed)
-      };
-    });
-
-    const badgeRole = currentUser.role === "candidat" ? "Candidat Officiel" : "Spectateur";
     document.getElementById("game-session-title").textContent = sess.title;
-    document.getElementById("game-sub").textContent = `${currentUser.pseudo} · ${badgeRole}`;
-    
-    ["tab-home", "tab-sessions", "tab-leaderboard", "tab-rules", "tab-chat"].forEach(id => document.getElementById(id).classList.add("hidden"));
+    document.getElementById("game-sub").textContent = `${currentUser.pseudo}`;
+    ["tab-home", "tab-sessions", "tab-leaderboard", "tab-rules", "tab-chat", "tab-admin"].forEach(id => document.getElementById(id).classList.add("hidden"));
     document.getElementById("screen-game").classList.remove("hidden");
     renderQuestion();
   }
@@ -1189,7 +1316,6 @@
 
     const optsBox = document.getElementById("q-options");
     optsBox.innerHTML = "";
-
     currentQ.opts.forEach(opt => {
       const btn = document.createElement("button");
       btn.className = "opt";
@@ -1202,10 +1328,7 @@
     timerId = setInterval(() => {
       timeLeft -= 1;
       document.getElementById("q-timer").textContent = `${timeLeft}s`;
-      if (timeLeft <= 0) {
-        clearInterval(timerId);
-        handleAnswer(null, false);
-      }
+      if (timeLeft <= 0) { clearInterval(timerId); handleAnswer(null, false); }
     }, 1000);
   }
 
@@ -1214,57 +1337,67 @@
     isAnswering = true;
     clearInterval(timerId);
 
-    const allBtns = document.querySelectorAll("#q-options .opt");
-    allBtns.forEach(btn => {
+    document.querySelectorAll("#q-options .opt").forEach(btn => {
       btn.disabled = true;
       if (btn.dataset.correct === "1") btn.classList.add("correct");
     });
-
     if (clickedBtn && !isCorrect) clickedBtn.classList.add("wrong");
     if (isCorrect) score += sessionQuestions[qIndex].pts;
 
     setTimeout(() => {
       qIndex += 1;
-      if (qIndex < sessionQuestions.length) {
-        renderQuestion();
-      } else {
-        finishSession();
-      }
+      if (qIndex < sessionQuestions.length) renderQuestion();
+      else finishSession();
     }, 650);
   }
 
   async function finishSession() {
-    const totalPoints = sessionQuestions.length * 1;
-    const tagRole = currentUser.role === "candidat" ? "CANDIDAT" : "SPECTATEUR";
-
+    const totalPoints = sessionQuestions.length;
     document.getElementById("screen-game").classList.add("hidden");
     document.getElementById("screen-result").classList.remove("hidden");
     document.getElementById("res-score").textContent = `${score} / ${totalPoints} pts`;
-    document.getElementById("res-detail").textContent =
-      `[${tagRole}] ${currentUser.pseudo} (${currentUser.whatsapp}) · Session ${activeSession.id}`;
+    document.getElementById("res-detail").textContent = `${currentUser.pseudo} · Session ${activeSession.id}`;
 
     const syncBox = document.getElementById("sync-status");
     syncBox.className = "alert";
-    syncBox.textContent = "Enregistrement du score dans le classement partagé...";
+    syncBox.textContent = "Enregistrement du score dans le classement...";
 
     if (enCoursEnvoi) return;
     enCoursEnvoi = true;
 
-    const leaderboardEntry = {
-      role: currentUser.role,
-      nom: currentUser.pseudo,
-      whatsapp: currentUser.whatsapp,
-      score: Number(score) || 0,
-      total: totalPoints,
-      sessionId: activeSession.id
-    };
-
     try {
-      await enregistrerDansJsonBin(leaderboardEntry);
-      syncBox.className = "argok" /* syntax fix */;
+      await chargerEtatServeur();
+      const role = currentUser.role === "spectateur" ? "spectateur" : "candidat";
+      const candidatId = normaliserCleParticipant(currentUser.pseudo, currentUser.whatsapp, role);
+      const sessionCode = `S${activeSession.id}`;
+
+      let entry = serverState.scores.find(s => s.candidatId === candidatId);
+      if (!entry) {
+        serverState.scores.push({
+          candidatId,
+          role,
+          nom: currentUser.pseudo,
+          whatsapp: currentUser.whatsapp,
+          quizScore: score,
+          ticketScore: 0,
+          score: score,
+          total: totalPoints,
+          sessions: [sessionCode],
+          date: Date.now()
+        });
+      } else if (!entry.sessions.includes(sessionCode)) {
+        entry.sessions.push(sessionCode);
+        entry.quizScore = (Number(entry.quizScore) || 0) + score;
+        entry.score = entry.quizScore + (Number(entry.ticketScore) || 0);
+        entry.total = (Number(entry.total) || 0) + totalPoints;
+        entry.date = Date.now();
+      }
+
+      serverState.scores = normaliserListeScores(serverState.scores);
+      await sauvegarderEtatServeur();
       syncBox.className = "alert ok";
       syncBox.textContent = "Score enregistré et cumulé avec succès !";
-    } catch (e) {
+    } catch (_) {
       syncBox.className = "alert err";
       syncBox.textContent = "Erreur de synchronisation. Vérifie ta connexion.";
     } finally {
