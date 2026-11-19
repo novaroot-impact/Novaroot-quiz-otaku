@@ -190,7 +190,7 @@
     .pill.open { background: rgba(39, 196, 125, 0.18); color: #6ef0b4; }
     .pill.done { background: rgba(154, 167, 204, 0.18); color: #cdd6f4; }
     .pill.locked { background: rgba(255, 77, 109, 0.16); color: #ff8fa3; }
-    .meta { font-size: 12px; color: var(--muted); }
+    .meta { font-size: 12px; color: var(--muted); line-height: 1.4; }
     
     /* COMPTE À REBOURS */
     .countdown-date { font-size: 11px; color: var(--muted); margin-bottom: 8px; text-align: center; }
@@ -309,7 +309,7 @@
 
     <div class="card-box">
       <h2>Grand Tournoi Otaku 2026</h2>
-      <p class="sub">Bienvenue sur la plateforme officielle de la communauté NovaRoot Impact à Kisangani. Suivez les sessions en ligne et préparez-vous pour la grande finale !</p>
+      <p class="sub">Bienvenue sur la plateforme officielle de la communauté NovaRoot Impact à Kisangani. Sessions chaque samedi à 21h00 !</p>
       <img src="finale.JPG" alt="Affiche Grande Finale" class="img-fluid" />
       <button class="btn" onclick="switchTab('sessions')">Voir les sessions de Quiz</button>
     </div>
@@ -321,6 +321,11 @@
     <div class="card-box">
       <h1>Sessions du concours</h1>
       <p class="sub" id="candidate-summary"></p>
+      <div class="alert">
+        <strong>Règles d'horaire (21h00) :</strong><br>
+        • À partir de <strong>21h15</strong> : -1 pt · À <strong>21h20</strong> : -2 pts · À <strong>21h30</strong> : -3 pts.<br>
+        • Après <strong>21h35</strong> : session fermée (rattrapage à prévoir).
+      </div>
       <img src="calendrier.JPG" alt="Calendrier des événements" class="img-fluid" style="margin-bottom: 14px;" />
       <div id="sessions-list"></div>
     </div>
@@ -331,7 +336,7 @@
     <div class="card-box">
       <div class="leaderboard-head">
         <h2 style="margin:0;">Classements en Direct</h2>
-        <button class="btn btn-secondary btn-small" id="btn-refresh-lb" type="button" onclick="rafraichirToutDepuisServeur()">Actualiser</button>
+        <button class="btn btn-secondary btn-small" id="btn-refresh-lb" type="button" onclick="chargerEtatServeur()">Actualiser</button>
       </div>
       <p class="sub" style="margin-top: 6px;">Barème : <strong>Quiz</strong> (sessions en ligne) + <strong>Billets</strong> (30 pts max) = <strong>Total</strong>.</p>
 
@@ -433,8 +438,19 @@
         <hr style="border:0; border-top:1px solid var(--border); margin:18px 0;">
         <span class="badge founder">Pouvoirs Exclusifs Fondateur</span>
 
-        <!-- Modification directe des points de Quiz et Pseudos -->
+        <!-- Timing par question -->
         <div class="admin-row" style="margin-top:12px;">
+          <div class="session-title" style="margin-bottom:6px;">⏱️ Timing par Question (Défaut : 15s)</div>
+          <p class="meta" style="margin-bottom:10px;">Définis le temps accordé pour répondre à chaque question (de 5 à 60 secondes).</p>
+          <div class="field">
+            <label>Secondes par question</label>
+            <input type="number" id="founder-question-timer" min="5" max="60" value="15" />
+          </div>
+          <button class="btn" type="button" onclick="sauvegarderTimingQuestions()">Enregistrer le timing</button>
+        </div>
+
+        <!-- Modification directe des points de Quiz et Pseudos -->
+        <div class="admin-row">
           <div class="session-title" style="margin-bottom:6px;">👑 Modifier Points Quiz & Pseudo</div>
           <p class="meta" style="margin-bottom:10px;">Réservé au Fondateur : corrige les points de quiz ou renomme un participant.</p>
           <div class="field">
@@ -469,7 +485,7 @@
   <div id="screen-game" class="card-box hidden">
     <h1 id="game-session-title">Session</h1>
     <p class="sub" id="game-sub"></p>
-    <div class="alert">Attention : quitter ou rafraîchir la page consomme ta tentative pour cette session.</div>
+    <div class="alert" id="game-penalty-info">Attention : quitter ou rafraîchir la page consomme ta tentative pour cette session.</div>
     <div class="q-box">
       <div class="q-head">
         <span id="q-counter">Question 1/10</span>
@@ -485,7 +501,7 @@
     <h1>Session enregistrée</h1>
     <p class="sub">Ton résultat a été enregistré et cumulé dans ton classement.</p>
     <div class="stat-box">
-      <div class="meta">SCORE DE LA SESSION</div>
+      <div class="meta">SCORE FINAL DE LA SESSION</div>
       <div class="stat-num" id="res-score">0</div>
       <div class="meta" id="res-detail"></div>
     </div>
@@ -498,38 +514,10 @@
 <script>
   // ====== CONFIGURATION STAFF (FONDATEUR & ADMINISTRATEURS) ======
   const STAFF_LIST = [
-    {
-      id: "founder_plamedi",
-      pseudo: "Plamedi Mutelay",
-      whatsapp: "0993024299",
-      code: "1-D09-2008",
-      role: "fondateur",
-      titre: "Fondateur"
-    },
-    {
-      id: "admin_leon",
-      pseudo: "Leon",
-      whatsapp: "0854426758",
-      code: "01-cno-21s",
-      role: "admin",
-      titre: "DGA · Secrétaire"
-    },
-    {
-      id: "admin_ruben",
-      pseudo: "Ruben",
-      whatsapp: "0833631069",
-      code: "02-cno-21s",
-      role: "admin",
-      titre: "Secrétaire · Admin"
-    },
-    {
-      id: "admin_joyboy",
-      pseudo: "Joyboy",
-      whatsapp: "0986876305",
-      code: "03-cno-2026",
-      role: "admin",
-      titre: "Admin"
-    }
+    { id: "founder_plamedi", pseudo: "Plamedi Mutelay", whatsapp: "0993024299", code: "1-D09-2008", role: "fondateur", titre: "Fondateur" },
+    { id: "admin_leon", pseudo: "Leon", whatsapp: "0854426758", code: "01-cno-21s", role: "admin", titre: "DGA · Secrétaire" },
+    { id: "admin_ruben", pseudo: "Ruben", whatsapp: "0833631069", code: "02-cno-21s", role: "admin", titre: "Secrétaire · Admin" },
+    { id: "admin_joyboy", pseudo: "Joyboy", whatsapp: "0986876305", code: "03-cno-2026", role: "admin", titre: "Admin" }
   ];
 
   // ====== LISTE DES CANDIDATS OFFICIELS ======
@@ -562,40 +550,82 @@
   };
   const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`;
 
-  // Planning des sessions
+  // ====== PLANNING DES SESSIONS (SAMEDIS À 21H00, CLÔTURE 21H35) ======
   const SESSIONS = [
-    { id: 1, title: "Session 1 — Chronométrée Classique", timePerQ: 15, count: 10, start: new Date("2026-11-18T17:57:00"), end: new Date("2026-11-18T18:30:00") },
-    { id: 2, title: "Session 2 — Chronométrée Rapide", timePerQ: 10, count: 10, start: new Date("2026-11-21T21:00:00"), end: new Date("2026-11-28T00:00:00") },
-    { id: 3, title: "Session 3 — Openings, Devinettes & Citations", timePerQ: 12, count: 10, start: new Date("2026-11-28T00:00:00"), end: new Date("2026-12-31T23:59:59") }
+    {
+      id: 1,
+      title: "Session 1 — Samedi 21/11 (21h00)",
+      start: new Date("2026-11-21T21:00:00"),
+      end: new Date("2026-11-21T21:35:00")
+    },
+    {
+      id: 2,
+      title: "Session 2 — Samedi 28/11 (21h00)",
+      start: new Date("2026-11-28T21:00:00"),
+      end: new Date("2026-11-28T21:35:00")
+    },
+    {
+      id: 3,
+      title: "Session 3 — Samedi 05/12 (21h00)",
+      start: new Date("2026-12-05T21:00:00"),
+      end: new Date("2026-12-05T21:35:00")
+    }
   ];
 
-  const QUESTION_BANK = [
-    { q: "Dans One Piece, quel est le rêve de Monkey D. Luffy ?", opts: ["Devenir Roi des Pirates", "Trouver le All Blue", "Vaincre tous les Empereurs", "Cartographier le monde"], ans: 0, pts: 1 },
-    { q: "Quel studio a produit l'anime Attack on Titan (saisons 1 à 3) ?", opts: ["MAPPA", "Wit Studio", "ufotable", "Bones"], ans: 1, pts: 1 },
-    { q: "Dans Naruto, quel clan possède le Sharingan ?", opts: ["Hyuga", "Senju", "Uchiha", "Uzumaki"], ans: 2, pts: 1 },
-    { q: "Quel est le nom du Death Note de Light Yagami ?", opts: ["Ryuk", "Rem", "Sidoh", "Gelus"], ans: 0, pts: 1 },
-    { q: "Dans Demon Slayer, quel souffle utilise Tanjiro Kamado à l'origine ?", opts: ["Souffle de la Flamme", "Souffle de l'Eau", "Souffle du Soleil", "Souffle de la Foudre"], ans: 1, pts: 1 },
-    { q: "Quel auteur a créé Fullmetal Alchemist ?", opts: ["Hiromu Arakawa", "Eiichiro Oda", "Kohei Horikoshi", "Gege Akutami"], ans: 0, pts: 1 },
-    { q: "Dans Jujutsu Kaisen, quel est le nom du fléau qui vit en Yuji Itadori ?", opts: ["Mahito", "Jogo", "Ryomen Sukuna", "Geto"], ans: 2, pts: 1 },
-    { q: "Quel objet permet d'invoquer Shenron dans Dragon Ball ?", opts: ["7 Dragon Balls", "5 Dragon Balls", "6 Dragon Balls", "8 Dragon Balls"], ans: 0, pts: 1 },
-    { q: "Dans Hunter x Hunter, quel est l'examen que passe Gon au début ?", opts: ["Examen Chuunin", "Examen Hunter", "Examen des Ombres", "Examen Nen"], ans: 1, pts: 1 },
-    { q: "Quel studio anime Jujutsu Kaisen ?", opts: ["Madhouse", "MAPPA", "CloverWorks", "A-1 Pictures"], ans: 1, pts: 1 },
-    { q: "Dans Death Note, quel est l'alias du détective principal ?", opts: ["Near", "Mello", "L", "Watari"], ans: 2, pts: 1 },
-    { q: "Dans My Hero Academia, quel est le nom du pouvoir de Deku ?", opts: ["All For One", "One For All", "Explosion", "Half-Cold Half-Hot"], ans: 1, pts: 1 }
-  ];
+  // ====== BANQUE DE QUESTIONS PAR SESSION ======
+  const SESSION_QUESTIONS = {
+    1: [
+      { q: "[Naruto] Dans Naruto Shippuden, Sasuke peut lancer l'Amaterasu d'un œil et la modifier d'un autre. Dans quel œil la lance-t-il ?", opts: ["Œil gauche", "Œil droit", "Les deux yeux simultanément", "Il ne peut pas lancer l'Amaterasu"], ans: 1, pts: 1 },
+      { q: "[Naruto] Quelle est la date exacte de la mort du 4e Hokage (Minato Namikaze) ?", opts: ["Le 10 octobre", "Le 24 juillet", "Le 5 mai", "Le 1er janvier"], ans: 0, pts: 1 },
+      { q: "[One Piece] Quelle est la prime de Luffy lorsqu'il affronte Hody Jones (Île des Hommes-Poissons) ?", opts: ["30 000 000 de Berries", "300 000 000 de Berries", "400 000 000 de Berries", "1 500 000 000 de Berries"], ans: 2, pts: 1 },
+      { q: "[One Piece] Quel est le nom complet du Chirurgien de la Mort ?", opts: ["Trafalgar D. Water Law", "Eustass Kid", "Donquixote Doflamingo", "Silvers Rayleigh"], ans: 0, pts: 1 },
+      { q: "[Dragon Ball] Combien de fois Son Goku est-il mort dans l'animé ?", opts: ["1 fois", "2 fois", "3 fois", "Il ne meurt jamais définitivement"], ans: 1, pts: 1 },
+      { q: "[Dragon Ball] Comment s'appelle le dragon divin ultime (présent dans Dragon Ball GT) ?", opts: ["Shenron", "Porunga", "Super Shenron", "Dark Shenron (Shenron Noir / Ultimate Shenron)"], ans: 3, pts: 1 },
+      { q: "[Bleach] Quel âge a Ichigo Kurosaki lorsqu'il perd sa mère (Masaki Kurosaki) ?", opts: ["7 ans", "9 ans", "12 ans", "15 ans"], ans: 1, pts: 1 },
+      { q: "[Bleach] Comment s'appelle le Zanpakuto de Gin Ichimaru ?", opts: ["Zangetsu", "Senbonzakura", "Shinsui", "Shinsō"], ans: 3, pts: 1 },
+      { q: "[SNK] Quel titan a pour hôte Lara Tyber ?", opts: ["Le Titan Colossal", "Le Titan Cuirassé", "Le Titan Marteau d'Armes", "Le Titan Féminin"], ans: 2, pts: 1 },
+      { q: "[SNK] Quel titan a le pouvoir de l'Axe ?", opts: ["Le Titan Originel", "Le Titan Bestial", "Le Titan Assaillant", "Le Titan Mâchoire"], ans: 0, pts: 1 }
+    ],
+    2: [
+      { q: "[My Hero Academia] Quel personnage possède un Alter lui permettant de créer des objets à partir des lipides de son corps ?", opts: ["Kyoka Jiro", "Momo Yaoyorozu", "Mina Ashido", "Tsuyu Asui"], ans: 1, pts: 1 },
+      { q: "[My Hero Academia] Lors du combat entre All Might et All For One à Kamino, pourquoi All Might utilise-t-il ce qui lui reste de One For All ?", opts: ["Pour sauver Bakugo", "Pour vaincre All For One et protéger les civils", "Pour transmettre définitivement son Alter à Deku", "Pour récupérer son ancienne puissance"], ans: 1, pts: 1 },
+      { q: "[Demon Slayer] Lequel de ces personnages n'est PAS une Lune Supérieure ou Inférieure ?", opts: ["Akaza", "Rui", "Doma", "Kagaya Ubuyashiki"], ans: 3, pts: 1 },
+      { q: "[Death Note] Pourquoi L soupçonne-t-il rapidement que Kira se trouve au Japon ?", opts: ["Il reçoit une lettre de Kira", "Il analyse la répartition géographique des premières victimes", "Light lui révèle indirectement son identité", "Ryuk a ciblé le Japon pour son taux de criminalité"], ans: 1, pts: 1 },
+      { q: "[Death Note] Quel est le véritable nom de L ?", opts: ["L Lawliet", "Lawliet", "L. L. Lawliet", "Il n'est jamais révélé"], ans: 1, pts: 1 },
+      { q: "[Jujutsu Kaisen] Pourquoi Toge Inumaki utilise-t-il principalement des mots comme « saumon » ou « thon » dans ses conversations ordinaires ?", opts: ["Parce qu'il aime particulièrement les poissons", "Parce qu'il veut cacher sa véritable personnalité", "Pour éviter d'utiliser accidentellement sa Parole Maudite", "Parce qu'il ne peut prononcer que des noms d'aliments"], ans: 2, pts: 1 },
+      { q: "[One Punch Man] Lors du combat entre Garou et Metal Bat, quelle explication correspond le mieux à la montée en puissance de Metal Bat ?", opts: ["Son corps devient temporairement plus résistant grâce aux dégâts", "Son « Fighting Spirit » lui permet d'augmenter progressivement ses capacités", "Sa batte accumule l'énergie des attaques bloquées", "Il utilise volontairement une technique d'épuisement"], ans: 1, pts: 1 },
+      { q: "[One Punch Man] Lorsque Saitama rencontre Sonic pour la première fois, pourquoi Sonic devient-il particulièrement frustré ?", opts: ["Saitama anticipe ses déplacements sans technique", "Saitama neutralise son attaque avant la fin du mouvement", "Saitama ne le considère pas comme un véritable adversaire malgré sa vitesse", "Saitama le confond avec un membre de la Hero Association"], ans: 2, pts: 1 },
+      { q: "[Jujutsu Kaisen] Quel est le métier de Kento Nanami avant son retour dans le monde de l'exorcisme ?", opts: ["Professeur", "Comptable", "Banquier", "Avocat"], ans: 1, pts: 1 },
+      { q: "[Demon Slayer] Quel est le lien entre Kagaya Ubuyashiki et Muzan Kibutsuji ?", opts: ["Ils sont frères", "Ils sont cousins", "Ils appartiennent à la même famille", "Ils n'ont aucun lien familial"], ans: 2, pts: 1 }
+    ],
+    3: [
+      { q: "[Black Clover] Quel est le nom du grimoire rare à cinq feuilles que reçoit Asta, qui lui permet de manier l'anti-magie ?", opts: ["Le grimoire du trèfle d'argent", "Le grimoire du démon aux cinq feuilles", "Le grimoire du vent céleste", "Le grimoire de la flamme royale"], ans: 1, pts: 1 },
+      { q: "[Solo Leveling] Quel est le nom du redoutable donjon de rang double (Double Dungeon) qui change le destin de Jin-woo au début ?", opts: ["Le Temple de Cartenon", "La Porte Rouge", "Le Repaire des Orcs", "Le Donjon de l'Île de Jeju"], ans: 0, pts: 1 },
+      { q: "[Dr. Stone] Quel ingrédient principal Senku utilise-t-il, combiné à l'alcool, pour fabriquer le liquide miracle qui libère les statues de pierre ?", opts: ["L'acide sulfurique", "L'acide nitrique", "Le carbonate de sodium", "L'oxyde de fer"], ans: 1, pts: 1 },
+      { q: "[Kuroko's Basketball] Quelle est la technique spéciale de Kuroko qui utilise le manque d'attention des adversaires pour faire des passes invisibles ?", opts: ["Le tir foudroyant", "La misdirection (détournement d'attention)", "Le dribble fantôme", "La passe étincelante"], ans: 1, pts: 1 },
+      { q: "[Tokyo Revengers] De combien d'années dans le passé Takemichi voyage-t-il la toute première fois ?", opts: ["5 ans", "10 ans", "12 ans", "15 ans"], ans: 2, pts: 1 },
+      { q: "[Kuroko's Basketball] Quelle technique sportive appartient authentiquement à Kuroko's Basketball ?", opts: ["Le Meteor Jam de Taiga Kagami", "La Danse du Dieu du Feu de Yami", "La Frappe du Monarque de Jin-woo", "Le Coup de pied de Mikey"], ans: 0, pts: 1 },
+      { q: "[Multi-Anime] Quel personnage est un spécialiste de la copie ou de l'imitation des techniques adverses ?", opts: ["Ryota Kise", "Gen Asagiri", "Beru", "Draken"], ans: 0, pts: 1 },
+      { q: "[Multi-Anime] Quel personnage est un mentaliste et illusionniste qui rejoint l'équipe principale après avoir trahi son camp d'origine ?", opts: ["Gen Asagiri", "Tetta Kisaki", "Thomas Andre", "Nozel Silva"], ans: 0, pts: 1 },
+      { q: "[Multi-Anime] Quel personnage porte un tatouage de dragon sur la tempe gauche ?", opts: ["Draken", "Yami Sukehiro", "Sung Jin-woo", "Tsukasa Shishio"], ans: 0, pts: 1 },
+      { q: "[Multi-Anime] Quel personnage possède des yeux vairons (un œil rouge et un œil jaune/doré) ?", opts: ["Seijuro Akashi", "Chifuyu Matsuno", "Yuno Grinberryall", "Cha Hae-in"], ans: 0, pts: 1 }
+    ]
+  };
 
   // État global synchronisé avec JSONBin
   let serverState = {
     concours: "Quiz Otaku 2026",
+    questionTimeSec: 15,
     scores: [],
     chat: [],
     chatLocked: false,
-    suspensions: {} // ex: { "admin_leon": 1795000000000 }
+    suspensions: {}
   };
 
   let selectedRole = "candidat";
   let currentUser = null;
   let activeSession = null;
+  let activePenalty = 0;
   let sessionQuestions = [];
   let qIndex = 0;
   let score = 0;
@@ -605,7 +635,6 @@
   let enCoursEnvoi = false;
   let isAnswering = false;
 
-  // Sélecteurs connexion
   const btnRoleCandidat = document.getElementById("role-candidat");
   const btnRoleSpectateur = document.getElementById("role-spectateur");
   const btnRoleStaff = document.getElementById("role-staff");
@@ -671,6 +700,21 @@
     return false;
   }
 
+  function getQuestionTimeSec() {
+    const t = Number(serverState.questionTimeSec);
+    return (!isNaN(t) && t >= 5 && t <= 60) ? t : 15;
+  }
+
+  // ====== CALCUL PÉNALITÉ DE RETARD (SESSION DÉMARRÉE À 21H00) ======
+  function calculerPenaliteRetard(sessionStartDate, nowDate = new Date()) {
+    // 21h00 = 0 min, 21h15 = 15 min (-1 pt), 21h20 = 20 min (-2 pts), 21h30 = 30 min (-3 pts)
+    const minutesAfterStart = (nowDate.getTime() - sessionStartDate.getTime()) / 60000;
+    if (minutesAfterStart >= 30) return 3;
+    if (minutesAfterStart >= 20) return 2;
+    if (minutesAfterStart >= 15) return 1;
+    return 0;
+  }
+
   // ====== SYNCHRONISATION JSONBIN ======
   async function chargerEtatServeur() {
     try {
@@ -683,12 +727,12 @@
       const rec = data?.record || {};
 
       serverState.concours = rec.concours || "Quiz Otaku 2026";
+      serverState.questionTimeSec = Number(rec.questionTimeSec) || 15;
       serverState.scores = normaliserListeScores(Array.isArray(rec.scores) ? rec.scores : []);
       serverState.chat = Array.isArray(rec.chat) ? rec.chat : [];
       serverState.chatLocked = Boolean(rec.chatLocked);
       serverState.suspensions = rec.suspensions && typeof rec.suspensions === "object" ? rec.suspensions : {};
 
-      // Vérification suspension en temps réel si l'utilisateur est un admin
       if (currentUser?.role === "admin" && estAdminSuspendu(currentUser.staffId)) {
         document.getElementById("nav-admin-btn").classList.add("hidden");
         if (!document.getElementById("tab-admin").classList.contains("hidden")) {
@@ -700,6 +744,9 @@
       afficherDoubleClassement();
       afficherMessagesChat();
       appliquerEtatVerrouillageChat();
+      if (!document.getElementById("tab-sessions").classList.contains("hidden")) {
+        renderSessions();
+      }
       if (isStaffActive()) rafraichirPanneauAdmin();
       return serverState;
     } catch (_) {
@@ -732,7 +779,7 @@
     scores.forEach(item => {
       const role = item.role === "spectateur" ? "spectateur" : "candidat";
       const key = item.candidatId || normaliserCleParticipant(item.nom, item.whatsapp, role);
-      const quizPts = item.quizScore !== undefined ? Number(item.quizScore) : (Number(item.score) || 0);
+      const quizPts = Math.max(0, item.quizScore !== undefined ? Number(item.quizScore) : (Number(item.score) || 0));
       const ticketPts = Math.min(30, Math.max(0, Number(item.ticketScore) || 0));
       const sessions = Array.isArray(item.sessions) ? [...item.sessions] : [];
 
@@ -763,10 +810,6 @@
       if (b.score !== a.score) return b.score - a.score;
       return (a.date || 0) - (b.date || 0);
     });
-  }
-
-  async function rafraichirToutDepuisServeur() {
-    await chargerEtatServeur();
   }
 
   // ====== AFFICHAGE CLASSEMENT ======
@@ -985,15 +1028,13 @@
 
     document.getElementById("admin-welcome-title").textContent = `Bonjour, ${currentUser.pseudo}`;
     document.getElementById("admin-welcome-sub").textContent = isFounder
-      ? "Tu disposes de tous les droits (billets, points quiz, pseudos, chat et suspension des administrateurs)."
+      ? "Tu disposes de tous les droits (timing, billets, points quiz, pseudos, chat et suspension des admins)."
       : "Tu peux attribuer les points de billets (max 30 pts) et modérer le chat.";
 
-    // État verrouillage chat
     const chatPill = document.getElementById("chat-status-pill");
     chatPill.textContent = serverState.chatLocked ? "Verrouillé" : "Ouvert";
     chatPill.className = `pill ${serverState.chatLocked ? 'locked' : 'open'}`;
 
-    // Liste des candidats pour les billets
     const selectTicket = document.getElementById("admin-ticket-candidat");
     selectTicket.innerHTML = CANDIDATS_OFFICIELS.map(c => {
       const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
@@ -1002,12 +1043,12 @@
       return `<option value="${id}">${c.pseudo} (Billets actuels : ${bPts}/30 pts)</option>`;
     }).join("");
 
-    // Section exclusive Fondateur
     const founderSec = document.getElementById("founder-only-section");
     founderSec.classList.toggle("hidden", !isFounder);
 
     if (isFounder) {
-      // Liste complète des participants
+      document.getElementById("founder-question-timer").value = getQuestionTimeSec();
+
       const selectFounder = document.getElementById("founder-edit-user");
       const tousLesCandidats = CANDIDATS_OFFICIELS.map(c => {
         const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
@@ -1026,7 +1067,6 @@
       ).join("");
       preRemplirEditionFondateur();
 
-      // Liste des administrateurs à gérer
       const adminsBox = document.getElementById("founder-admins-list");
       const admins = STAFF_LIST.filter(s => s.role === "admin");
       adminsBox.innerHTML = admins.map(adm => {
@@ -1045,6 +1085,19 @@
         </div>`;
       }).join("");
     }
+  }
+
+  async function sauvegarderTimingQuestions() {
+    if (currentUser?.role !== "fondateur") return;
+    const sec = Number(document.getElementById("founder-question-timer").value);
+    if (isNaN(sec) || sec < 5 || sec > 60) {
+      afficherFeedbackAdmin("Choisis un temps entre 5 et 60 secondes par question.", true);
+      return;
+    }
+    await chargerEtatServeur();
+    serverState.questionTimeSec = sec;
+    await sauvegarderEtatServeur();
+    afficherFeedbackAdmin(`Timing mis à jour : ${sec} secondes par question.`);
   }
 
   async function toggleChatLock(verrouiller) {
@@ -1097,7 +1150,6 @@
     afficherFeedbackAdmin(`Points de billets mis à jour (${val}/30 pts).`);
   }
 
-  // Fonctions exclusives Fondateur
   function preRemplirEditionFondateur() {
     const sel = document.getElementById("founder-edit-user");
     const opt = sel.options[sel.selectedIndex];
@@ -1217,8 +1269,9 @@
     if (countdownInterval) clearInterval(countdownInterval);
     const prog = getProgress();
     const now = new Date();
+    const qSec = getQuestionTimeSec();
     const labelStatut = currentUser.role === "fondateur" ? "Fondateur" : currentUser.role === "admin" ? "Administrateur" : currentUser.role === "candidat" ? "Candidat Officiel" : "Spectateur";
-    document.getElementById("candidate-summary").textContent = `${labelStatut} : ${currentUser.pseudo} · ${prog.completed.length}/${SESSIONS.length} sessions validées`;
+    document.getElementById("candidate-summary").textContent = `${labelStatut} : ${currentUser.pseudo} · ${qSec}s / question · ${prog.completed.length}/${SESSIONS.length} sessions validées`;
 
     const container = document.getElementById("sessions-list");
     container.innerHTML = "";
@@ -1243,11 +1296,17 @@
             <div class="countdown-box"><div class="countdown-num cd-s">00</div><div class="countdown-label">s</div></div>
           </div>`;
       } else if (!notExpired) {
-        statusLabel = "Expirée"; pillClass = "locked"; reason = "La session est terminée.";
+        statusLabel = "Clôturée (21h35)"; pillClass = "locked";
+        reason = "La session est terminée après 21h35. Il faut attendre le rattrapage.";
       } else {
         const prevDone = sess.id === 1 || prog.completed.includes(sess.id - 1);
         if (prevDone) {
-          statusLabel = "Disponible"; pillClass = "open"; reason = `${sess.timePerQ}s / question · En cours`; canPlay = true;
+          const pen = calculerPenaliteRetard(sess.start, now);
+          statusLabel = "En cours"; pillClass = "open";
+          reason = pen > 0
+            ? `${qSec}s / question · Retard actif : <strong>-${pen} pt(s)</strong> sur le total de la session.`
+            : `${qSec}s / question · Aucune pénalité de retard.`;
+          canPlay = true;
         } else {
           reason = `Termine d'abord la Session ${sess.id - 1}.`;
         }
@@ -1286,19 +1345,33 @@
 
   function startSession(sess) {
     if (countdownInterval) clearInterval(countdownInterval);
+    const now = new Date();
+    if (now.getTime() > sess.end.getTime()) {
+      renderSessions();
+      return;
+    }
+
     const prog = getProgress();
     if (prog.completed.includes(sess.id)) { switchTab('sessions'); return; }
     prog.completed.push(sess.id);
     saveProgress(prog);
 
-    activeSession = sess; score = 0; qIndex = 0; isAnswering = false;
-    sessionQuestions = shuffle(QUESTION_BANK).slice(0, sess.count).map(item => ({
+    activeSession = sess;
+    activePenalty = calculerPenaliteRetard(sess.start, now);
+    score = 0; qIndex = 0; isAnswering = false;
+
+    const bank = SESSION_QUESTIONS[sess.id] || [];
+    sessionQuestions = shuffle(bank).map(item => ({
       q: item.q, pts: item.pts,
       opts: shuffle(item.opts.map((text, idx) => ({ text, isCorrect: idx === item.ans })))
     }));
 
     document.getElementById("game-session-title").textContent = sess.title;
-    document.getElementById("game-sub").textContent = `${currentUser.pseudo}`;
+    document.getElementById("game-sub").textContent = `${currentUser.pseudo} · ${getQuestionTimeSec()}s / question`;
+    document.getElementById("game-penalty-info").innerHTML = activePenalty > 0
+      ? `⚠️ Retard constaté : <strong>-${activePenalty} point(s)</strong> seront déduits du total de cette session.`
+      : `Attention : quitter ou rafraîchir la page consomme ta tentative pour cette session.`;
+
     ["tab-home", "tab-sessions", "tab-leaderboard", "tab-rules", "tab-chat", "tab-admin"].forEach(id => document.getElementById(id).classList.add("hidden"));
     document.getElementById("screen-game").classList.remove("hidden");
     renderQuestion();
@@ -1308,7 +1381,7 @@
     clearInterval(timerId);
     isAnswering = false;
     const currentQ = sessionQuestions[qIndex];
-    timeLeft = activeSession.timePerQ;
+    timeLeft = getQuestionTimeSec();
 
     document.getElementById("q-counter").textContent = `Question ${qIndex + 1}/${sessionQuestions.length}`;
     document.getElementById("q-timer").textContent = `${timeLeft}s`;
@@ -1352,11 +1425,15 @@
   }
 
   async function finishSession() {
+    const finalSessionScore = Math.max(0, score - activePenalty);
     const totalPoints = sessionQuestions.length;
+
     document.getElementById("screen-game").classList.add("hidden");
     document.getElementById("screen-result").classList.remove("hidden");
-    document.getElementById("res-score").textContent = `${score} / ${totalPoints} pts`;
-    document.getElementById("res-detail").textContent = `${currentUser.pseudo} · Session ${activeSession.id}`;
+    document.getElementById("res-score").textContent = `${finalSessionScore} / ${totalPoints} pts`;
+    document.getElementById("res-detail").textContent = activePenalty > 0
+      ? `${currentUser.pseudo} · Session ${activeSession.id} (Brut : ${score} pts · Pénalité retard : -${activePenalty} pt)`
+      : `${currentUser.pseudo} · Session ${activeSession.id}`;
 
     const syncBox = document.getElementById("sync-status");
     syncBox.className = "alert";
@@ -1378,16 +1455,16 @@
           role,
           nom: currentUser.pseudo,
           whatsapp: currentUser.whatsapp,
-          quizScore: score,
+          quizScore: finalSessionScore,
           ticketScore: 0,
-          score: score,
+          score: finalSessionScore,
           total: totalPoints,
           sessions: [sessionCode],
           date: Date.now()
         });
       } else if (!entry.sessions.includes(sessionCode)) {
         entry.sessions.push(sessionCode);
-        entry.quizScore = (Number(entry.quizScore) || 0) + score;
+        entry.quizScore = (Number(entry.quizScore) || 0) + finalSessionScore;
         entry.score = entry.quizScore + (Number(entry.ticketScore) || 0);
         entry.total = (Number(entry.total) || 0) + totalPoints;
         entry.date = Date.now();
