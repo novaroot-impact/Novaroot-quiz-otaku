@@ -1180,10 +1180,21 @@
       const key = item.candidatId || normaliserCleParticipant(item.nom, item.whatsapp, role);
       const quizPts = Math.max(0, item.quizScore !== undefined ? Number(item.quizScore) : (Number(item.score) || 0));
       const ticketPts = Math.min(30, Math.max(0, Number(item.ticketScore) || 0));
-      const sessions = Array.isArray(item.sessions) ? [...item.sessions] : [];
-      const sessionScores = item.sessionScores && typeof item.sessionScores === "object"
+      const sessions = Array.isArray(item.sessions) ? [...new Set(item.sessions.filter(Boolean))] : [];
+      const rawSessionScores = item.sessionScores && typeof item.sessionScores === "object"
         ? { ...item.sessionScores }
         : {};
+
+      // Rattrapage si une session est listée sans score détaillé dans sessionScores
+      if (sessions.length === 1 && rawSessionScores[sessions[0]] === undefined && quizPts > 0) {
+        rawSessionScores[sessions[0]] = quizPts;
+      } else {
+        sessions.forEach(s => {
+          if (rawSessionScores[s] === undefined) {
+            rawSessionScores[s] = 0;
+          }
+        });
+      }
 
       if (!map.has(key)) {
         map.set(key, {
@@ -1196,7 +1207,7 @@
           score: quizPts + (role === "candidat" ? ticketPts : 0),
           total: Number(item.total) || 0,
           sessions,
-          sessionScores,
+          sessionScores: rawSessionScores,
           date: item.date || Date.now()
         });
       } else {
@@ -1205,9 +1216,11 @@
         if (role === "candidat") ex.ticketScore = Math.min(30, Math.max(ex.ticketScore, ticketPts));
         ex.score = ex.quizScore + ex.ticketScore;
         ex.total += Number(item.total) || 0;
-        sessions.forEach(s => { if (s && !ex.sessions.includes(s)) ex.sessions.push(s); });
-        Object.entries(sessionScores).forEach(([sid, val]) => {
-          ex.sessionScores[sid] = Math.max(0, Number(val) || 0);
+        sessions.forEach(s => { if (!ex.sessions.includes(s)) ex.sessions.push(s); });
+        Object.entries(rawSessionScores).forEach(([sid, val]) => {
+          if (val !== undefined) {
+            ex.sessionScores[sid] = Math.max(Number(ex.sessionScores[sid]) || 0, Number(val) || 0);
+          }
         });
       }
     });
