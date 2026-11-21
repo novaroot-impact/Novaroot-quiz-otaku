@@ -39,7 +39,7 @@
       width: 100%;
       max-width: 480px;
     }
-    
+
     /* BARRE DE NAVIGATION */
     .top-nav {
       display: flex;
@@ -197,7 +197,7 @@
     .pill.done { background: rgba(154, 167, 204, 0.18); color: #cdd6f4; }
     .pill.locked { background: rgba(255, 77, 109, 0.16); color: #ff8fa3; }
     .meta { font-size: 12px; color: var(--muted); line-height: 1.4; }
-    
+
     /* COMPTE À REBOURS */
     .countdown-date { font-size: 11px; color: var(--muted); margin-bottom: 8px; text-align: center; }
     .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; }
@@ -245,6 +245,30 @@
       background: rgba(255,255,255,0.05);
       padding: 2px 7px;
       border-radius: 6px;
+    }
+
+    /* TIMING INDIVIDUEL PAR QUESTION */
+    .q-timers-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .q-timer-item {
+      background: #10172e;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px;
+    }
+    .q-timer-item label {
+      font-size: 11px;
+      margin-bottom: 4px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .q-timer-item input {
+      padding: 7px 9px;
+      font-size: 13px;
     }
 
     /* CHAT FAÇON WHATSAPP */
@@ -383,7 +407,7 @@
   <div id="screen-login" class="card-box">
     <span class="badge">Novaroot Impact · Quiz Otaku 2026</span>
     <h1>Identification</h1>
-    <p class="sub">Sélectionne ton profil d'accès à la plateforme officielle.</p>
+    <p class="sub">Sélectionne ton profil et ta localisation. Tous les horaires sont synchronisés sur l'heure de <strong>Kisangani</strong>.</p>
 
     <label>Tu te connectes en tant que :</label>
     <div class="role-switch">
@@ -399,6 +423,27 @@
     <div class="field">
       <label for="whatsapp">Numéro Téléphone (WhatsApp)</label>
       <input id="whatsapp" type="tel" placeholder="Ex. 0810330270" maxlength="25" />
+    </div>
+    <div class="grid-2">
+      <div class="field">
+        <label for="pays">Pays</label>
+        <input id="pays" type="text" placeholder="Ex. RD Congo" maxlength="40" value="RD Congo" />
+      </div>
+      <div class="field">
+        <label for="ville">Ville</label>
+        <input id="ville" type="text" placeholder="Ex. Kisangani" maxlength="40" value="Kisangani" />
+      </div>
+    </div>
+    <div class="field">
+      <label for="timezone-select">Fuseau horaire de ta ville (ajusté sur Kisangani)</label>
+      <select id="timezone-select">
+        <option value="Africa/Lubumbashi" selected>Kisangani / Lubumbashi (UTC+2)</option>
+        <option value="Africa/Kinshasa">Kinshasa (UTC+1)</option>
+        <option value="Africa/Nairobi">Nairobi / Kampala (UTC+3)</option>
+        <option value="Europe/Paris">Paris / Bruxelles (UTC+1 / +2)</option>
+        <option value="UTC">Temps Universel (UTC+0)</option>
+        <option value="America/New_York">New York (UTC-5 / -4)</option>
+      </select>
     </div>
     <div class="field" id="code-field-wrapper">
       <label for="candidat-code" id="code-label">Code personnel candidat</label>
@@ -420,30 +465,41 @@
 
     <div class="card-box">
       <h2>Grand Tournoi Otaku 2026</h2>
-      <p class="sub">Bienvenue sur la plateforme officielle de la communauté NovaRoot Impact à Kisangani. Sessions chaque samedi à 21h00 !</p>
+      <p class="sub">Bienvenue sur la plateforme officielle de la communauté NovaRoot Impact. Sessions chaque samedi de 21h00 à 22h00 (heure de Kisangani) !</p>
       <img src="finale.JPG" alt="Affiche Grande Finale" class="img-fluid" />
       <button class="btn" onclick="switchTab('sessions')">Voir les sessions de Quiz</button>
     </div>
     <div class="ad-slot">Bannière Sponsorisée · Partenaire Officiel</div>
   </div>
 
-  <!-- ONGLET 2 : SESSIONS -->
+  <!-- ONGLET 2 : SESSIONS & SUPERVISION LIVE STAFF -->
   <div id="tab-sessions" class="hidden">
     <div class="card-box">
-      <h1>Sessions du concours</h1>
+      <h1 id="sessions-main-title">Sessions du concours</h1>
       <p class="sub" id="candidate-summary"></p>
       <div id="status-session-banner" class="alert err hidden"></div>
       <div class="alert">
-        <strong>Règles d'horaire (21h00) :</strong><br>
+        <strong>Horaires officiels (Heure de Kisangani : 21h00 – 22h00) :</strong><br>
         • À partir de <strong>21h15</strong> : -1 pt · À <strong>21h20</strong> : -2 pts · À <strong>21h30</strong> : -3 pts.<br>
-        • Après <strong>21h35</strong> : session fermée (rattrapage à prévoir).
+        • Session ouverte jusqu'à <strong>22h00</strong> (aucune coupure à 21h35).
       </div>
+
+      <!-- MONITEUR EN DIRECT POUR FONDATEUR & ADMINS -->
+      <div id="staff-live-monitor" class="hidden">
+        <div class="leaderboard-head">
+          <h2 style="margin:0;">👁️ Supervision en Direct des Sessions</h2>
+          <button class="btn btn-secondary btn-small" type="button" onclick="chargerEtatServeur()">Actualiser</button>
+        </div>
+        <p class="sub" style="margin-bottom:10px;">Les comptes Fondateur et Admin observent en direct : qui joue, à quelle question il est et ce qu'il a répondu.</p>
+        <div id="live-activity-list"></div>
+      </div>
+
       <img src="calendrier.JPG" alt="Calendrier des événements" class="img-fluid" style="margin-bottom: 14px;" />
       <div id="sessions-list"></div>
     </div>
   </div>
 
-  <!-- ONGLET 3 : CLASSEMENT -->
+  <!-- ONGLET 3 : CLASSEMENTS (CUMULÉ + JOURNALIER / PAR SESSION) -->
   <div id="tab-leaderboard" class="hidden">
     <div class="card-box">
       <div class="leaderboard-head">
@@ -452,17 +508,40 @@
       </div>
       <p class="sub" style="margin-top: 6px;">Barème : <strong>Quiz</strong> (sessions en ligne) + <strong>Billets</strong> (30 pts max) = <strong>Total</strong>.</p>
 
+      <div class="field">
+        <label for="daily-session-filter">Classement Journalier / Par Session</label>
+        <select id="daily-session-filter" onchange="afficherDoubleClassement()">
+          <option value="1">Session 1 — Samedi 21/11</option>
+          <option value="2">Session 2 — Samedi 28/11</option>
+          <option value="3">Session 3 — Samedi 05/12</option>
+        </select>
+      </div>
+
       <div class="leaderboard-box official" style="margin-top: 0;">
-        <h3 style="margin:0 0 8px; color: var(--accent-2); font-size: 14px;">🏆 Candidats Officiels</h3>
-        <ol class="leaderboard-list" id="leaderboard-official-sessions">
+        <h3 style="margin:0 0 8px; color: var(--accent-2); font-size: 14px;">🏆 Candidats Officiels — Cumulé (Toutes sessions)</h3>
+        <ol class="leaderboard-list" id="leaderboard-official-cumul">
+          <li>Chargement du classement...</li>
+        </ol>
+      </div>
+
+      <div class="leaderboard-box official">
+        <h3 style="margin:0 0 8px; color: var(--accent-2); font-size: 14px;" id="title-official-daily">📅 Candidats Officiels — Session 1</h3>
+        <ol class="leaderboard-list" id="leaderboard-official-daily">
+          <li>Chargement du classement journalier...</li>
+        </ol>
+      </div>
+
+      <div class="leaderboard-box">
+        <h3 style="margin:0 0 8px; font-size: 14px;">👀 Spectateurs — Cumulé (Toutes sessions)</h3>
+        <ol class="leaderboard-list" id="leaderboard-spectator-cumul">
           <li>Chargement du classement...</li>
         </ol>
       </div>
 
       <div class="leaderboard-box">
-        <h3 style="margin:0 0 8px; font-size: 14px;">👀 Spectateurs</h3>
-        <ol class="leaderboard-list" id="leaderboard-spectator-sessions">
-          <li>Chargement du classement...</li>
+        <h3 style="margin:0 0 8px; font-size: 14px;" id="title-spectator-daily">📅 Spectateurs — Session 1</h3>
+        <ol class="leaderboard-list" id="leaderboard-spectator-daily">
+          <li>Chargement du classement journalier...</li>
         </ol>
       </div>
     </div>
@@ -487,7 +566,7 @@
         <button class="btn btn-secondary btn-small" type="button" onclick="chargerEtatServeur()">Actualiser</button>
       </div>
       <p class="sub" style="margin-top:6px;">Appuie sur <strong>↩ Répondre</strong> sur un message pour citer son auteur.</p>
-      
+
       <div id="chat-locked-banner" class="alert err hidden">🔒 Le chat est temporairement verrouillé par l'administration. Seuls les administrateurs peuvent écrire.</div>
 
       <div class="chat-container">
@@ -560,15 +639,34 @@
         <hr style="border:0; border-top:1px solid var(--border); margin:18px 0;">
         <span class="badge founder">Pouvoirs Exclusifs Fondateur</span>
 
-        <!-- Timing par question -->
+        <!-- Timing individuel par question -->
         <div class="admin-row" style="margin-top:12px;">
-          <div class="session-title" style="margin-bottom:6px;">⏱️ Timing par Question (Défaut : 15s)</div>
-          <p class="meta" style="margin-bottom:10px;">Définis le temps accordé pour répondre à chaque question (de 5 à 60 secondes).</p>
+          <div class="session-title" style="margin-bottom:6px;">⏱️ Timing Individuel par Question (5s à 60s)</div>
+          <p class="meta" style="margin-bottom:10px;">Règle la durée exacte de chaque question (Q1, Q2, Q3...) pour la session choisie.</p>
           <div class="field">
-            <label>Secondes par question</label>
-            <input type="number" id="founder-question-timer" min="5" max="60" value="15" />
+            <label for="founder-timer-session">Session concernée</label>
+            <select id="founder-timer-session" onchange="chargerInputsTimingQuestions()">
+              <option value="1">Session 1</option>
+              <option value="2">Session 2</option>
+              <option value="3">Session 3</option>
+            </select>
           </div>
-          <button class="btn" type="button" onclick="sauvegarderTimingQuestions()">Enregistrer le timing</button>
+          <div class="field">
+            <label for="founder-uniform-sec">Appliquer le même temps à toutes les questions (optionnel)</label>
+            <div class="grid-2">
+              <input type="number" id="founder-uniform-sec" min="5" max="60" value="15" />
+              <button class="btn btn-secondary" type="button" style="margin-top:0;" onclick="appliquerTempsUniformeQuestions()">Appliquer à toutes</button>
+            </div>
+          </div>
+          <div class="q-timers-grid" id="founder-per-question-timers"></div>
+          <button class="btn" type="button" onclick="sauvegarderTimingQuestions()">Enregistrer le timing par question</button>
+        </div>
+
+        <!-- Gestion et délivrance des pénalités -->
+        <div class="admin-row">
+          <div class="session-title" style="margin-bottom:6px;">⚖️ Pénalités de Retard & Délivrance</div>
+          <p class="meta" style="margin-bottom:10px;">Consulte les candidats ayant reçu une pénalité et délivre-la (restitution des points) si tu l'accordes.</p>
+          <div id="founder-penalties-list"></div>
         </div>
 
         <!-- Élimination (points insuffisants) -->
@@ -616,26 +714,28 @@
           <div id="founder-disqualified-list" style="margin-top:10px;"></div>
         </div>
 
-        <!-- Modification directe des points de Quiz et Pseudos -->
+        <!-- Pouvoir Fondateur sur Candidats ET Spectateurs -->
         <div class="admin-row">
-          <div class="session-title" style="margin-bottom:6px;">👑 Modifier Points Quiz & Pseudo</div>
-          <p class="meta" style="margin-bottom:10px;">Réservé au Fondateur : corrige les points de quiz ou renomme un participant.</p>
+          <div class="session-title" style="margin-bottom:6px;">👑 Points Quiz, Pseudo & Reset (Candidats & Spectateurs)</div>
+          <p class="meta" style="margin-bottom:10px;">Modifie les points, le pseudo ou réinitialise la progression d'un candidat ou d'un spectateur.</p>
           <div class="field">
-            <label>Participant</label>
+            <label>Participant (Candidat officiel ou Spectateur)</label>
             <select id="founder-edit-user" onchange="preRemplirEditionFondateur()"></select>
           </div>
           <div class="field">
             <label>Nouveau Pseudo</label>
-            <input type="text" id="founder-new-pseudo" placeholder="Pseudo du candidat" />
+            <input type="text" id="founder-new-pseudo" placeholder="Pseudo du participant" />
           </div>
           <div class="field">
-            <label>Points de Quiz</label>
+            <label>Points de Quiz (Total cumulé)</label>
             <input type="number" id="founder-new-quiz-pts" min="0" max="500" placeholder="Points quiz" />
           </div>
           <div class="grid-2">
             <button class="btn" type="button" onclick="sauvegarderEditionFondateur()">Appliquer</button>
             <button class="btn btn-danger" type="button" onclick="reinitialiserScoreParticipant()">Réinitialiser à 0</button>
           </div>
+          <button class="btn btn-ok" type="button" onclick="resetProgressionTestParticipant()">🔄 Reset progression test (local + score)</button>
+          <button class="btn btn-secondary" type="button" onclick="nettoyerScoresEssai()">🧹 Nettoyer essais (Nova_test / Kenjiro)</button>
         </div>
 
         <!-- Suspension temporaire des administrateurs -->
@@ -648,7 +748,7 @@
     </div>
   </div>
 
-  <!-- ÉCRAN : JEU -->
+  <!-- ÉCRAN : JEU (CANDIDATS & SPECTATEURS UNIQUEMENT) -->
   <div id="screen-game" class="card-box hidden">
     <h1 id="game-session-title">Session</h1>
     <p class="sub" id="game-sub"></p>
@@ -679,6 +779,9 @@
 </div>
 
 <script>
+  // ====== RÉFÉRENCE HORAIRE OFFICIELLE : KISANGANI (RDC, UTC+2) ======
+  const KISANGANI_TIMEZONE = "Africa/Lubumbashi";
+
   // ====== CONFIGURATION STAFF (FONDATEUR & ADMINISTRATEURS) ======
   const STAFF_LIST = [
     { id: "founder_plamedi", pseudo: "Plamedi Mutelay", whatsapp: "0993024299", code: "1-D09-2008", role: "fondateur", titre: "Fondateur" },
@@ -717,11 +820,27 @@
   };
   const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`;
 
-  // ====== PLANNING DES SESSIONS (SAMEDIS À 21H00, CLÔTURE 21H35) ======
+  // ====== PLANNING DES SESSIONS (SAMEDIS 21H00 À 22H00 HEURE DE KISANGANI, UTC+2) ======
+  // 21h00 UTC+2 = 19h00 UTC ; 22h00 UTC+2 = 20h00 UTC
   const SESSIONS = [
-    { id: 1, title: "Session 1 — Samedi 21/11 (21h00)", start: new Date("2026-11-21T21:00:00"), end: new Date("2026-11-21T21:35:00") },
-    { id: 2, title: "Session 2 — Samedi 28/11 (21h00)", start: new Date("2026-11-28T21:00:00"), end: new Date("2026-11-28T21:35:00") },
-    { id: 3, title: "Session 3 — Samedi 05/12 (21h00)", start: new Date("2026-12-05T21:00:00"), end: new Date("2026-12-05T21:35:00") }
+    {
+      id: 1,
+      title: "Session 1 — Samedi 21/11 (21h00–22h00)",
+      startUtcMs: Date.parse("2026-11-21T19:00:00Z"),
+      endUtcMs: Date.parse("2026-11-21T20:00:00Z")
+    },
+    {
+      id: 2,
+      title: "Session 2 — Samedi 28/11 (21h00–22h00)",
+      startUtcMs: Date.parse("2026-11-28T19:00:00Z"),
+      endUtcMs: Date.parse("2026-11-28T20:00:00Z")
+    },
+    {
+      id: 3,
+      title: "Session 3 — Samedi 05/12 (21h00–22h00)",
+      startUtcMs: Date.parse("2026-12-05T19:00:00Z"),
+      endUtcMs: Date.parse("2026-12-05T20:00:00Z")
+    }
   ];
 
   // ====== BANQUE DE QUESTIONS PAR SESSION ======
@@ -764,17 +883,28 @@
     ]
   };
 
+  function construireTimingsParDefaut() {
+    const map = {};
+    [1, 2, 3].forEach(sid => {
+      const nb = (SESSION_QUESTIONS[sid] || []).length || 10;
+      map[sid] = Array.from({ length: nb }, () => 15);
+    });
+    return map;
+  }
+
   // État global synchronisé avec JSONBin
   let serverState = {
     concours: "Quiz Otaku 2026",
-    questionTimeSec: 15,
+    questionTimers: construireTimingsParDefaut(),
     minPointsThreshold: 0,
     scores: [],
+    penalties: [],
+    livePlayers: {},
     chat: [],
     chatLocked: false,
     suspensions: {},
-    disqualified: {}, // inscription non finalisée ou tricherie
-    eliminated: {}    // nombre de points requis non atteint
+    disqualified: {},
+    eliminated: {}
   };
 
   let selectedRole = "candidat";
@@ -786,10 +916,11 @@
   let score = 0;
   let timerId = null;
   let countdownInterval = null;
+  let liveMonitorInterval = null;
   let timeLeft = 15;
   let enCoursEnvoi = false;
   let isAnswering = false;
-  let replyingTo = null; // { sender, text }
+  let replyingTo = null;
 
   const btnRoleCandidat = document.getElementById("role-candidat");
   const btnRoleSpectateur = document.getElementById("role-spectateur");
@@ -811,6 +942,60 @@
   btnRoleSpectateur.addEventListener("click", () => setRole("spectateur"));
   btnRoleStaff.addEventListener("click", () => setRole("staff"));
 
+  // Détection automatique du fuseau horaire de l'utilisateur à l'ouverture
+  (function initTimezoneAuto() {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const sel = document.getElementById("timezone-select");
+      if (tz && Array.from(sel.options).some(o => o.value === tz)) {
+        sel.value = tz;
+      }
+    } catch (_) {}
+  })();
+
+  function isStaffRole() {
+    return currentUser && (currentUser.role === "fondateur" || currentUser.role === "admin");
+  }
+
+  function isStaffActive() {
+    if (!currentUser) return false;
+    if (currentUser.role === "fondateur") return true;
+    if (currentUser.role === "admin") return !estAdminSuspendu(currentUser.staffId);
+    return false;
+  }
+
+  function getUserTimeZone() {
+    return currentUser?.timezone || document.getElementById("timezone-select")?.value || KISANGANI_TIMEZONE;
+  }
+
+  function formaterHeureDansZone(utcMs, timeZone) {
+    try {
+      return new Date(utcMs).toLocaleTimeString("fr-FR", {
+        timeZone: timeZone || KISANGANI_TIMEZONE,
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    } catch (_) {
+      return new Date(utcMs).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+    }
+  }
+
+  function formaterDateCompleteDansZone(utcMs, timeZone) {
+    try {
+      return new Date(utcMs).toLocaleDateString("fr-FR", {
+        timeZone: timeZone || KISANGANI_TIMEZONE,
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    } catch (_) {
+      return new Date(utcMs).toLocaleString("fr-FR");
+    }
+  }
+
   function escapeHtml(str) {
     return String(str || "")
       .replace(/&/g, "&amp;")
@@ -823,7 +1008,11 @@
     if (!timestamp) return "";
     const d = new Date(Number(timestamp));
     if (isNaN(d.getTime())) return "";
-    return d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+    return d.toLocaleTimeString("fr-FR", {
+      timeZone: getUserTimeZone(),
+      hour: "2-digit",
+      minute: "2-digit"
+    });
   }
 
   function normaliserTelephone(tel) {
@@ -886,23 +1075,33 @@
     return null;
   }
 
-  function isStaffActive() {
-    if (!currentUser) return false;
-    if (currentUser.role === "fondateur") return true;
-    if (currentUser.role === "admin") return !estAdminSuspendu(currentUser.staffId);
-    return false;
+  function normaliserTimersSession(rawTimers, sessionId) {
+    const nb = (SESSION_QUESTIONS[sessionId] || []).length || 10;
+    const base = Array.isArray(rawTimers?.[sessionId]) ? rawTimers[sessionId] : [];
+    return Array.from({ length: nb }, (_, idx) => {
+      const v = Number(base[idx]);
+      return (!isNaN(v) && v >= 5 && v <= 60) ? v : 15;
+    });
   }
 
-  function getQuestionTimeSec() {
-    const t = Number(serverState.questionTimeSec);
-    return (!isNaN(t) && t >= 5 && t <= 60) ? t : 15;
+  function getQuestionTimeSecFor(sessionId, questionIndex) {
+    const arr = normaliserTimersSession(serverState.questionTimers, sessionId);
+    const val = Number(arr[questionIndex]);
+    return (!isNaN(val) && val >= 5 && val <= 60) ? val : 15;
   }
 
-  function calculerPenaliteRetard(sessionStartDate, nowDate = new Date()) {
-    const minutesAfterStart = (nowDate.getTime() - sessionStartDate.getTime()) / 60000;
-    if (minutesAfterStart >= 30) return 3;
-    if (minutesAfterStart >= 20) return 2;
-    if (minutesAfterStart >= 15) return 1;
+  function getResumeTimingsSession(sessionId) {
+    const arr = normaliserTimersSession(serverState.questionTimers, sessionId);
+    const allSame = arr.every(v => v === arr[0]);
+    return allSame ? `${arr[0]}s / question` : arr.map((v, i) => `Q${i + 1}:${v}s`).join(" · ");
+  }
+
+  // Calcul du retard basé sur l'heure de Kisangani (UTC+2)
+  function calculerPenaliteRetardKisangani(sessionStartUtcMs, nowUtcMs = Date.now()) {
+    const minutesAfterStart = (nowUtcMs - sessionStartUtcMs) / 60000;
+    if (minutesAfterStart >= 30) return 3; // 21h30 heure de Kisangani
+    if (minutesAfterStart >= 20) return 2; // 21h20 heure de Kisangani
+    if (minutesAfterStart >= 15) return 1; // 21h15 heure de Kisangani
     return 0;
   }
 
@@ -918,9 +1117,15 @@
       const rec = data?.record || {};
 
       serverState.concours = rec.concours || "Quiz Otaku 2026";
-      serverState.questionTimeSec = Number(rec.questionTimeSec) || 15;
+      const mergedTimers = construireTimingsParDefaut();
+      [1, 2, 3].forEach(sid => {
+        mergedTimers[sid] = normaliserTimersSession(rec.questionTimers, sid);
+      });
+      serverState.questionTimers = mergedTimers;
       serverState.minPointsThreshold = Number(rec.minPointsThreshold) || 0;
       serverState.scores = normaliserListeScores(Array.isArray(rec.scores) ? rec.scores : []);
+      serverState.penalties = Array.isArray(rec.penalties) ? rec.penalties : [];
+      serverState.livePlayers = rec.livePlayers && typeof rec.livePlayers === "object" ? rec.livePlayers : {};
       serverState.chat = Array.isArray(rec.chat) ? rec.chat : [];
       serverState.chatLocked = Boolean(rec.chatLocked);
       serverState.suspensions = rec.suspensions && typeof rec.suspensions === "object" ? rec.suspensions : {};
@@ -976,6 +1181,9 @@
       const quizPts = Math.max(0, item.quizScore !== undefined ? Number(item.quizScore) : (Number(item.score) || 0));
       const ticketPts = Math.min(30, Math.max(0, Number(item.ticketScore) || 0));
       const sessions = Array.isArray(item.sessions) ? [...item.sessions] : [];
+      const sessionScores = item.sessionScores && typeof item.sessionScores === "object"
+        ? { ...item.sessionScores }
+        : {};
 
       if (!map.has(key)) {
         map.set(key, {
@@ -988,6 +1196,7 @@
           score: quizPts + (role === "candidat" ? ticketPts : 0),
           total: Number(item.total) || 0,
           sessions,
+          sessionScores,
           date: item.date || Date.now()
         });
       } else {
@@ -997,6 +1206,9 @@
         ex.score = ex.quizScore + ex.ticketScore;
         ex.total += Number(item.total) || 0;
         sessions.forEach(s => { if (s && !ex.sessions.includes(s)) ex.sessions.push(s); });
+        Object.entries(sessionScores).forEach(([sid, val]) => {
+          ex.sessionScores[sid] = Math.max(0, Number(val) || 0);
+        });
       }
     });
 
@@ -1006,9 +1218,13 @@
     });
   }
 
-  // ====== AFFICHAGE CLASSEMENT ======
+  // ====== CLASSEMENTS (CUMULÉ + JOURNALIER / PAR SESSION) ======
   function afficherDoubleClassement() {
     const scores = serverState.scores || [];
+    const selectedSessionId = String(document.getElementById("daily-session-filter")?.value || "1");
+    const sessKey = `S${selectedSessionId}`;
+    const sessObj = SESSIONS.find(s => String(s.id) === selectedSessionId) || SESSIONS[0];
+
     const officiels = scores.filter(s =>
       s.role !== "spectateur" &&
       !getDisqualificationInfo(s.candidatId) &&
@@ -1016,9 +1232,10 @@
     );
     const spectateurs = scores.filter(s => s.role === "spectateur");
 
-    const elOff = document.getElementById("leaderboard-official-sessions");
-    if (elOff) {
-      elOff.innerHTML = officiels.length
+    // 1. Candidats Officiels — Cumulé
+    const elOffCumul = document.getElementById("leaderboard-official-cumul");
+    if (elOffCumul) {
+      elOffCumul.innerHTML = officiels.length
         ? officiels.map(item => {
             const qPts = Number(item.quizScore) || 0;
             const bPts = Number(item.ticketScore) || 0;
@@ -1026,20 +1243,59 @@
             const sessTxt = item.sessions?.length ? ` · ${item.sessions.join(", ")}` : "";
             return `<li>
               <strong>${escapeHtml(item.nom)}</strong> — <strong style="color:var(--accent-2);">${totPts} pts</strong><br>
-              <span class="score-breakdown">Quiz : ${qPts} pts | Billets : ${bPts}/30 pts${sessTxt}</span>
+              <span class="score-breakdown">Quiz cumulé : ${qPts} pts | Billets : ${bPts}/30 pts${sessTxt}</span>
             </li>`;
           }).join("")
         : "<li>Aucun candidat officiel actif classé pour le moment.</li>";
     }
 
-    const elSpec = document.getElementById("leaderboard-spectator-sessions");
-    if (elSpec) {
-      elSpec.innerHTML = spectateurs.length
+    // 2. Candidats Officiels — Journalier (par session)
+    document.getElementById("title-official-daily").textContent = `📅 Candidats Officiels — ${sessObj.title}`;
+    const elOffDaily = document.getElementById("leaderboard-official-daily");
+    const officielsDaily = [...officiels].sort((a, b) => {
+      const sa = Number(a.sessionScores?.[sessKey]) || 0;
+      const sb = Number(b.sessionScores?.[sessKey]) || 0;
+      return sb - sa;
+    });
+    if (elOffDaily) {
+      elOffDaily.innerHTML = officielsDaily.length
+        ? officielsDaily.map(item => {
+            const dPts = Number(item.sessionScores?.[sessKey]) || 0;
+            const participated = item.sessions?.includes(sessKey);
+            return `<li>
+              <strong>${escapeHtml(item.nom)}</strong> — <strong style="color:var(--accent-2);">${dPts} pts</strong><br>
+              <span class="score-breakdown">${sessKey} : ${participated ? `${dPts} pts` : "Non joué"}</span>
+            </li>`;
+          }).join("")
+        : "<li>Aucun candidat officiel pour cette session.</li>";
+    }
+
+    // 3. Spectateurs — Cumulé
+    const elSpecCumul = document.getElementById("leaderboard-spectator-cumul");
+    if (elSpecCumul) {
+      elSpecCumul.innerHTML = spectateurs.length
         ? spectateurs.map(item => {
             const qPts = Number(item.quizScore) || 0;
-            return `<li><strong>${escapeHtml(item.nom)}</strong> — ${qPts} pts <span class="meta">(Quiz)</span></li>`;
+            return `<li><strong>${escapeHtml(item.nom)}</strong> — ${qPts} pts <span class="meta">(Quiz cumulé)</span></li>`;
           }).join("")
         : "<li>Aucun spectateur classé pour le moment.</li>";
+    }
+
+    // 4. Spectateurs — Journalier (par session)
+    document.getElementById("title-spectator-daily").textContent = `📅 Spectateurs — ${sessObj.title}`;
+    const elSpecDaily = document.getElementById("leaderboard-spectator-daily");
+    const spectateursDaily = [...spectateurs].sort((a, b) => {
+      const sa = Number(a.sessionScores?.[sessKey]) || 0;
+      const sb = Number(b.sessionScores?.[sessKey]) || 0;
+      return sb - sa;
+    });
+    if (elSpecDaily) {
+      elSpecDaily.innerHTML = spectateursDaily.length
+        ? spectateursDaily.map(item => {
+            const dPts = Number(item.sessionScores?.[sessKey]) || 0;
+            return `<li><strong>${escapeHtml(item.nom)}</strong> — ${dPts} pts <span class="meta">(${sessKey})</span></li>`;
+          }).join("")
+        : "<li>Aucun spectateur pour cette session.</li>";
     }
   }
 
@@ -1069,6 +1325,9 @@
   document.getElementById("btn-login").addEventListener("click", async () => {
     const pseudo = document.getElementById("pseudo").value.trim();
     const whatsapp = document.getElementById("whatsapp").value.trim();
+    const pays = document.getElementById("pays").value.trim() || "RD Congo";
+    const ville = document.getElementById("ville").value.trim() || "Kisangani";
+    const timezone = document.getElementById("timezone-select").value || KISANGANI_TIMEZONE;
     const code = document.getElementById("candidat-code").value.trim();
     const msg = document.getElementById("login-msg");
 
@@ -1088,7 +1347,7 @@
         return;
       }
       if (staff.role === "admin" && estAdminSuspendu(staff.id)) {
-        const finDate = new Date(serverState.suspensions[staff.id]).toLocaleString("fr-FR");
+        const finDate = new Date(serverState.suspensions[staff.id]).toLocaleString("fr-FR", { timeZone: timezone });
         msg.textContent = `Ton compte administrateur est suspendu jusqu'au ${finDate}.`;
         msg.classList.remove("hidden");
         return;
@@ -1098,7 +1357,10 @@
         staffId: staff.id,
         pseudo: staff.pseudo,
         whatsapp: staff.whatsapp,
-        titre: staff.titre
+        titre: staff.titre,
+        pays,
+        ville,
+        timezone
       };
       document.getElementById("nav-admin-btn").classList.remove("hidden");
     } else if (selectedRole === "candidat") {
@@ -1130,13 +1392,19 @@
         role: "candidat",
         pseudo: candidatValide.pseudo,
         whatsapp: whatsapp,
-        code: candidatValide.code
+        code: candidatValide.code,
+        pays,
+        ville,
+        timezone
       };
     } else {
       currentUser = {
         role: "spectateur",
         pseudo,
-        whatsapp
+        whatsapp,
+        pays,
+        ville,
+        timezone
       };
     }
 
@@ -1294,7 +1562,113 @@
     box.textContent = texte;
     box.className = `alert ${estErreur ? 'err' : 'ok'}`;
     box.classList.remove("hidden");
-    setTimeout(() => box.classList.add("hidden"), 4000);
+    setTimeout(() => box.classList.add("hidden"), 4500);
+  }
+
+  function chargerInputsTimingQuestions() {
+    const sid = Number(document.getElementById("founder-timer-session")?.value || 1);
+    const timers = normaliserTimersSession(serverState.questionTimers, sid);
+    const grid = document.getElementById("founder-per-question-timers");
+    if (!grid) return;
+
+    grid.innerHTML = timers.map((sec, idx) => `
+      <div class="q-timer-item">
+        <label for="q-sec-${sid}-${idx}">Question ${idx + 1} (sec)</label>
+        <input type="number" id="q-sec-${sid}-${idx}" min="5" max="60" value="${sec}" />
+      </div>
+    `).join("");
+  }
+
+  function appliquerTempsUniformeQuestions() {
+    const sid = Number(document.getElementById("founder-timer-session")?.value || 1);
+    const uniformSec = Number(document.getElementById("founder-uniform-sec")?.value);
+    if (isNaN(uniformSec) || uniformSec < 5 || uniformSec > 60) {
+      afficherFeedbackAdmin("Choisis un temps entre 5 et 60 secondes.", true);
+      return;
+    }
+    const timers = normaliserTimersSession(serverState.questionTimers, sid);
+    timers.forEach((_, idx) => {
+      const inp = document.getElementById(`q-sec-${sid}-${idx}`);
+      if (inp) inp.value = uniformSec;
+    });
+  }
+
+  async function sauvegarderTimingQuestions() {
+    if (currentUser?.role !== "fondateur") return;
+    const sid = Number(document.getElementById("founder-timer-session")?.value || 1);
+    const nb = (SESSION_QUESTIONS[sid] || []).length || 10;
+    const nouveauxTimings = [];
+
+    for (let i = 0; i < nb; i++) {
+      const val = Number(document.getElementById(`q-sec-${sid}-${i}`)?.value);
+      if (isNaN(val) || val < 5 || val > 60) {
+        afficherFeedbackAdmin(`Question ${i + 1} : renseigne un temps valide entre 5 et 60 secondes.`, true);
+        return;
+      }
+      nouveauxTimings.push(val);
+    }
+
+    await chargerEtatServeur();
+    if (!serverState.questionTimers || typeof serverState.questionTimers !== "object") {
+      serverState.questionTimers = construireTimingsParDefaut();
+    }
+    serverState.questionTimers[sid] = nouveauxTimings;
+    await sauvegarderEtatServeur();
+    afficherFeedbackAdmin(`Timing individuel enregistré pour la Session ${sid} (${nouveauxTimings.map((t, i) => `Q${i + 1}:${t}s`).join(", ")}).`);
+  }
+
+  function afficherListePenalitesFondateur() {
+    const box = document.getElementById("founder-penalties-list");
+    if (!box) return;
+    const list = Array.isArray(serverState.penalties) ? serverState.penalties : [];
+    if (!list.length) {
+      box.innerHTML = `<div class="meta">Aucune pénalité enregistrée pour le moment.</div>`;
+      return;
+    }
+
+    box.innerHTML = list.map((p, idx) => {
+      const delivree = Boolean(p.delivered);
+      const badgeClass = delivree ? "done" : "locked";
+      const badgeTxt = delivree ? "Délivrée (Annulée)" : `-${p.points} pt(s) appliqués`;
+      return `<div class="session-card" style="margin-bottom:8px;">
+        <div class="session-top">
+          <div class="session-title">${escapeHtml(p.nom)} <span class="meta">(${escapeHtml(p.sessionLabel || `Session ${p.sessionId}`)})</span></div>
+          <span class="pill ${badgeClass}">${badgeTxt}</span>
+        </div>
+        <div class="meta" style="margin-bottom:8px;">Pénalité : -${p.points} pt(s) · Ville : ${escapeHtml(p.ville || "Kisangani")}</div>
+        ${!delivree
+          ? `<button class="btn btn-ok btn-small" type="button" onclick="delivrerPenalite(${idx})">✓ Délivrer la pénalité (+${p.points} pt rendu)</button>`
+          : `<div class="meta" style="color:var(--ok);">Pénalité délivrée le ${new Date(p.deliveredAt || Date.now()).toLocaleString("fr-FR")}.</div>`
+        }
+      </div>`;
+    }).join("");
+  }
+
+  async function delivrerPenalite(index) {
+    if (currentUser?.role !== "fondateur") return;
+    await chargerEtatServeur();
+    const p = serverState.penalties?.[index];
+    if (!p || p.delivered) return;
+
+    p.delivered = true;
+    p.deliveredAt = Date.now();
+
+    const ptsRendus = Number(p.points) || 0;
+    const sessKey = `S${p.sessionId}`;
+    let entry = serverState.scores.find(s => s.candidatId === p.candidatId);
+    if (entry && ptsRendus > 0) {
+      entry.quizScore = (Number(entry.quizScore) || 0) + ptsRendus;
+      if (entry.sessionScores && entry.sessionScores[sessKey] !== undefined) {
+        entry.sessionScores[sessKey] = (Number(entry.sessionScores[sessKey]) || 0) + ptsRendus;
+      }
+      entry.score = entry.quizScore + (Number(entry.ticketScore) || 0);
+      serverState.scores = normaliserListeScores(serverState.scores);
+    }
+
+    await sauvegarderEtatServeur();
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`Pénalité délivrée à ${p.nom} (+${ptsRendus} pt restitué).`);
   }
 
   function rafraichirPanneauAdmin() {
@@ -1307,8 +1681,8 @@
 
     document.getElementById("admin-welcome-title").textContent = `Bonjour, ${currentUser.pseudo}`;
     document.getElementById("admin-welcome-sub").textContent = isFounder
-      ? "Tu disposes de tous les droits (timing, éliminations, disqualifications, billets, points quiz, pseudos, chat et suspension des admins)."
-      : "Tu peux attribuer les points de billets (max 30 pts) et modérer le chat.";
+      ? "Tu disposes de tous les droits (timing par question, délivrance des pénalités, candidats & spectateurs, éliminations, disqualifications, billets, chat et admins)."
+      : "Tu peux attribuer les points de billets (max 30 pts), modérer le chat et suivre les sessions en direct.";
 
     const chatPill = document.getElementById("chat-status-pill");
     chatPill.textContent = serverState.chatLocked ? "Verrouillé" : "Ouvert";
@@ -1327,7 +1701,8 @@
     founderSec.classList.toggle("hidden", !isFounder);
 
     if (isFounder) {
-      document.getElementById("founder-question-timer").value = getQuestionTimeSec();
+      chargerInputsTimingQuestions();
+      afficherListePenalitesFondateur();
       document.getElementById("founder-min-points").value = Number(serverState.minPointsThreshold) || 0;
 
       // Sélecteur élimination
@@ -1374,23 +1749,38 @@
           }).join("")
         : `<div class="meta">Aucun candidat disqualifié actuellement.</div>`;
 
-      // Sélecteur édition points & pseudos
+      // Sélecteur édition points, pseudos & reset test (Candidats ET Spectateurs)
       const selectFounder = document.getElementById("founder-edit-user");
-      const tousLesCandidats = CANDIDATS_OFFICIELS.map(c => {
+      const mapUsers = new Map();
+      CANDIDATS_OFFICIELS.forEach(c => {
         const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
         const ex = serverState.scores.find(s => s.candidatId === id);
-        return {
+        mapUsers.set(id, {
           id,
+          role: "candidat",
           nom: ex ? ex.nom : c.pseudo,
           whatsapp: c.whatsapp,
           quizScore: ex ? (ex.quizScore || 0) : 0,
           ticketScore: ex ? (ex.ticketScore || 0) : 0
-        };
+        });
+      });
+      serverState.scores.forEach(s => {
+        if (!mapUsers.has(s.candidatId)) {
+          mapUsers.set(s.candidatId, {
+            id: s.candidatId,
+            role: s.role || "spectateur",
+            nom: s.nom,
+            whatsapp: s.whatsapp || "",
+            quizScore: s.quizScore || 0,
+            ticketScore: s.ticketScore || 0
+          });
+        }
       });
 
-      selectFounder.innerHTML = tousLesCandidats.map(u =>
-        `<option value="${u.id}" data-nom="${u.nom}" data-quiz="${u.quizScore}">${u.nom} (Quiz : ${u.quizScore} pts · Billets : ${u.ticketScore} pts)</option>`
-      ).join("");
+      selectFounder.innerHTML = Array.from(mapUsers.values()).map(u => {
+        const tag = u.role === "spectateur" ? " [Spectateur]" : " [Candidat]";
+        return `<option value="${u.id}" data-nom="${escapeHtml(u.nom)}" data-quiz="${u.quizScore}">${escapeHtml(u.nom)}${tag} (Quiz : ${u.quizScore} pts · Billets : ${u.ticketScore} pts)</option>`;
+      }).join("");
       preRemplirEditionFondateur();
 
       // Liste des administrateurs à gérer
@@ -1398,7 +1788,7 @@
       const admins = STAFF_LIST.filter(s => s.role === "admin");
       adminsBox.innerHTML = admins.map(adm => {
         const suspendu = estAdminSuspendu(adm.id);
-        const finStr = suspendu ? new Date(serverState.suspensions[adm.id]).toLocaleString("fr-FR") : "";
+        const finStr = suspendu ? new Date(serverState.suspensions[adm.id]).toLocaleString("fr-FR", { timeZone: getUserTimeZone() }) : "";
         return `<div class="session-card" style="margin-bottom:8px;">
           <div class="session-top">
             <div class="session-title">${adm.pseudo} <span class="meta">(${adm.titre})</span></div>
@@ -1520,19 +1910,6 @@
     );
   }
 
-  async function sauvegarderTimingQuestions() {
-    if (currentUser?.role !== "fondateur") return;
-    const sec = Number(document.getElementById("founder-question-timer").value);
-    if (isNaN(sec) || sec < 5 || sec > 60) {
-      afficherFeedbackAdmin("Choisis un temps entre 5 et 60 secondes par question.", true);
-      return;
-    }
-    await chargerEtatServeur();
-    serverState.questionTimeSec = sec;
-    await sauvegarderEtatServeur();
-    afficherFeedbackAdmin(`Timing mis à jour : ${sec} secondes par question.`);
-  }
-
   async function toggleChatLock(verrouiller) {
     if (!isStaffActive()) return;
     await chargerEtatServeur();
@@ -1568,6 +1945,7 @@
         score: val,
         total: 0,
         sessions: [],
+        sessionScores: {},
         date: Date.now()
       };
       serverState.scores.push(entry);
@@ -1606,21 +1984,23 @@
     const candInfo = CANDIDATS_OFFICIELS.find(c => normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat") === candidatId);
     let entry = serverState.scores.find(s => s.candidatId === candidatId);
 
-    if (!entry && candInfo) {
+    if (!entry) {
+      const isSpec = candidatId.startsWith("spectateur__");
       entry = {
         candidatId,
-        role: "candidat",
+        role: isSpec ? "spectateur" : "candidat",
         nom: nouveauPseudo,
-        whatsapp: candInfo.whatsapp,
+        whatsapp: candInfo ? candInfo.whatsapp : "",
         quizScore: nouveauxPointsQuiz,
         ticketScore: 0,
         score: nouveauxPointsQuiz,
         total: 0,
         sessions: [],
+        sessionScores: {},
         date: Date.now()
       };
       serverState.scores.push(entry);
-    } else if (entry) {
+    } else {
       entry.nom = nouveauPseudo;
       entry.quizScore = nouveauxPointsQuiz;
       entry.score = nouveauxPointsQuiz + (Number(entry.ticketScore) || 0);
@@ -1630,7 +2010,7 @@
     await sauvegarderEtatServeur();
     afficherDoubleClassement();
     rafraichirPanneauAdmin();
-    afficherFeedbackAdmin(`Profil et points de quiz mis à jour pour ${nouveauPseudo}.`);
+    afficherFeedbackAdmin(`Profil et points mis à jour pour ${nouveauPseudo}.`);
   }
 
   async function reinitialiserScoreParticipant() {
@@ -1644,12 +2024,74 @@
       entry.ticketScore = 0;
       entry.score = 0;
       entry.sessions = [];
+      entry.sessionScores = {};
       serverState.scores = normaliserListeScores(serverState.scores);
       await sauvegarderEtatServeur();
       afficherDoubleClassement();
       rafraichirPanneauAdmin();
       afficherFeedbackAdmin("Le score du participant a été réinitialisé à 0.");
     }
+  }
+
+  async function resetProgressionTestParticipant() {
+    if (currentUser?.role !== "fondateur") return;
+    const candidatId = document.getElementById("founder-edit-user").value;
+    if (!candidatId) return;
+
+    await chargerEtatServeur();
+    const entry = serverState.scores.find(s => s.candidatId === candidatId);
+    const candOff = CANDIDATS_OFFICIELS.find(c => normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat") === candidatId);
+    const nomAffiche = entry?.nom || candOff?.pseudo || candidatId;
+
+    const parts = candidatId.split("__");
+    const suffix = parts.length >= 3 ? `${parts[1]}__${parts[2]}` : candidatId;
+    localStorage.removeItem(`nr_quiz_prog_candidat__${suffix}`);
+    localStorage.removeItem(`nr_quiz_prog_spectateur__${suffix}`);
+    localStorage.removeItem(`nr_quiz_prog_${candidatId}`);
+
+    if (entry) {
+      entry.quizScore = 0;
+      entry.ticketScore = 0;
+      entry.score = 0;
+      entry.total = 0;
+      entry.sessions = [];
+      entry.sessionScores = {};
+      serverState.scores = normaliserListeScores(serverState.scores);
+      await sauvegarderEtatServeur();
+    }
+
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`Progression locale et score réinitialisés pour ${nomAffiche}.`);
+  }
+
+  async function nettoyerScoresEssai() {
+    if (currentUser?.role !== "fondateur") return;
+    await chargerEtatServeur();
+
+    const testNames = ["nova_test", "kenjiro", "kenjiro_2077"];
+    const avant = serverState.scores.length;
+
+    serverState.scores = serverState.scores.filter(s => {
+      const n = (s.nom || "").trim().toLowerCase();
+      return !testNames.includes(n);
+    });
+
+    CANDIDATS_OFFICIELS.filter(c => testNames.includes(c.pseudo.trim().toLowerCase())).forEach(c => {
+      const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
+      localStorage.removeItem(`nr_quiz_prog_${id}`);
+    });
+    Object.keys(localStorage).forEach(k => {
+      if (k.startsWith("nr_quiz_prog_") && testNames.some(t => k.toLowerCase().includes(t))) {
+        localStorage.removeItem(k);
+      }
+    });
+
+    const retires = avant - serverState.scores.length;
+    await sauvegarderEtatServeur();
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`${retires} entrée(s) d'essai (Nova_test / Kenjiro) retirée(s) et progression locale nettoyée.`);
   }
 
   async function suspendreAdmin(staffId, heures) {
@@ -1670,11 +2112,75 @@
     afficherFeedbackAdmin("Administrateur réactivé avec succès.");
   }
 
-  // ====== SESSIONS & JEU ======
-  function formaterDateLisible(dateObj) {
-    return dateObj.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  // ====== SUPERVISION EN DIRECT (FONDATEUR & ADMINS) ======
+  async function publierEtatEnDirect(statut, derniereReponseTexte = "") {
+    if (!currentUser || isStaffRole()) return;
+    const pid = normaliserCleParticipant(currentUser.pseudo, currentUser.whatsapp, currentUser.role);
+    if (!serverState.livePlayers || typeof serverState.livePlayers !== "object") {
+      serverState.livePlayers = {};
+    }
+
+    serverState.livePlayers[pid] = {
+      id: pid,
+      nom: currentUser.pseudo,
+      role: currentUser.role === "spectateur" ? "Spectateur" : "Candidat",
+      ville: currentUser.ville || "Kisangani",
+      pays: currentUser.pays || "RD Congo",
+      sessionId: activeSession ? activeSession.id : null,
+      sessionTitle: activeSession ? activeSession.title : "",
+      questionNum: activeSession ? (qIndex + 1) : 0,
+      totalQuestions: sessionQuestions.length || 10,
+      lastAnswer: derniereReponseTexte || (serverState.livePlayers[pid]?.lastAnswer || "Aucune encore"),
+      currentScore: score,
+      status: statut,
+      updatedAt: Date.now()
+    };
+
+    try {
+      await sauvegarderEtatServeur();
+    } catch (_) {}
   }
 
+  function afficherMoniteurStaff() {
+    const monitor = document.getElementById("staff-live-monitor");
+    const box = document.getElementById("live-activity-list");
+    if (!monitor || !box) return;
+
+    if (!isStaffRole()) {
+      monitor.classList.add("hidden");
+      if (liveMonitorInterval) {
+        clearInterval(liveMonitorInterval);
+        liveMonitorInterval = null;
+      }
+      return;
+    }
+
+    monitor.classList.remove("hidden");
+    const players = Object.values(serverState.livePlayers || {}).sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+    if (!players.length) {
+      box.innerHTML = `<div class="session-card"><div class="meta">Aucun candidat ou spectateur actif en session pour le moment.</div></div>`;
+      return;
+    }
+
+    box.innerHTML = players.map(p => {
+      const isPlaying = p.status === "en_cours";
+      const heureStr = p.updatedAt ? formaterHeureDansZone(p.updatedAt, getUserTimeZone()) : "";
+      return `<div class="session-card">
+        <div class="session-top">
+          <div class="session-title">${escapeHtml(p.nom)} <span class="pill">${escapeHtml(p.role)}</span></div>
+          <span class="pill ${isPlaying ? 'open' : 'done'}">${isPlaying ? 'En train de jouer' : 'Terminé'}</span>
+        </div>
+        <div class="meta">
+          • <strong>Session :</strong> ${escapeHtml(p.sessionTitle || `Session ${p.sessionId}`)}<br>
+          • <strong>Progression :</strong> Question ${p.questionNum}/${p.totalQuestions} · Score en cours : <strong>${p.currentScore} pts</strong><br>
+          • <strong>Dernière réponse :</strong> ${escapeHtml(p.lastAnswer || "Aucune")} <span style="opacity:0.75;">(${escapeHtml(p.ville || "Kisangani")} · ${heureStr})</span>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  // ====== SESSIONS & JEU ======
   function shuffle(arr) {
     const copy = [...arr];
     for (let i = copy.length - 1; i > 0; i--) {
@@ -1701,56 +2207,77 @@
   function renderSessions() {
     if (countdownInterval) clearInterval(countdownInterval);
     const prog = getProgress();
-    const now = new Date();
-    const qSec = getQuestionTimeSec();
+    const nowUtcMs = Date.now();
+    const userTz = getUserTimeZone();
+    const locLabel = `${currentUser?.ville || "Kisangani"} (${currentUser?.pays || "RD Congo"})`;
     const blockReason = getCurrentCandidatBlockReason();
     const banner = document.getElementById("status-session-banner");
 
-    if (blockReason) {
-      banner.textContent = `${blockReason} Tu ne peux plus lancer de session.`;
-      banner.classList.remove("hidden");
-    } else {
+    if (isStaffRole()) {
+      document.getElementById("sessions-main-title").textContent = "Observation des Sessions";
+      document.getElementById("candidate-summary").textContent = `Mode Observation (${currentUser.titre || currentUser.pseudo}) · ${locLabel} · Référence : Kisangani (21h00–22h00)`;
       banner.classList.add("hidden");
+      afficherMoniteurStaff();
+      if (!liveMonitorInterval) {
+        liveMonitorInterval = setInterval(() => {
+          if (!document.getElementById("tab-sessions").classList.contains("hidden") && isStaffRole()) {
+            chargerEtatServeur();
+          }
+        }, 6000);
+      }
+    } else {
+      document.getElementById("sessions-main-title").textContent = "Sessions du concours";
+      document.getElementById("staff-live-monitor").classList.add("hidden");
+      if (blockReason) {
+        banner.textContent = `${blockReason} Tu ne peux plus lancer de session.`;
+        banner.classList.remove("hidden");
+      } else {
+        banner.classList.add("hidden");
+      }
+      const labelStatut = currentUser.role === "candidat" ? "Candidat Officiel" : "Spectateur";
+      document.getElementById("candidate-summary").textContent = `${labelStatut} : ${currentUser.pseudo} · ${locLabel} · ${prog.completed.length}/${SESSIONS.length} sessions validées`;
     }
-
-    const labelStatut = currentUser.role === "fondateur" ? "Fondateur" : currentUser.role === "admin" ? "Administrateur" : currentUser.role === "candidat" ? "Candidat Officiel" : "Spectateur";
-    document.getElementById("candidate-summary").textContent = `${labelStatut} : ${currentUser.pseudo} · ${qSec}s / question · ${prog.completed.length}/${SESSIONS.length} sessions validées`;
 
     const container = document.getElementById("sessions-list");
     container.innerHTML = "";
 
     SESSIONS.forEach(sess => {
       const isDone = prog.completed.includes(sess.id);
-      const nowTime = now.getTime();
-      const started = nowTime >= sess.start.getTime();
-      const notExpired = nowTime <= sess.end.getTime();
+      const started = nowUtcMs >= sess.startUtcMs;
+      const notExpired = nowUtcMs <= sess.endUtcMs;
+      const heuresLoc = `${formaterHeureDansZone(sess.startUtcMs, userTz)}–${formaterHeureDansZone(sess.endUtcMs, userTz)}`;
+      const timingsResume = getResumeTimingsSession(sess.id);
 
       let statusLabel = "Verrouillée", pillClass = "locked", reason = "", canPlay = false;
 
-      if (blockReason) {
+      if (isStaffRole()) {
+        statusLabel = !started ? "À venir" : (!notExpired ? "Clôturée (22h00)" : "En cours");
+        pillClass = (!started || !notExpired) ? "locked" : "open";
+        reason = `Kisangani : 21h00–22h00 (${heuresLoc} chez toi) · Timings : ${timingsResume} · <em>Observation uniquement (pas de participation au quiz)</em>.`;
+      } else if (blockReason) {
         statusLabel = "Bloqué"; pillClass = "locked"; reason = "Accès aux sessions bloqué.";
       } else if (isDone) {
-        statusLabel = "Terminée"; pillClass = "done"; reason = "Session validée et enregistrée.";
+        statusLabel = "Terminée"; pillClass = "done"; reason = `Session validée et enregistrée · ${heuresLoc} (${locLabel}).`;
       } else if (!started) {
         statusLabel = "À venir"; pillClass = "locked";
-        reason = `<div class="countdown-date">Ouverture le ${formaterDateLisible(sess.start)}</div>
-          <div class="countdown-grid" data-start="${sess.start.getTime()}">
+        reason = `<div class="countdown-date">Ouverture à 21h00 Kisangani — ${formaterDateCompleteDansZone(sess.startUtcMs, userTz)} (${locLabel})</div>
+          <div class="countdown-grid" data-start="${sess.startUtcMs}">
             <div class="countdown-box"><div class="countdown-num cd-j">00</div><div class="countdown-label">jours</div></div>
             <div class="countdown-box"><div class="countdown-num cd-h">00</div><div class="countdown-label">h</div></div>
             <div class="countdown-box"><div class="countdown-num cd-m">00</div><div class="countdown-label">min</div></div>
             <div class="countdown-box"><div class="countdown-num cd-s">00</div><div class="countdown-label">s</div></div>
           </div>`;
       } else if (!notExpired) {
-        statusLabel = "Clôturée (21h35)"; pillClass = "locked";
-        reason = "La session est terminée après 21h35. Il faut attendre le rattrapage.";
+        statusLabel = "Clôturée (22h00)"; pillClass = "locked";
+        reason = `La session est terminée à 22h00 heure de Kisangani (${heuresLoc} chez toi).`;
       } else {
         const prevDone = sess.id === 1 || prog.completed.includes(sess.id - 1);
         if (prevDone) {
-          const pen = calculerPenaliteRetard(sess.start, now);
+          const pen = calculerPenaliteRetardKisangani(sess.startUtcMs, nowUtcMs);
           statusLabel = "En cours"; pillClass = "open";
           reason = pen > 0
-            ? `${qSec}s / question · Retard actif : <strong>-${pen} pt(s)</strong> sur le total de la session.`
-            : `${qSec}s / question · Aucune pénalité de retard.`;
+            ? `Ouverte (${heuresLoc} chez toi · 21h00–22h00 Kisangani) · Retard actif : <strong>-${pen} pt(s)</strong> · ${timingsResume}.`
+            : `Ouverte (${heuresLoc} chez toi · 21h00–22h00 Kisangani) · Aucune pénalité · ${timingsResume}.`;
           canPlay = true;
         } else {
           reason = `Termine d'abord la Session ${sess.id - 1}.`;
@@ -1761,7 +2288,7 @@
       card.className = "session-card";
       card.innerHTML = `<div class="session-top"><div class="session-title">${sess.title}</div><span class="pill ${pillClass}">${statusLabel}</span></div><div class="meta">${reason}</div>`;
 
-      if (canPlay) {
+      if (canPlay && !isStaffRole()) {
         const btn = document.createElement("button");
         btn.className = "btn";
         btn.textContent = `Lancer la Session ${sess.id}`;
@@ -1789,6 +2316,11 @@
   }
 
   async function startSession(sess) {
+    if (isStaffRole()) {
+      switchTab("sessions");
+      return;
+    }
+
     await chargerEtatServeur();
     if (getCurrentCandidatBlockReason()) {
       renderSessions();
@@ -1796,8 +2328,8 @@
     }
 
     if (countdownInterval) clearInterval(countdownInterval);
-    const now = new Date();
-    if (now.getTime() > sess.end.getTime()) {
+    const nowUtcMs = Date.now();
+    if (nowUtcMs > sess.endUtcMs || nowUtcMs < sess.startUtcMs) {
       renderSessions();
       return;
     }
@@ -1808,7 +2340,7 @@
     saveProgress(prog);
 
     activeSession = sess;
-    activePenalty = calculerPenaliteRetard(sess.start, now);
+    activePenalty = calculerPenaliteRetardKisangani(sess.startUtcMs, nowUtcMs);
     score = 0; qIndex = 0; isAnswering = false;
 
     const bank = SESSION_QUESTIONS[sess.id] || [];
@@ -1818,13 +2350,15 @@
     }));
 
     document.getElementById("game-session-title").textContent = sess.title;
-    document.getElementById("game-sub").textContent = `${currentUser.pseudo} · ${getQuestionTimeSec()}s / question`;
+    document.getElementById("game-sub").textContent = `${currentUser.pseudo} · ${currentUser.ville || "Kisangani"}`;
     document.getElementById("game-penalty-info").innerHTML = activePenalty > 0
-      ? `⚠️ Retard constaté : <strong>-${activePenalty} point(s)</strong> seront déduits du total de cette session.`
+      ? `⚠️ Retard constaté (heure de Kisangani) : <strong>-${activePenalty} point(s)</strong> seront déduits du total de cette session.`
       : `Attention : quitter ou rafraîchir la page consomme ta tentative pour cette session.`;
 
     ["tab-home", "tab-sessions", "tab-leaderboard", "tab-rules", "tab-chat", "tab-admin"].forEach(id => document.getElementById(id).classList.add("hidden"));
     document.getElementById("screen-game").classList.remove("hidden");
+
+    await publierEtatEnDirect("en_cours", "Session démarrée");
     renderQuestion();
   }
 
@@ -1832,7 +2366,7 @@
     clearInterval(timerId);
     isAnswering = false;
     const currentQ = sessionQuestions[qIndex];
-    timeLeft = getQuestionTimeSec();
+    timeLeft = getQuestionTimeSecFor(activeSession.id, qIndex);
 
     document.getElementById("q-counter").textContent = `Question ${qIndex + 1}/${sessionQuestions.length}`;
     document.getElementById("q-timer").textContent = `${timeLeft}s`;
@@ -1845,18 +2379,18 @@
       btn.className = "opt";
       btn.textContent = opt.text;
       btn.dataset.correct = opt.isCorrect ? "1" : "0";
-      btn.addEventListener("click", () => handleAnswer(btn, opt.isCorrect));
+      btn.addEventListener("click", () => handleAnswer(btn, opt.isCorrect, opt.text));
       optsBox.appendChild(btn);
     });
 
     timerId = setInterval(() => {
       timeLeft -= 1;
       document.getElementById("q-timer").textContent = `${timeLeft}s`;
-      if (timeLeft <= 0) { clearInterval(timerId); handleAnswer(null, false); }
+      if (timeLeft <= 0) { clearInterval(timerId); handleAnswer(null, false, "Temps écoulé"); }
     }, 1000);
   }
 
-  function handleAnswer(clickedBtn, isCorrect) {
+  async function handleAnswer(clickedBtn, isCorrect, answerLabel = "") {
     if (isAnswering) return;
     isAnswering = true;
     clearInterval(timerId);
@@ -1867,6 +2401,9 @@
     });
     if (clickedBtn && !isCorrect) clickedBtn.classList.add("wrong");
     if (isCorrect) score += sessionQuestions[qIndex].pts;
+
+    const resumeRep = `${answerLabel} (${isCorrect ? "Juste" : "Faux"})`;
+    await publierEtatEnDirect("en_cours", `Q${qIndex + 1} : ${resumeRep}`);
 
     setTimeout(() => {
       qIndex += 1;
@@ -1901,7 +2438,7 @@
 
       let entry = serverState.scores.find(s => s.candidatId === candidatId);
       if (!entry) {
-        serverState.scores.push({
+        entry = {
           candidatId,
           role,
           nom: currentUser.pseudo,
@@ -1911,18 +2448,45 @@
           score: finalSessionScore,
           total: totalPoints,
           sessions: [sessionCode],
+          sessionScores: { [sessionCode]: finalSessionScore },
           date: Date.now()
-        });
+        };
+        serverState.scores.push(entry);
       } else if (!entry.sessions.includes(sessionCode)) {
         entry.sessions.push(sessionCode);
+        if (!entry.sessionScores || typeof entry.sessionScores !== "object") {
+          entry.sessionScores = {};
+        }
+        entry.sessionScores[sessionCode] = finalSessionScore;
         entry.quizScore = (Number(entry.quizScore) || 0) + finalSessionScore;
         entry.score = entry.quizScore + (Number(entry.ticketScore) || 0);
         entry.total = (Number(entry.total) || 0) + totalPoints;
         entry.date = Date.now();
       }
 
+      // Enregistre la pénalité dans l'historique pour que le Fondateur puisse la consulter et la délivrer
+      if (role === "candidat" && activePenalty > 0) {
+        if (!Array.isArray(serverState.penalties)) serverState.penalties = [];
+        const alreadyLogged = serverState.penalties.some(
+          p => p.candidatId === candidatId && Number(p.sessionId) === Number(activeSession.id)
+        );
+        if (!alreadyLogged) {
+          serverState.penalties.push({
+            candidatId,
+            nom: currentUser.pseudo,
+            sessionId: activeSession.id,
+            sessionLabel: activeSession.title,
+            points: activePenalty,
+            ville: currentUser.ville || "Kisangani",
+            delivered: false,
+            date: Date.now()
+          });
+        }
+      }
+
       serverState.scores = normaliserListeScores(serverState.scores);
       await sauvegarderEtatServeur();
+      await publierEtatEnDirect("termine", `Session terminée (${finalSessionScore}/${totalPoints} pts)`);
       syncBox.className = "alert ok";
       syncBox.textContent = "Score enregistré et cumulé avec succès !";
     } catch (_) {
