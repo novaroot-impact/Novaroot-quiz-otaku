@@ -233,6 +233,7 @@
     /* CLASSEMENT DÉTAILLÉ */
     .leaderboard-box { margin-top: 14px; background: var(--card-2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
     .leaderboard-box.official { border-color: rgba(255, 107, 44, 0.35); }
+    .leaderboard-box.test-box { border-color: rgba(39, 196, 125, 0.35); }
     .leaderboard-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
     .leaderboard-list { margin: 0; padding-left: 20px; font-size: 13px; }
     .leaderboard-list li { padding: 7px 0; border-bottom: 1px solid var(--border); }
@@ -510,19 +511,19 @@
   <!-- ONGLET 2 : SESSIONS & SUPERVISION LIVE STAFF -->
   <div id="tab-sessions" class="hidden">
     <div class="card-box">
-      <h1 id="sessions-main-title">Sessions du concours</h1>
+      <h1 id="sessions-main-title">Sessions & Tests</h1>
       <p class="sub" id="candidate-summary"></p>
       <div id="status-session-banner" class="alert err hidden"></div>
       <div class="alert">
         <strong>Horaires officiels (Heure de Kisangani : 21h00 – 22h00) :</strong><br>
-        • À partir de <strong>21h15</strong> : -1 pt · À <strong>21h20</strong> : -2 pts · À <strong>21h30</strong> : -3 pts.<br>
-        • Session ouverte jusqu'à <strong>22h00</strong> (aucune coupure à 21h35).
+        • <strong>3 Sessions officielles</strong> (cumulées dans le classement officiel) + <strong>Test 1 (Lun 23/11)</strong> &amp; <strong>Test 2 (Mar 24/11)</strong> (classement test séparé).<br>
+        • À partir de <strong>21h15</strong> : -1 pt · À <strong>21h20</strong> : -2 pts · À <strong>21h30</strong> : -3 pts · Clôture à <strong>22h00</strong>.
       </div>
 
       <!-- MONITEUR EN DIRECT POUR FONDATEUR & ADMINS -->
       <div id="staff-live-monitor" class="hidden">
         <div class="leaderboard-head">
-          <h2 style="margin:0;">👁️ Supervision en Direct des Sessions</h2>
+          <h2 style="margin:0;">👁️ Supervision en Direct</h2>
           <button class="btn btn-secondary btn-small" type="button" onclick="chargerEtatServeur()">Actualiser</button>
         </div>
         <p class="sub" style="margin-bottom:10px;">Les comptes Fondateur et Admin observent en direct : qui joue, à quelle question il est et ce qu'il a répondu.</p>
@@ -534,40 +535,64 @@
     </div>
   </div>
 
-  <!-- ONGLET 3 : CLASSEMENTS (CUMULÉ + JOURNALIER / PAR SESSION) -->
+  <!-- ONGLET 3 : CLASSEMENTS (OFFICIEL CUMULÉ + TESTS CUMULÉ + PAR SESSION/TEST) -->
   <div id="tab-leaderboard" class="hidden">
     <div class="card-box">
       <div class="leaderboard-head">
         <h2 style="margin:0;">Classements en Direct</h2>
         <button class="btn btn-secondary btn-small" id="btn-refresh-lb" type="button" onclick="chargerEtatServeur()">Actualiser</button>
       </div>
-      <p class="sub" style="margin-top: 6px;">Barème : <strong>Quiz</strong> (sessions en ligne) + <strong>Billets</strong> (30 pts max) = <strong>Total</strong>.</p>
+      <p class="sub" style="margin-top: 6px;">
+        <strong>Classement Officiel Cumulé</strong> = addition des <strong>3 sessions officielles</strong> + <strong>Billets (30 pts max)</strong>.<br>
+        Les <strong>Tests 1 &amp; 2</strong> ne sont pas cumulés dans le classement officiel et ont leurs propres classements cumulés.
+      </p>
 
       <div class="field">
-        <label for="daily-session-filter">Classement Journalier / Par Session</label>
+        <label for="daily-session-filter">Détail par Session Officielle ou Test</label>
         <select id="daily-session-filter" onchange="afficherDoubleClassement()">
-          <option value="1">Session 1 — Samedi 21/11</option>
-          <option value="2">Session 2 — Samedi 28/11</option>
-          <option value="3">Session 3 — Samedi 05/12</option>
+          <option value="S1">Session 1 — Samedi 21/11 (Officielle)</option>
+          <option value="S2">Session 2 — Samedi 28/11 (Officielle)</option>
+          <option value="S3">Session 3 — Samedi 05/12 (Officielle)</option>
+          <option value="T1">Test 1 — Lundi 23/11 (Entraînement)</option>
+          <option value="T2">Test 2 — Mardi 24/11 (Entraînement)</option>
         </select>
       </div>
 
+      <!-- 1. CLASSEMENT OFFICIEL CUMULÉ (3 SESSIONS + BILLETS) -->
       <div class="leaderboard-box official" style="margin-top: 0;">
-        <h3 style="margin:0 0 8px; color: var(--accent-2); font-size: 14px;">🏆 Candidats Officiels — Cumulé (Toutes sessions)</h3>
+        <h3 style="margin:0 0 8px; color: var(--accent-2); font-size: 14px;">🏆 Candidats Officiels — Cumulé (3 Sessions + Billets)</h3>
         <ol class="leaderboard-list" id="leaderboard-official-cumul">
           <li>Chargement du classement...</li>
         </ol>
       </div>
 
+      <!-- 2. DÉTAIL PAR SESSION OFFICIELLE OU TEST SÉLECTIONNÉ -->
       <div class="leaderboard-box official">
-        <h3 style="margin:0 0 8px; color: var(--accent-2); font-size: 14px;" id="title-official-daily">📅 Candidats Officiels — Session 1</h3>
+        <h3 style="margin:0 0 8px; color: var(--accent-2); font-size: 14px;" id="title-official-daily">📅 Candidats — Session 1</h3>
         <ol class="leaderboard-list" id="leaderboard-official-daily">
-          <li>Chargement du classement journalier...</li>
+          <li>Chargement du classement...</li>
         </ol>
       </div>
 
+      <!-- 3. CLASSEMENT CUMULÉ DES TESTS — CANDIDATS -->
+      <div class="leaderboard-box test-box">
+        <h3 style="margin:0 0 8px; color: var(--ok); font-size: 14px;">🧪 Candidats — Cumulé Tests (Test 1 + Test 2)</h3>
+        <ol class="leaderboard-list" id="leaderboard-test-candidate-cumul">
+          <li>Aucun point de test enregistré pour le moment.</li>
+        </ol>
+      </div>
+
+      <!-- 4. CLASSEMENT CUMULÉ DES TESTS — SPECTATEURS -->
+      <div class="leaderboard-box test-box">
+        <h3 style="margin:0 0 8px; color: var(--ok); font-size: 14px;">🧪 Spectateurs — Cumulé Tests (Test 1 + Test 2)</h3>
+        <ol class="leaderboard-list" id="leaderboard-test-spectator-cumul">
+          <li>Aucun point de test spectateur enregistré pour le moment.</li>
+        </ol>
+      </div>
+
+      <!-- 5. SPECTATEURS — CUMULÉ OFFICIEL & DÉTAIL -->
       <div class="leaderboard-box">
-        <h3 style="margin:0 0 8px; font-size: 14px;">👀 Spectateurs — Cumulé (Toutes sessions)</h3>
+        <h3 style="margin:0 0 8px; font-size: 14px;">👀 Spectateurs — Cumulé Sessions Officielles</h3>
         <ol class="leaderboard-list" id="leaderboard-spectator-cumul">
           <li>Chargement du classement...</li>
         </ol>
@@ -576,7 +601,7 @@
       <div class="leaderboard-box">
         <h3 style="margin:0 0 8px; font-size: 14px;" id="title-spectator-daily">📅 Spectateurs — Session 1</h3>
         <ol class="leaderboard-list" id="leaderboard-spectator-daily">
-          <li>Chargement du classement journalier...</li>
+          <li>Chargement du classement...</li>
         </ol>
       </div>
     </div>
@@ -689,13 +714,15 @@
         <!-- Timing individuel par question -->
         <div class="admin-row" style="margin-top:12px;">
           <div class="session-title" style="margin-bottom:6px;">⏱️ Timing Individuel par Question (5s à 60s)</div>
-          <p class="meta" style="margin-bottom:10px;">Règle la durée exacte de chaque question (Q1, Q2, Q3...) pour la session choisie.</p>
+          <p class="meta" style="margin-bottom:10px;">Règle la durée exacte de chaque question (Q1, Q2, Q3...) pour la session ou le test choisi.</p>
           <div class="field">
-            <label for="founder-timer-session">Session concernée</label>
+            <label for="founder-timer-session">Session ou Test concerné</label>
             <select id="founder-timer-session" onchange="chargerInputsTimingQuestions()">
-              <option value="1">Session 1</option>
-              <option value="2">Session 2</option>
-              <option value="3">Session 3</option>
+              <option value="1">Session 1 (Officielle)</option>
+              <option value="2">Session 2 (Officielle)</option>
+              <option value="3">Session 3 (Officielle)</option>
+              <option value="4">Test 1 — Lundi 23/11</option>
+              <option value="5">Test 2 — Mardi 24/11</option>
             </select>
           </div>
           <div class="field">
@@ -721,7 +748,7 @@
           <div class="session-title" style="margin-bottom:6px;">📉 Élimination des Candidats (Points)</div>
           <p class="meta" style="margin-bottom:10px;">Élimine ou réintègre un candidat qui n'a pas atteint le nombre de points demandé.</p>
           <div class="field">
-            <label>Seuil minimum de points requis (Total Quiz + Billets)</label>
+            <label>Seuil minimum de points requis (Total Officiel + Billets)</label>
             <div class="grid-2">
               <input type="number" id="founder-min-points" min="0" max="500" value="0" placeholder="Ex. 15" />
               <button class="btn btn-danger" type="button" style="margin-top:0;" onclick="eliminerSousSeuil()">Éliminer &lt; Seuil</button>
@@ -761,20 +788,22 @@
           <div id="founder-disqualified-list" style="margin-top:10px;"></div>
         </div>
 
-        <!-- Pouvoir Fondateur : Points par Session, Pseudo & Reset (Candidats ET Spectateurs) -->
+        <!-- Pouvoir Fondateur : Points par Session / Test, Pseudo & Reset (Candidats ET Spectateurs) -->
         <div class="admin-row">
-          <div class="session-title" style="margin-bottom:6px;">👑 Points par Session, Pseudo & Reset (Candidats & Spectateurs)</div>
-          <p class="meta" style="margin-bottom:10px;">Modifie les points de chaque session (S1, S2, S3), le pseudo ou réinitialise un candidat ou spectateur.</p>
+          <div class="session-title" style="margin-bottom:6px;">👑 Points par Session ou Test, Pseudo & Reset</div>
+          <p class="meta" style="margin-bottom:10px;">Modifie les points de chaque session (S1, S2, S3) ou test (T1, T2), le pseudo ou réinitialise un candidat ou spectateur.</p>
           <div class="field">
             <label>Participant (Candidat officiel ou Spectateur)</label>
             <select id="founder-edit-user" onchange="preRemplirEditionFondateur()"></select>
           </div>
           <div class="field">
-            <label>Session à modifier</label>
+            <label>Session ou Test à modifier</label>
             <select id="founder-edit-session" onchange="preRemplirEditionFondateur()">
-              <option value="S1">Session 1 (S1)</option>
-              <option value="S2">Session 2 (S2)</option>
-              <option value="S3">Session 3 (S3)</option>
+              <option value="S1">Session 1 — Officielle (S1)</option>
+              <option value="S2">Session 2 — Officielle (S2)</option>
+              <option value="S3">Session 3 — Officielle (S3)</option>
+              <option value="T1">Test 1 — Lundi 23/11 (T1)</option>
+              <option value="T2">Test 2 — Mardi 24/11 (T2)</option>
             </select>
           </div>
           <div class="field">
@@ -782,12 +811,12 @@
             <input type="text" id="founder-new-pseudo" placeholder="Pseudo du participant" />
           </div>
           <div class="field">
-            <label for="founder-new-session-pts">Points de cette session (S1 / S2 / S3)</label>
-            <input type="number" id="founder-new-session-pts" min="0" max="500" placeholder="Points de la session choisie" />
+            <label for="founder-new-session-pts">Points de la session ou du test choisi</label>
+            <input type="number" id="founder-new-session-pts" min="0" max="500" placeholder="Points de la session/test" />
           </div>
           <div class="meta" id="founder-user-sessions-summary" style="margin-bottom:8px;"></div>
           <div class="grid-2">
-            <button class="btn" type="button" onclick="sauvegarderEditionFondateur()">Appliquer à la session</button>
+            <button class="btn" type="button" onclick="sauvegarderEditionFondateur()">Appliquer</button>
             <button class="btn btn-danger" type="button" onclick="reinitialiserScoreParticipant()">Réinitialiser à 0</button>
           </div>
           <button class="btn btn-ok" type="button" onclick="resetProgressionTestParticipant()">🔄 Reset progression test (local + score)</button>
@@ -822,9 +851,9 @@
   <!-- ÉCRAN : FIN DE SESSION -->
   <div id="screen-result" class="card-box hidden">
     <h1>Session enregistrée</h1>
-    <p class="sub">Ton résultat a été enregistré et cumulé dans ton classement.</p>
+    <p class="sub" id="result-sub-msg">Ton résultat a été enregistré dans ton classement.</p>
     <div class="stat-box">
-      <div class="meta">SCORE FINAL DE LA SESSION</div>
+      <div class="meta">SCORE FINAL</div>
       <div class="stat-num" id="res-score">0</div>
       <div class="meta" id="res-detail"></div>
     </div>
@@ -876,29 +905,52 @@
   };
   const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`;
 
-  // ====== PLANNING DES SESSIONS (SAMEDIS 21H00 À 22H00 HEURE DE KISANGANI, UTC+2) ======
+  // ====== PLANNING DES SESSIONS OFFICIELLES & TESTS (HEURE DE KISANGANI, UTC+2) ======
+  // 21h00 UTC+2 = 19h00 UTC ; 22h00 UTC+2 = 20h00 UTC
   const SESSIONS = [
     {
       id: 1,
+      code: "S1",
+      isTest: false,
       title: "Session 1 — Samedi 21/11 (21h00–22h00)",
       startUtcMs: Date.parse("2026-11-21T19:00:00Z"),
       endUtcMs: Date.parse("2026-11-21T20:00:00Z")
     },
     {
       id: 2,
+      code: "S2",
+      isTest: false,
       title: "Session 2 — Samedi 28/11 (21h00–22h00)",
       startUtcMs: Date.parse("2026-11-28T19:00:00Z"),
       endUtcMs: Date.parse("2026-11-28T20:00:00Z")
     },
     {
       id: 3,
+      code: "S3",
+      isTest: false,
       title: "Session 3 — Samedi 05/12 (21h00–22h00)",
       startUtcMs: Date.parse("2026-12-05T19:00:00Z"),
       endUtcMs: Date.parse("2026-12-05T20:00:00Z")
+    },
+    {
+      id: 4,
+      code: "T1",
+      isTest: true,
+      title: "Test 1 — Lundi 23/11 (21h00–22h00)",
+      startUtcMs: Date.parse("2026-11-23T19:00:00Z"),
+      endUtcMs: Date.parse("2026-11-23T20:00:00Z")
+    },
+    {
+      id: 5,
+      code: "T2",
+      isTest: true,
+      title: "Test 2 — Mardi 24/11 (21h00–22h00)",
+      startUtcMs: Date.parse("2026-11-24T19:00:00Z"),
+      endUtcMs: Date.parse("2026-11-24T20:00:00Z")
     }
   ];
 
-  // ====== BANQUE DE QUESTIONS PAR SESSION ======
+  // ====== BANQUE DE QUESTIONS (SESSIONS 1-3 + TEST 1 & TEST 2) ======
   const SESSION_QUESTIONS = {
     1: [
       { q: "[Naruto] Dans Naruto Shippuden, Sasuke peut lancer l'Amaterasu d'un œil et la modifier d'un autre. Dans quel œil la lance-t-il ?", opts: ["Œil gauche", "Œil droit", "Les deux yeux simultanément", "Il ne peut pas lancer l'Amaterasu"], ans: 1, pts: 1 },
@@ -935,12 +987,36 @@
       { q: "[Multi-Anime] Quel personnage est un mentaliste et illusionniste qui rejoint l'équipe principale après avoir trahi son camp d'origine ?", opts: ["Gen Asagiri", "Tetta Kisaki", "Thomas Andre", "Nozel Silva"], ans: 0, pts: 1 },
       { q: "[Multi-Anime] Quel personnage porte un tatouage de dragon sur la tempe gauche ?", opts: ["Draken", "Yami Sukehiro", "Sung Jin-woo", "Tsukasa Shishio"], ans: 0, pts: 1 },
       { q: "[Multi-Anime] Quel personnage possède des yeux vairons (un œil rouge et un œil jaune/doré) ?", opts: ["Seijuro Akashi", "Chifuyu Matsuno", "Yuno Grinberryall", "Cha Hae-in"], ans: 0, pts: 1 }
+    ],
+    4: [
+      { q: "[Naruto] Quel est le rôle principal du Sharingan ?", opts: ["Copier des techniques non-héréditaires", "Activer le mode Ermite sans entraînement", "Annuler le chakra naturel", "Remplacer le Rinnegan chez les Senju"], ans: 0, pts: 1 },
+      { q: "[Naruto] Quel était le but initial d'Akatsuki sous Yahiko ?", opts: ["Conquérir tous les villages", "Capturer les démons à queues", "Promouvoir la paix à Amegakure", "Protéger le Conseil des Kage"], ans: 2, pts: 1 },
+      { q: "[One Piece] Que permet le Busoshoku Haki ?", opts: ["Lire les pensées à distance", "Frapper les corps intangibles des Logia", "Effacer les mémoires", "Devenir un élément naturel"], ans: 1, pts: 1 },
+      { q: "[One Piece] À quoi sert un Road Ponéglyphe ?", opts: ["Donner des recettes de navigation", "Repérer une île menant à Laugh Tale", "Annuler les fruits du démon", "Identifier tous les Marines"], ans: 1, pts: 1 },
+      { q: "[Attack on Titan] De quoi sont faits les murs de Paradis ?", opts: ["De pierre importée de Mahr", "De Titans colossaux endormis durcis", "De métal forgé en un jour", "De corail volcanique"], ans: 1, pts: 1 },
+      { q: "[Attack on Titan] Quelle particularité a le Titan Assaillant ?", opts: ["Voler en haute altitude", "Cracher des flammes d'acier", "Chercher la liberté et voir le futur", "Se régénérer dans l'eau salée"], ans: 2, pts: 1 },
+      { q: "[Dragon Ball] Quelle règle régit la fusion Métamol ?", opts: ["Utiliser des boucles Potara", "Avoir puissance et taille équilibrées", "Être définitive à tout niveau", "Exiger un Saiyan et un Namek"], ans: 1, pts: 1 },
+      { q: "[Dragon Ball] Que se passe-t-il après avoir réuni les Dragon Balls terrestres ?", opts: ["Immortalité infinie sans limite", "Exaucement de vœux puis repos d'un an", "Destruction d'une planète entière", "Transformation en Super Saiyan"], ans: 1, pts: 1 },
+      { q: "[Bleach] Qu'est-ce que le Bankai ?", opts: ["La forme de base d'un Zanpakuto", "La libération finale d'un Zanpakuto", "Un pouvoir exclusif des Vasto Lorde", "Un sort défensif des Quincy"], ans: 1, pts: 1 },
+      { q: "[Bleach] Quelle capacité définit les Quincy ?", opts: ["Manipuler le Reishi, souvent à l'arc", "Purifier les âmes avec un Zanpakuto", "Utiliser le Sonído sans énergie", "Ouvrir des portails avec des masques"], ans: 0, pts: 1 }
+    ],
+    5: [
+      { q: "[Death Note] Quelle règle s'applique à l'écriture d'un nom ?", opts: ["La mort suit si l'on visualise le visage", "La mort est toujours instantanée", "Un simple surnom suffit sans visage", "Le Shinigami meurt à la première page"], ans: 0, pts: 1 },
+      { q: "[Death Note] Quel est le rôle de L ?", opts: ["Chef de la police de Tokyo à visage découvert", "Détective anonyme qui cible le Japon", "Shinigami envoyé par le roi des morts", "Créateur du cahier cherchant à le vendre"], ans: 1, pts: 1 },
+      { q: "[Kuroko's Basket] Quel est le style de Tetsuya Kuroko ?", opts: ["Tirs à trois points à longue distance", "Redirection de l'attention et passes décisives", "Domination aérienne au poste de pivot", "Contres systématiques par lecture mentale"], ans: 1, pts: 1 },
+      { q: "[Kuroko's Basket] Qu'est-ce que la Génération des Miracles ?", opts: ["Cinq prodiges de Teiko aux talents uniques", "L'équipe nationale olympique sans coach", "Une passe spéciale de l'équipe de Seirin", "Un tournoi réservé aux lycées de Tokyo"], ans: 0, pts: 1 },
+      { q: "[Jujutsu Kaisen] Quelle affirmation décrit l'énergie occulte ?", opts: ["Elle naît surtout des émotions négatives", "Tous les humains maîtrisent l'extension du territoire", "Seuls les exorcistes créent des fléaux", "Elle disparaît à chaque sort inné"], ans: 0, pts: 1 },
+      { q: "[Jujutsu Kaisen] Qui est Ryomen Sukuna ?", opts: ["Professeur de Kyoto allié d'Itadori", "Le Roi des Fléaux très puissant", "Un corps sans aucune énergie occulte", "Un humain armé de fusils classiques"], ans: 1, pts: 1 },
+      { q: "[Solo Leveling] Quelle particularité a Sung Jin-Woo en tant que Joueur ?", opts: ["Accès à un système de niveaux et quêtes", "Éveil direct au rang S sans progression", "Combat limité à dix chasseurs de rang E", "Perte des pouvoirs dès le rang C"], ans: 0, pts: 1 },
+      { q: "[Solo Leveling] À quoi sert l'Extraction d'ombre ?", opts: ["Lever une armée de soldats d'ombre", "Transformer l'acier en verre protecteur", "Remonter le temps de vingt-quatre heures", "Pétrifier les monstres en pierre"], ans: 0, pts: 1 },
+      { q: "[One-Punch Man] Quelle situation caractérise Saitama ?", opts: ["Héros de classe C dépendant de Genos", "Force extrême d'un coup et manque de défis", "Armure fournie par le Dr Kuseno", "Cyborg modifié par la Maison de l'Évolution"], ans: 1, pts: 1 },
+      { q: "[One-Punch Man] Quel est le rôle de Genos auprès de Saitama ?", opts: ["Président de l'Association des Héros", "Cyborg disciple cherchant son secret", "Chef de l'Association des Monstres", "Journaliste critique des héros"], ans: 1, pts: 1 }
     ]
   };
 
   function construireTimingsParDefaut() {
     const map = {};
-    [1, 2, 3].forEach(sid => {
+    [1, 2, 3, 4, 5].forEach(sid => {
       const nb = (SESSION_QUESTIONS[sid] || []).length || 10;
       map[sid] = Array.from({ length: nb }, () => 15);
     });
@@ -1182,6 +1258,16 @@
     return 0;
   }
 
+  function getOfficialQuizTotal(item) {
+    const sScores = item.sessionScores || {};
+    return ["S1", "S2", "S3"].reduce((acc, k) => acc + Math.max(0, Number(sScores[k]) || 0), 0);
+  }
+
+  function getTestQuizTotal(item) {
+    const sScores = item.sessionScores || {};
+    return ["T1", "T2"].reduce((acc, k) => acc + Math.max(0, Number(sScores[k]) || 0), 0);
+  }
+
   // ====== SYNCHRONISATION JSONBIN ======
   async function chargerEtatServeur() {
     try {
@@ -1195,7 +1281,7 @@
 
       serverState.concours = rec.concours || "Quiz Otaku 2026";
       const mergedTimers = construireTimingsParDefaut();
-      [1, 2, 3].forEach(sid => {
+      [1, 2, 3, 4, 5].forEach(sid => {
         mergedTimers[sid] = normaliserTimersSession(rec.questionTimers, sid);
       });
       serverState.questionTimers = mergedTimers;
@@ -1281,6 +1367,7 @@
           quizScore: rawQuizPts,
           ticketScore: role === "candidat" ? ticketPts : 0,
           score: rawQuizPts + (role === "candidat" ? ticketPts : 0),
+          testScore: 0,
           total: Number(item.total) || 0,
           sessions,
           sessionScores: rawSessionScores,
@@ -1301,14 +1388,15 @@
       }
     });
 
-    // Synchronise quizScore et score avec le détail par session lorsque des scores de sessions existent
+    // Calcule séparément le cumul officiel (S1+S2+S3 + billets) et le cumul des tests (T1+T2)
     map.forEach(entry => {
-      const sEntries = Object.entries(entry.sessionScores || {});
-      if (sEntries.length > 0) {
-        const sommeSessions = sEntries.reduce((acc, [, v]) => acc + Math.max(0, Number(v) || 0), 0);
-        entry.quizScore = sommeSessions;
-        entry.score = entry.quizScore + (entry.role === "candidat" ? (Number(entry.ticketScore) || 0) : 0);
-      }
+      const officialQuiz = getOfficialQuizTotal(entry);
+      const testQuiz = getTestQuizTotal(entry);
+      const billets = entry.role === "candidat" ? Math.min(30, Math.max(0, Number(entry.ticketScore) || 0)) : 0;
+
+      entry.quizScore = officialQuiz;
+      entry.testScore = testQuiz;
+      entry.score = officialQuiz + billets;
     });
 
     return Array.from(map.values()).sort((a, b) => {
@@ -1317,12 +1405,11 @@
     });
   }
 
-  // ====== CLASSEMENTS (CUMULÉ + JOURNALIER / PAR SESSION) ======
+  // ====== CLASSEMENTS (OFFICIEL CUMULÉ + TESTS CUMULÉ + PAR SESSION/TEST) ======
   function afficherDoubleClassement() {
     const scores = serverState.scores || [];
-    const selectedSessionId = String(document.getElementById("daily-session-filter")?.value || "1");
-    const sessKey = `S${selectedSessionId}`;
-    const sessObj = SESSIONS.find(s => String(s.id) === selectedSessionId) || SESSIONS[0];
+    const sessKey = String(document.getElementById("daily-session-filter")?.value || "S1");
+    const sessObj = SESSIONS.find(s => s.code === sessKey) || SESSIONS[0];
 
     const officiels = scores.filter(s =>
       s.role !== "spectateur" &&
@@ -1331,23 +1418,26 @@
     );
     const spectateurs = scores.filter(s => s.role === "spectateur");
 
+    // 1. Candidats Officiels — Cumulé (3 sessions officielles + Billets, hors tests)
     const elOffCumul = document.getElementById("leaderboard-official-cumul");
     if (elOffCumul) {
       elOffCumul.innerHTML = officiels.length
         ? officiels.map(item => {
-            const qPts = Number(item.quizScore) || 0;
+            const qPts = getOfficialQuizTotal(item);
             const bPts = Number(item.ticketScore) || 0;
             const totPts = qPts + bPts;
-            const sessTxt = item.sessions?.length ? ` · ${item.sessions.join(", ")}` : "";
+            const offSess = (item.sessions || []).filter(k => ["S1", "S2", "S3"].includes(k));
+            const sessTxt = offSess.length ? ` · ${offSess.join(", ")}` : "";
             return `<li>
               <strong>${escapeHtml(item.nom)}</strong> — <strong style="color:var(--accent-2);">${totPts} pts</strong><br>
-              <span class="score-breakdown">Quiz cumulé : ${qPts} pts | Billets : ${bPts}/30 pts${sessTxt}</span>
+              <span class="score-breakdown">3 Sessions officielles : ${qPts} pts | Billets : ${bPts}/30 pts${sessTxt}</span>
             </li>`;
           }).join("")
         : "<li>Aucun candidat officiel actif classé pour le moment.</li>";
     }
 
-    document.getElementById("title-official-daily").textContent = `📅 Candidats Officiels — ${sessObj.title}`;
+    // 2. Détail par Session Officielle ou Test sélectionné (Candidats)
+    document.getElementById("title-official-daily").textContent = `📅 Candidats — ${sessObj.title}`;
     const elOffDaily = document.getElementById("leaderboard-official-daily");
     const officielsDaily = [...officiels].sort((a, b) => {
       const sa = Number(a.sessionScores?.[sessKey]) || 0;
@@ -1364,19 +1454,59 @@
               <span class="score-breakdown">${sessKey} : ${participated ? `${dPts} pts` : "Non joué"}</span>
             </li>`;
           }).join("")
-        : "<li>Aucun candidat officiel pour cette session.</li>";
+        : "<li>Aucun candidat pour cette session/test.</li>";
     }
 
+    // 3. Candidats — Cumulé Tests (Test 1 + Test 2, non cumulé dans le classement officiel)
+    const elTestCandCumul = document.getElementById("leaderboard-test-candidate-cumul");
+    const candidatsTest = [...officiels]
+      .filter(item => getTestQuizTotal(item) > 0 || (item.sessions || []).some(k => ["T1", "T2"].includes(k)))
+      .sort((a, b) => getTestQuizTotal(b) - getTestQuizTotal(a));
+    if (elTestCandCumul) {
+      elTestCandCumul.innerHTML = candidatsTest.length
+        ? candidatsTest.map(item => {
+            const tPts = getTestQuizTotal(item);
+            const t1 = Number(item.sessionScores?.T1) || 0;
+            const t2 = Number(item.sessionScores?.T2) || 0;
+            return `<li>
+              <strong>${escapeHtml(item.nom)}</strong> — <strong style="color:var(--ok);">${tPts} pts</strong><br>
+              <span class="score-breakdown">Test 1 : ${t1} pts | Test 2 : ${t2} pts (hors classement officiel)</span>
+            </li>`;
+          }).join("")
+        : "<li>Aucun résultat de test candidat enregistré pour le moment.</li>";
+    }
+
+    // 4. Spectateurs — Cumulé Tests (Test 1 + Test 2)
+    const elTestSpecCumul = document.getElementById("leaderboard-test-spectator-cumul");
+    const spectateursTest = [...spectateurs]
+      .filter(item => getTestQuizTotal(item) > 0 || (item.sessions || []).some(k => ["T1", "T2"].includes(k)))
+      .sort((a, b) => getTestQuizTotal(b) - getTestQuizTotal(a));
+    if (elTestSpecCumul) {
+      elTestSpecCumul.innerHTML = spectateursTest.length
+        ? spectateursTest.map(item => {
+            const tPts = getTestQuizTotal(item);
+            const t1 = Number(item.sessionScores?.T1) || 0;
+            const t2 = Number(item.sessionScores?.T2) || 0;
+            return `<li>
+              <strong>${escapeHtml(item.nom)}</strong> — <strong style="color:var(--ok);">${tPts} pts</strong><br>
+              <span class="score-breakdown">Test 1 : ${t1} pts | Test 2 : ${t2} pts</span>
+            </li>`;
+          }).join("")
+        : "<li>Aucun résultat de test spectateur enregistré pour le moment.</li>";
+    }
+
+    // 5. Spectateurs — Cumulé Sessions Officielles
     const elSpecCumul = document.getElementById("leaderboard-spectator-cumul");
     if (elSpecCumul) {
       elSpecCumul.innerHTML = spectateurs.length
         ? spectateurs.map(item => {
-            const qPts = Number(item.quizScore) || 0;
-            return `<li><strong>${escapeHtml(item.nom)}</strong> — ${qPts} pts <span class="meta">(Quiz cumulé)</span></li>`;
+            const qPts = getOfficialQuizTotal(item);
+            return `<li><strong>${escapeHtml(item.nom)}</strong> — ${qPts} pts <span class="meta">(Sessions officielles)</span></li>`;
           }).join("")
         : "<li>Aucun spectateur classé pour le moment.</li>";
     }
 
+    // 6. Spectateurs — Détail par Session / Test sélectionné
     document.getElementById("title-spectator-daily").textContent = `📅 Spectateurs — ${sessObj.title}`;
     const elSpecDaily = document.getElementById("leaderboard-spectator-daily");
     const spectateursDaily = [...spectateurs].sort((a, b) => {
@@ -1390,7 +1520,7 @@
             const dPts = Number(item.sessionScores?.[sessKey]) || 0;
             return `<li><strong>${escapeHtml(item.nom)}</strong> — ${dPts} pts <span class="meta">(${sessKey})</span></li>`;
           }).join("")
-        : "<li>Aucun spectateur pour cette session.</li>";
+        : "<li>Aucun spectateur pour cette session/test.</li>";
     }
   }
 
@@ -1784,7 +1914,7 @@
     }
     serverState.questionTimers[sid] = nouveauxTimings;
     await sauvegarderEtatServeur();
-    afficherFeedbackAdmin(`Timing individuel enregistré pour la Session ${sid} (${nouveauxTimings.map((t, i) => `Q${i + 1}:${t}s`).join(", ")}).`);
+    afficherFeedbackAdmin(`Timing individuel enregistré (${nouveauxTimings.map((t, i) => `Q${i + 1}:${t}s`).join(", ")}).`);
   }
 
   function afficherListePenalitesFondateur() {
@@ -1824,7 +1954,7 @@
     p.deliveredAt = Date.now();
 
     const ptsRendus = Number(p.points) || 0;
-    const sessKey = `S${p.sessionId}`;
+    const sessKey = p.sessionCode || `S${p.sessionId}`;
     let entry = serverState.scores.find(s => s.candidatId === p.candidatId);
     if (entry && ptsRendus > 0) {
       if (!entry.sessionScores || typeof entry.sessionScores !== "object") {
@@ -1851,7 +1981,7 @@
 
     document.getElementById("admin-welcome-title").textContent = `Bonjour, ${currentUser.pseudo}`;
     document.getElementById("admin-welcome-sub").textContent = isFounder
-      ? "Tu disposes de tous les droits (points par session pour candidats & spectateurs, timing par question, pénalités, éliminations, disqualifications, billets, chat et admins)."
+      ? "Tu disposes de tous les droits (points par session ou test pour candidats & spectateurs, timing par question, pénalités, éliminations, disqualifications, billets, chat et admins)."
       : "Tu peux attribuer les points de billets (max 30 pts), modérer le chat et suivre les sessions en direct.";
 
     const chatPill = document.getElementById("chat-status-pill");
@@ -1914,8 +2044,6 @@
           role: "candidat",
           nom: ex ? ex.nom : c.pseudo,
           whatsapp: c.whatsapp,
-          quizScore: ex ? (ex.quizScore || 0) : 0,
-          ticketScore: ex ? (ex.ticketScore || 0) : 0,
           sessionScores: ex?.sessionScores || {}
         });
       });
@@ -1926,8 +2054,6 @@
             role: s.role || "spectateur",
             nom: s.nom,
             whatsapp: s.whatsapp || "",
-            quizScore: s.quizScore || 0,
-            ticketScore: s.ticketScore || 0,
             sessionScores: s.sessionScores || {}
           });
         }
@@ -1938,7 +2064,9 @@
         const s1 = Number(u.sessionScores?.S1) || 0;
         const s2 = Number(u.sessionScores?.S2) || 0;
         const s3 = Number(u.sessionScores?.S3) || 0;
-        return `<option value="${u.id}" data-nom="${escapeHtml(u.nom)}" data-s1="${s1}" data-s2="${s2}" data-s3="${s3}">${escapeHtml(u.nom)}${tag} (S1:${s1} · S2:${s2} · S3:${s3})</option>`;
+        const t1 = Number(u.sessionScores?.T1) || 0;
+        const t2 = Number(u.sessionScores?.T2) || 0;
+        return `<option value="${u.id}" data-nom="${escapeHtml(u.nom)}" data-s1="${s1}" data-s2="${s2}" data-s3="${s3}" data-t1="${t1}" data-t2="${t2}">${escapeHtml(u.nom)}${tag} (Off:${s1+s2+s3} · Tests:${t1+t2})</option>`;
       }).join("");
       preRemplirEditionFondateur();
 
@@ -2109,7 +2237,6 @@
       serverState.scores.push(entry);
     } else if (entry) {
       entry.ticketScore = val;
-      entry.score = (Number(entry.quizScore) || 0) + val;
     }
 
     serverState.scores = normaliserListeScores(serverState.scores);
@@ -2128,13 +2255,15 @@
     const s1 = Number(opt.dataset.s1) || 0;
     const s2 = Number(opt.dataset.s2) || 0;
     const s3 = Number(opt.dataset.s3) || 0;
-    const mapSess = { S1: s1, S2: s2, S3: s3 };
+    const t1 = Number(opt.dataset.t1) || 0;
+    const t2 = Number(opt.dataset.t2) || 0;
+    const mapSess = { S1: s1, S2: s2, S3: s3, T1: t1, T2: t2 };
 
     document.getElementById("founder-new-pseudo").value = opt.dataset.nom || "";
     document.getElementById("founder-new-session-pts").value = mapSess[sessKey] ?? 0;
     const summaryEl = document.getElementById("founder-user-sessions-summary");
     if (summaryEl) {
-      summaryEl.textContent = `Détail actuel : S1 = ${s1} pts · S2 = ${s2} pts · S3 = ${s3} pts`;
+      summaryEl.textContent = `Officiel : S1=${s1} · S2=${s2} · S3=${s3} | Tests : T1=${t1} · T2=${t2}`;
     }
   }
 
@@ -2146,7 +2275,7 @@
     const nouveauxPointsSession = Number(document.getElementById("founder-new-session-pts").value);
 
     if (!nouveauPseudo || isNaN(nouveauxPointsSession) || nouveauxPointsSession < 0) {
-      afficherFeedbackAdmin("Renseigne un pseudo valide et un score positif pour la session.", true);
+      afficherFeedbackAdmin("Renseigne un pseudo valide et un score positif.", true);
       return;
     }
 
@@ -2161,9 +2290,9 @@
         role: isSpec ? "spectateur" : "candidat",
         nom: nouveauPseudo,
         whatsapp: candInfo ? candInfo.whatsapp : "",
-        quizScore: nouveauxPointsSession,
+        quizScore: 0,
         ticketScore: 0,
-        score: nouveauxPointsSession,
+        score: 0,
         total: 0,
         sessions: [sessKey],
         sessionScores: { [sessKey]: nouveauxPointsSession },
@@ -2197,6 +2326,7 @@
       entry.quizScore = 0;
       entry.ticketScore = 0;
       entry.score = 0;
+      entry.testScore = 0;
       entry.sessions = [];
       entry.sessionScores = {};
       serverState.scores = normaliserListeScores(serverState.scores);
@@ -2227,6 +2357,7 @@
       entry.quizScore = 0;
       entry.ticketScore = 0;
       entry.score = 0;
+      entry.testScore = 0;
       entry.total = 0;
       entry.sessions = [];
       entry.sessionScores = {};
@@ -2354,7 +2485,7 @@
     }).join("");
   }
 
-  // ====== SESSIONS & JEU ======
+  // ====== SESSIONS, TESTS & JEU ======
   function shuffle(arr) {
     const copy = [...arr];
     for (let i = copy.length - 1; i > 0; i--) {
@@ -2388,7 +2519,7 @@
     const banner = document.getElementById("status-session-banner");
 
     if (isStaffRole()) {
-      document.getElementById("sessions-main-title").textContent = "Observation des Sessions";
+      document.getElementById("sessions-main-title").textContent = "Observation des Sessions & Tests";
       document.getElementById("candidate-summary").textContent = `Mode Observation (${currentUser.titre || currentUser.pseudo}) · ${locLabel} · Référence : Kisangani (21h00–22h00)`;
       banner.classList.add("hidden");
       afficherMoniteurStaff();
@@ -2400,7 +2531,7 @@
         }, 6000);
       }
     } else {
-      document.getElementById("sessions-main-title").textContent = "Sessions du concours";
+      document.getElementById("sessions-main-title").textContent = "Sessions & Tests";
       document.getElementById("staff-live-monitor").classList.add("hidden");
       if (blockReason) {
         banner.textContent = `${blockReason} Tu ne peux plus lancer de session.`;
@@ -2409,7 +2540,7 @@
         banner.classList.add("hidden");
       }
       const labelStatut = currentUser.role === "candidat" ? "Candidat Officiel" : "Spectateur";
-      document.getElementById("candidate-summary").textContent = `${labelStatut} : ${currentUser.pseudo} · ${locLabel} · ${prog.completed.length}/${SESSIONS.length} sessions validées`;
+      document.getElementById("candidate-summary").textContent = `${labelStatut} : ${currentUser.pseudo} · ${locLabel} · ${prog.completed.length}/${SESSIONS.length} complétés`;
     }
 
     const container = document.getElementById("sessions-list");
@@ -2421,17 +2552,20 @@
       const notExpired = nowUtcMs <= sess.endUtcMs;
       const heuresLoc = `${formaterHeureDansZone(sess.startUtcMs, userTz)}–${formaterHeureDansZone(sess.endUtcMs, userTz)}`;
       const timingsResume = getResumeTimingsSession(sess.id);
+      const typeTag = sess.isTest
+        ? `<span class="pill" style="background:rgba(39,196,125,0.14);color:#6ef0b4;">TEST ENTRAÎNEMENT</span>`
+        : `<span class="pill" style="background:rgba(255,107,44,0.14);color:var(--accent-2);">OFFICIEL</span>`;
 
       let statusLabel = "Verrouillée", pillClass = "locked", reason = "", canPlay = false;
 
       if (isStaffRole()) {
         statusLabel = !started ? "À venir" : (!notExpired ? "Clôturée (22h00)" : "En cours");
         pillClass = (!started || !notExpired) ? "locked" : "open";
-        reason = `Kisangani : 21h00–22h00 (${heuresLoc} chez toi) · Timings : ${timingsResume} · <em>Observation uniquement (pas de participation au quiz)</em>.`;
+        reason = `Kisangani : 21h00–22h00 (${heuresLoc} chez toi) · Timings : ${timingsResume} · <em>Observation uniquement</em>.`;
       } else if (blockReason) {
-        statusLabel = "Bloqué"; pillClass = "locked"; reason = "Accès aux sessions bloqué.";
+        statusLabel = "Bloqué"; pillClass = "locked"; reason = "Accès bloqué.";
       } else if (isDone) {
-        statusLabel = "Terminée"; pillClass = "done"; reason = `Session validée et enregistrée · ${heuresLoc} (${locLabel}).`;
+        statusLabel = "Terminé"; pillClass = "done"; reason = `Complété et enregistré · ${heuresLoc} (${locLabel}).`;
       } else if (!started) {
         statusLabel = "À venir"; pillClass = "locked";
         reason = `<div class="countdown-date">Ouverture à 21h00 Kisangani — ${formaterDateCompleteDansZone(sess.startUtcMs, userTz)} (${locLabel})</div>
@@ -2443,15 +2577,15 @@
           </div>`;
       } else if (!notExpired) {
         statusLabel = "Clôturée (22h00)"; pillClass = "locked";
-        reason = `La session est terminée à 22h00 heure de Kisangani (${heuresLoc} chez toi).`;
+        reason = `Terminé à 22h00 heure de Kisangani (${heuresLoc} chez toi).`;
       } else {
-        const prevDone = sess.id === 1 || prog.completed.includes(sess.id - 1);
-        if (prevDone) {
+        const prevOfficialDone = sess.isTest || sess.id === 1 || prog.completed.includes(sess.id - 1);
+        if (prevOfficialDone) {
           const pen = calculerPenaliteRetardKisangani(sess.startUtcMs, nowUtcMs);
           statusLabel = "En cours"; pillClass = "open";
           reason = pen > 0
-            ? `Ouverte (${heuresLoc} chez toi · 21h00–22h00 Kisangani) · Retard actif : <strong>-${pen} pt(s)</strong> · ${timingsResume}.`
-            : `Ouverte (${heuresLoc} chez toi · 21h00–22h00 Kisangani) · Aucune pénalité · ${timingsResume}.`;
+            ? `Ouvert (${heuresLoc} chez toi · 21h00–22h00 Kisangani) · Retard actif : <strong>-${pen} pt(s)</strong> · ${timingsResume}.`
+            : `Ouvert (${heuresLoc} chez toi · 21h00–22h00 Kisangani) · Aucune pénalité · ${timingsResume}.`;
           canPlay = true;
         } else {
           reason = `Termine d'abord la Session ${sess.id - 1}.`;
@@ -2460,12 +2594,12 @@
 
       const card = document.createElement("div");
       card.className = "session-card";
-      card.innerHTML = `<div class="session-top"><div class="session-title">${sess.title}</div><span class="pill ${pillClass}">${statusLabel}</span></div><div class="meta">${reason}</div>`;
+      card.innerHTML = `<div class="session-top"><div class="session-title">${sess.title}</div><div style="display:flex;gap:4px;align-items:center;">${typeTag}<span class="pill ${pillClass}">${statusLabel}</span></div></div><div class="meta">${reason}</div>`;
 
       if (canPlay && !isStaffRole()) {
         const btn = document.createElement("button");
         btn.className = "btn";
-        btn.textContent = `Lancer la Session ${sess.id}`;
+        btn.textContent = sess.isTest ? `Lancer ${sess.code} (Test)` : `Lancer la Session ${sess.id}`;
         btn.addEventListener("click", () => startSession(sess));
         card.appendChild(btn);
       }
@@ -2526,13 +2660,13 @@
     document.getElementById("game-session-title").textContent = sess.title;
     document.getElementById("game-sub").textContent = `${currentUser.pseudo} · ${currentUser.ville || "Kisangani"}`;
     document.getElementById("game-penalty-info").innerHTML = activePenalty > 0
-      ? `⚠️ Retard constaté (heure de Kisangani) : <strong>-${activePenalty} point(s)</strong> seront déduits du total de cette session.`
-      : `Attention : quitter ou rafraîchir la page consomme ta tentative pour cette session.`;
+      ? `⚠️ Retard constaté (heure de Kisangani) : <strong>-${activePenalty} point(s)</strong> seront déduits du total.`
+      : `Attention : quitter ou rafraîchir la page consomme ta tentative.`;
 
     ["tab-home", "tab-sessions", "tab-leaderboard", "tab-rules", "tab-chat", "tab-admin"].forEach(id => document.getElementById(id).classList.add("hidden"));
     document.getElementById("screen-game").classList.remove("hidden");
 
-    await publierEtatEnDirect("en_cours", "Session démarrée");
+    await publierEtatEnDirect("en_cours", `${sess.code} démarré`);
     renderQuestion();
   }
 
@@ -2589,13 +2723,17 @@
   async function finishSession() {
     const finalSessionScore = Math.max(0, score - activePenalty);
     const totalPoints = sessionQuestions.length;
+    const sessionCode = activeSession.code || `S${activeSession.id}`;
 
     document.getElementById("screen-game").classList.add("hidden");
     document.getElementById("screen-result").classList.remove("hidden");
+    document.getElementById("result-sub-msg").textContent = activeSession.isTest
+      ? "Résultat de test enregistré dans le classement des tests (non cumulé au classement officiel)."
+      : "Ton résultat a été enregistré et cumulé dans ton classement officiel.";
     document.getElementById("res-score").textContent = `${finalSessionScore} / ${totalPoints} pts`;
     document.getElementById("res-detail").textContent = activePenalty > 0
-      ? `${currentUser.pseudo} · Session ${activeSession.id} (Brut : ${score} pts · Pénalité retard : -${activePenalty} pt)`
-      : `${currentUser.pseudo} · Session ${activeSession.id}`;
+      ? `${currentUser.pseudo} · ${sessionCode} (Brut : ${score} pts · Pénalité retard : -${activePenalty} pt)`
+      : `${currentUser.pseudo} · ${sessionCode}`;
 
     const syncBox = document.getElementById("sync-status");
     syncBox.className = "alert";
@@ -2608,7 +2746,6 @@
       await chargerEtatServeur();
       const role = currentUser.role === "spectateur" ? "spectateur" : "candidat";
       const candidatId = normaliserCleParticipant(currentUser.pseudo, currentUser.whatsapp, role);
-      const sessionCode = `S${activeSession.id}`;
 
       let entry = serverState.scores.find(s => s.candidatId === candidatId);
       if (!entry) {
@@ -2617,9 +2754,10 @@
           role,
           nom: currentUser.pseudo,
           whatsapp: currentUser.whatsapp,
-          quizScore: finalSessionScore,
+          quizScore: activeSession.isTest ? 0 : finalSessionScore,
           ticketScore: 0,
-          score: finalSessionScore,
+          score: activeSession.isTest ? 0 : finalSessionScore,
+          testScore: activeSession.isTest ? finalSessionScore : 0,
           total: totalPoints,
           sessions: [sessionCode],
           sessionScores: { [sessionCode]: finalSessionScore },
@@ -2639,13 +2777,14 @@
       if (role === "candidat" && activePenalty > 0) {
         if (!Array.isArray(serverState.penalties)) serverState.penalties = [];
         const alreadyLogged = serverState.penalties.some(
-          p => p.candidatId === candidatId && Number(p.sessionId) === Number(activeSession.id)
+          p => p.candidatId === candidatId && p.sessionCode === sessionCode
         );
         if (!alreadyLogged) {
           serverState.penalties.push({
             candidatId,
             nom: currentUser.pseudo,
             sessionId: activeSession.id,
+            sessionCode: sessionCode,
             sessionLabel: activeSession.title,
             points: activePenalty,
             ville: currentUser.ville || "Kisangani",
@@ -2657,9 +2796,9 @@
 
       serverState.scores = normaliserListeScores(serverState.scores);
       await sauvegarderEtatServeur();
-      await publierEtatEnDirect("termine", `Session terminée (${finalSessionScore}/${totalPoints} pts)`);
+      await publierEtatEnDirect("termine", `${sessionCode} terminé (${finalSessionScore}/${totalPoints} pts)`);
       syncBox.className = "alert ok";
-      syncBox.textContent = "Score enregistré et cumulé avec succès !";
+      syncBox.textContent = "Score enregistré avec succès !";
     } catch (_) {
       syncBox.className = "alert err";
       syncBox.textContent = "Erreur de synchronisation. Vérifie ta connexion.";
