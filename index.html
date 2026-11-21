@@ -272,7 +272,7 @@
     }
 
     /* CHAT FAÇON WHATSAPP */
-    .chat-container { display: flex; flex-direction: column; height: 420px; background: var(--card-2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 12px; }
+    .chat-container { display: flex; flex-direction: column; height: 440px; background: var(--card-2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 12px; }
     .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
     .chat-msg {
       background: rgba(255,255,255,0.06);
@@ -346,6 +346,21 @@
       gap: 8px;
     }
     .chat-text { line-height: 1.38; }
+    .chat-link {
+      color: #7cc4ff;
+      text-decoration: underline;
+      word-break: break-all;
+    }
+    .chat-link:hover { color: #b5deff; }
+    .chat-photo {
+      display: block;
+      max-width: 100%;
+      max-height: 220px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
     .chat-time {
       font-size: 9px;
       color: var(--muted);
@@ -353,8 +368,8 @@
       opacity: 0.85;
     }
 
-    /* BANDEAU DE RÉPONSE AVANT ENVOI */
-    .reply-preview-bar {
+    /* BANDEAU DE RÉPONSE / PHOTO AVANT ENVOI */
+    .reply-preview-bar, .photo-preview-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -364,8 +379,17 @@
       border-top: 1px solid var(--border);
       border-left: 3px solid var(--ok);
     }
-    .reply-preview-info { overflow: hidden; }
+    .photo-preview-bar { border-left-color: var(--accent-2); }
+    .photo-thumb-preview {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .reply-preview-info { overflow: hidden; flex: 1; }
     .reply-preview-title { font-size: 11px; font-weight: 700; color: #6ef0b4; }
+    .photo-preview-bar .reply-preview-title { color: var(--accent-2); }
     .reply-preview-msg {
       font-size: 11px;
       color: var(--muted);
@@ -384,6 +408,17 @@
       cursor: pointer;
       flex-shrink: 0;
     }
+    .chat-photo-btn {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 0 10px;
+      font-size: 15px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .chat-photo-btn:hover { border-color: var(--accent); }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .img-fluid { width: 100%; border-radius: 12px; margin-bottom: 10px; object-fit: cover; }
@@ -565,7 +600,7 @@
         <h1 style="margin:0;">Espace de Discussion</h1>
         <button class="btn btn-secondary btn-small" type="button" onclick="chargerEtatServeur()">Actualiser</button>
       </div>
-      <p class="sub" style="margin-top:6px;">Appuie sur <strong>↩ Répondre</strong> sur un message pour citer son auteur.</p>
+      <p class="sub" style="margin-top:6px;">Liens cliquables, photos et <strong>↩ Répondre</strong> pour citer un message.</p>
 
       <div id="chat-locked-banner" class="alert err hidden">🔒 Le chat est temporairement verrouillé par l'administration. Seuls les administrateurs peuvent écrire.</div>
 
@@ -577,6 +612,16 @@
           </div>
         </div>
 
+        <!-- Aperçu photo sélectionnée -->
+        <div id="chat-photo-preview" class="photo-preview-bar hidden">
+          <img id="photo-preview-img" src="" alt="Aperçu photo" class="photo-thumb-preview" />
+          <div class="reply-preview-info">
+            <div class="reply-preview-title">Photo prête à être envoyée</div>
+            <div class="reply-preview-msg" id="photo-preview-name">Image compressée</div>
+          </div>
+          <button type="button" class="reply-cancel-btn" onclick="annulerPhotoChat()" title="Retirer la photo">✕</button>
+        </div>
+
         <!-- Aperçu de la réponse sélectionnée -->
         <div id="chat-reply-preview" class="reply-preview-bar hidden">
           <div class="reply-preview-info">
@@ -586,8 +631,10 @@
           <button type="button" class="reply-cancel-btn" onclick="annulerReponseChat()" title="Annuler">✕</button>
         </div>
 
+        <input type="file" id="chat-photo-input" accept="image/*" class="hidden" />
         <div class="chat-input-area" id="chat-input-wrapper" style="display:flex; padding:8px; background:#10172e; border-top:1px solid var(--border); gap:6px;">
-          <input type="text" id="chat-input" placeholder="Écris ton message..." maxlength="200" />
+          <button class="chat-photo-btn" id="chat-photo-btn" type="button" title="Envoyer une photo">📷</button>
+          <input type="text" id="chat-input" placeholder="Écris ton message ou un lien..." maxlength="300" />
           <button class="btn btn-small" id="chat-send-btn" type="button" style="margin-top:0; width:auto;">Envoyer</button>
         </div>
       </div>
@@ -714,24 +761,33 @@
           <div id="founder-disqualified-list" style="margin-top:10px;"></div>
         </div>
 
-        <!-- Pouvoir Fondateur sur Candidats ET Spectateurs -->
+        <!-- Pouvoir Fondateur : Points par Session, Pseudo & Reset (Candidats ET Spectateurs) -->
         <div class="admin-row">
-          <div class="session-title" style="margin-bottom:6px;">👑 Points Quiz, Pseudo & Reset (Candidats & Spectateurs)</div>
-          <p class="meta" style="margin-bottom:10px;">Modifie les points, le pseudo ou réinitialise la progression d'un candidat ou d'un spectateur.</p>
+          <div class="session-title" style="margin-bottom:6px;">👑 Points par Session, Pseudo & Reset (Candidats & Spectateurs)</div>
+          <p class="meta" style="margin-bottom:10px;">Modifie les points de chaque session (S1, S2, S3), le pseudo ou réinitialise un candidat ou spectateur.</p>
           <div class="field">
             <label>Participant (Candidat officiel ou Spectateur)</label>
             <select id="founder-edit-user" onchange="preRemplirEditionFondateur()"></select>
+          </div>
+          <div class="field">
+            <label>Session à modifier</label>
+            <select id="founder-edit-session" onchange="preRemplirEditionFondateur()">
+              <option value="S1">Session 1 (S1)</option>
+              <option value="S2">Session 2 (S2)</option>
+              <option value="S3">Session 3 (S3)</option>
+            </select>
           </div>
           <div class="field">
             <label>Nouveau Pseudo</label>
             <input type="text" id="founder-new-pseudo" placeholder="Pseudo du participant" />
           </div>
           <div class="field">
-            <label>Points de Quiz (Total cumulé)</label>
-            <input type="number" id="founder-new-quiz-pts" min="0" max="500" placeholder="Points quiz" />
+            <label for="founder-new-session-pts">Points de cette session (S1 / S2 / S3)</label>
+            <input type="number" id="founder-new-session-pts" min="0" max="500" placeholder="Points de la session choisie" />
           </div>
+          <div class="meta" id="founder-user-sessions-summary" style="margin-bottom:8px;"></div>
           <div class="grid-2">
-            <button class="btn" type="button" onclick="sauvegarderEditionFondateur()">Appliquer</button>
+            <button class="btn" type="button" onclick="sauvegarderEditionFondateur()">Appliquer à la session</button>
             <button class="btn btn-danger" type="button" onclick="reinitialiserScoreParticipant()">Réinitialiser à 0</button>
           </div>
           <button class="btn btn-ok" type="button" onclick="resetProgressionTestParticipant()">🔄 Reset progression test (local + score)</button>
@@ -821,7 +877,6 @@
   const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`;
 
   // ====== PLANNING DES SESSIONS (SAMEDIS 21H00 À 22H00 HEURE DE KISANGANI, UTC+2) ======
-  // 21h00 UTC+2 = 19h00 UTC ; 22h00 UTC+2 = 20h00 UTC
   const SESSIONS = [
     {
       id: 1,
@@ -892,7 +947,6 @@
     return map;
   }
 
-  // État global synchronisé avec JSONBin
   let serverState = {
     concours: "Quiz Otaku 2026",
     questionTimers: construireTimingsParDefaut(),
@@ -921,6 +975,7 @@
   let enCoursEnvoi = false;
   let isAnswering = false;
   let replyingTo = null;
+  let pendingPhotoData = null;
 
   const btnRoleCandidat = document.getElementById("role-candidat");
   const btnRoleSpectateur = document.getElementById("role-spectateur");
@@ -942,7 +997,6 @@
   btnRoleSpectateur.addEventListener("click", () => setRole("spectateur"));
   btnRoleStaff.addEventListener("click", () => setRole("staff"));
 
-  // Détection automatique du fuseau horaire de l'utilisateur à l'ouverture
   (function initTimezoneAuto() {
     try {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -1002,6 +1056,30 @@
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
+  }
+
+  function formaterTexteAvecLiens(str) {
+    const raw = String(str || "");
+    const urlRegex = /((?:https?:\/\/|www\.)[^\s<]+[^\s<.,!?;:)"'\]]*)/gi;
+    let result = "";
+    let lastIndex = 0;
+    let match;
+
+    while ((match = urlRegex.exec(raw)) !== null) {
+      const matchedText = match[0];
+      const startIdx = match.index;
+      result += escapeHtml(raw.slice(lastIndex, startIdx));
+
+      const href = /^https?:\/\//i.test(matchedText) ? matchedText : `https://${matchedText}`;
+      const safeHref = escapeHtml(href);
+      const safeLabel = escapeHtml(matchedText);
+      result += `<a href="${safeHref}" target="_blank" rel="noopener noreferrer" class="chat-link">${safeLabel}</a>`;
+
+      lastIndex = startIdx + matchedText.length;
+    }
+
+    result += escapeHtml(raw.slice(lastIndex));
+    return result;
   }
 
   function formaterHeureChat(timestamp) {
@@ -1096,12 +1174,11 @@
     return allSame ? `${arr[0]}s / question` : arr.map((v, i) => `Q${i + 1}:${v}s`).join(" · ");
   }
 
-  // Calcul du retard basé sur l'heure de Kisangani (UTC+2)
   function calculerPenaliteRetardKisangani(sessionStartUtcMs, nowUtcMs = Date.now()) {
     const minutesAfterStart = (nowUtcMs - sessionStartUtcMs) / 60000;
-    if (minutesAfterStart >= 30) return 3; // 21h30 heure de Kisangani
-    if (minutesAfterStart >= 20) return 2; // 21h20 heure de Kisangani
-    if (minutesAfterStart >= 15) return 1; // 21h15 heure de Kisangani
+    if (minutesAfterStart >= 30) return 3;
+    if (minutesAfterStart >= 20) return 2;
+    if (minutesAfterStart >= 15) return 1;
     return 0;
   }
 
@@ -1178,16 +1255,15 @@
     scores.forEach(item => {
       const role = item.role === "spectateur" ? "spectateur" : "candidat";
       const key = item.candidatId || normaliserCleParticipant(item.nom, item.whatsapp, role);
-      const quizPts = Math.max(0, item.quizScore !== undefined ? Number(item.quizScore) : (Number(item.score) || 0));
+      const rawQuizPts = Math.max(0, item.quizScore !== undefined ? Number(item.quizScore) : (Number(item.score) || 0));
       const ticketPts = Math.min(30, Math.max(0, Number(item.ticketScore) || 0));
       const sessions = Array.isArray(item.sessions) ? [...new Set(item.sessions.filter(Boolean))] : [];
       const rawSessionScores = item.sessionScores && typeof item.sessionScores === "object"
         ? { ...item.sessionScores }
         : {};
 
-      // Rattrapage si une session est listée sans score détaillé dans sessionScores
-      if (sessions.length === 1 && rawSessionScores[sessions[0]] === undefined && quizPts > 0) {
-        rawSessionScores[sessions[0]] = quizPts;
+      if (sessions.length === 1 && rawSessionScores[sessions[0]] === undefined && rawQuizPts > 0) {
+        rawSessionScores[sessions[0]] = rawQuizPts;
       } else {
         sessions.forEach(s => {
           if (rawSessionScores[s] === undefined) {
@@ -1202,9 +1278,9 @@
           role,
           nom: item.nom,
           whatsapp: item.whatsapp || "",
-          quizScore: quizPts,
+          quizScore: rawQuizPts,
           ticketScore: role === "candidat" ? ticketPts : 0,
-          score: quizPts + (role === "candidat" ? ticketPts : 0),
+          score: rawQuizPts + (role === "candidat" ? ticketPts : 0),
           total: Number(item.total) || 0,
           sessions,
           sessionScores: rawSessionScores,
@@ -1212,7 +1288,7 @@
         });
       } else {
         const ex = map.get(key);
-        ex.quizScore += quizPts;
+        ex.quizScore += rawQuizPts;
         if (role === "candidat") ex.ticketScore = Math.min(30, Math.max(ex.ticketScore, ticketPts));
         ex.score = ex.quizScore + ex.ticketScore;
         ex.total += Number(item.total) || 0;
@@ -1222,6 +1298,16 @@
             ex.sessionScores[sid] = Math.max(Number(ex.sessionScores[sid]) || 0, Number(val) || 0);
           }
         });
+      }
+    });
+
+    // Synchronise quizScore et score avec le détail par session lorsque des scores de sessions existent
+    map.forEach(entry => {
+      const sEntries = Object.entries(entry.sessionScores || {});
+      if (sEntries.length > 0) {
+        const sommeSessions = sEntries.reduce((acc, [, v]) => acc + Math.max(0, Number(v) || 0), 0);
+        entry.quizScore = sommeSessions;
+        entry.score = entry.quizScore + (entry.role === "candidat" ? (Number(entry.ticketScore) || 0) : 0);
       }
     });
 
@@ -1245,7 +1331,6 @@
     );
     const spectateurs = scores.filter(s => s.role === "spectateur");
 
-    // 1. Candidats Officiels — Cumulé
     const elOffCumul = document.getElementById("leaderboard-official-cumul");
     if (elOffCumul) {
       elOffCumul.innerHTML = officiels.length
@@ -1262,7 +1347,6 @@
         : "<li>Aucun candidat officiel actif classé pour le moment.</li>";
     }
 
-    // 2. Candidats Officiels — Journalier (par session)
     document.getElementById("title-official-daily").textContent = `📅 Candidats Officiels — ${sessObj.title}`;
     const elOffDaily = document.getElementById("leaderboard-official-daily");
     const officielsDaily = [...officiels].sort((a, b) => {
@@ -1274,7 +1358,7 @@
       elOffDaily.innerHTML = officielsDaily.length
         ? officielsDaily.map(item => {
             const dPts = Number(item.sessionScores?.[sessKey]) || 0;
-            const participated = item.sessions?.includes(sessKey);
+            const participated = item.sessions?.includes(sessKey) || (item.sessionScores?.[sessKey] !== undefined);
             return `<li>
               <strong>${escapeHtml(item.nom)}</strong> — <strong style="color:var(--accent-2);">${dPts} pts</strong><br>
               <span class="score-breakdown">${sessKey} : ${participated ? `${dPts} pts` : "Non joué"}</span>
@@ -1283,7 +1367,6 @@
         : "<li>Aucun candidat officiel pour cette session.</li>";
     }
 
-    // 3. Spectateurs — Cumulé
     const elSpecCumul = document.getElementById("leaderboard-spectator-cumul");
     if (elSpecCumul) {
       elSpecCumul.innerHTML = spectateurs.length
@@ -1294,7 +1377,6 @@
         : "<li>Aucun spectateur classé pour le moment.</li>";
     }
 
-    // 4. Spectateurs — Journalier (par session)
     document.getElementById("title-spectator-daily").textContent = `📅 Spectateurs — ${sessObj.title}`;
     const elSpecDaily = document.getElementById("leaderboard-spectator-daily");
     const spectateursDaily = [...spectateurs].sort((a, b) => {
@@ -1427,22 +1509,82 @@
     switchTab('home');
   });
 
-  // ====== CHAT & RÉPONSES CITÉES FAÇON WHATSAPP ======
+  // ====== CHAT, LIENS, PHOTOS & RÉPONSES CITÉES ======
+  function compresserImagePourChat(file, maxWidth = 720, quality = 0.68) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL("image/jpeg", quality);
+          resolve(dataUrl);
+        };
+        img.onerror = reject;
+        img.src = ev.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById("chat-photo-btn").addEventListener("click", () => {
+    if (serverState.chatLocked && !isStaffActive()) return;
+    document.getElementById("chat-photo-input").click();
+  });
+
+  document.getElementById("chat-photo-input").addEventListener("change", async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    try {
+      const compressed = await compresserImagePourChat(file);
+      if (compressed.length > 260000) {
+        alert("Cette image reste trop volumineuse après compression. Choisis une photo plus légère.");
+        return;
+      }
+      pendingPhotoData = compressed;
+      document.getElementById("photo-preview-img").src = compressed;
+      document.getElementById("photo-preview-name").textContent = file.name || "Photo sélectionnée";
+      document.getElementById("chat-photo-preview").classList.remove("hidden");
+    } catch (_) {
+      alert("Impossible de charger cette photo.");
+    }
+  });
+
+  function annulerPhotoChat() {
+    pendingPhotoData = null;
+    document.getElementById("photo-preview-img").src = "";
+    document.getElementById("chat-photo-preview").classList.add("hidden");
+  }
+
   function selectionnerReponseChat(index) {
     const msg = serverState.chat?.[index];
     if (!msg) return;
     if (serverState.chatLocked && !isStaffActive()) return;
 
+    const previewText = msg.text || (msg.image ? "📷 Photo" : "");
     replyingTo = {
       sender: msg.sender,
-      text: msg.text
+      text: previewText
     };
 
     const isSelf = currentUser && msg.sender === currentUser.pseudo;
     document.getElementById("reply-preview-author").textContent = isSelf
       ? "Réponse à vous-même"
       : `Réponse à ${msg.sender}`;
-    document.getElementById("reply-preview-text").textContent = msg.text;
+    document.getElementById("reply-preview-text").textContent = previewText;
     document.getElementById("chat-reply-preview").classList.remove("hidden");
     document.getElementById("chat-input").focus();
   }
@@ -1461,6 +1603,7 @@
       banner.classList.remove("hidden");
       wrapper.classList.add("hidden");
       annulerReponseChat();
+      annulerPhotoChat();
     } else {
       banner.classList.toggle("hidden", !locked);
       wrapper.classList.remove("hidden");
@@ -1494,6 +1637,14 @@
         </div>`;
       }
 
+      const safeImageSrc = (typeof m.image === "string" && m.image.startsWith("data:image/"))
+        ? `<img src="${m.image}" alt="Photo envoyée par ${escapeHtml(m.sender)}" class="chat-photo" />`
+        : "";
+
+      const textHtml = m.text
+        ? `<div class="chat-text">${formaterTexteAvecLiens(m.text)}</div>`
+        : "";
+
       const replyBtn = canReply
         ? `<button type="button" class="chat-reply-btn" onclick="selectionnerReponseChat(${idx})">↩ Répondre</button>`
         : "";
@@ -1507,8 +1658,9 @@
           <div class="chat-actions">${replyBtn}${delBtn}</div>
         </div>
         ${quoteHtml}
+        ${safeImageSrc}
         <div class="chat-body-row">
-          <div class="chat-text">${escapeHtml(m.text)}</div>
+          ${textHtml}
           ${timeStr ? `<span class="chat-time">${timeStr}</span>` : ""}
         </div>
       </div>`;
@@ -1529,7 +1681,7 @@
   async function envoyerMessageChat() {
     const input = document.getElementById("chat-input");
     const text = input.value.trim();
-    if (!text || !currentUser) return;
+    if ((!text && !pendingPhotoData) || !currentUser) return;
 
     await chargerEtatServeur();
     if (serverState.chatLocked && !isStaffActive()) {
@@ -1545,6 +1697,10 @@
       date: Date.now()
     };
 
+    if (pendingPhotoData) {
+      nouveauMessage.image = pendingPhotoData;
+    }
+
     if (replyingTo) {
       nouveauMessage.replyTo = {
         sender: replyingTo.sender,
@@ -1553,10 +1709,11 @@
     }
 
     serverState.chat.push(nouveauMessage);
-    if (serverState.chat.length > 60) serverState.chat.shift();
+    if (serverState.chat.length > 50) serverState.chat.shift();
 
     input.value = "";
     annulerReponseChat();
+    annulerPhotoChat();
     afficherMessagesChat();
     await sauvegarderEtatServeur();
   }
@@ -1670,11 +1827,11 @@
     const sessKey = `S${p.sessionId}`;
     let entry = serverState.scores.find(s => s.candidatId === p.candidatId);
     if (entry && ptsRendus > 0) {
-      entry.quizScore = (Number(entry.quizScore) || 0) + ptsRendus;
-      if (entry.sessionScores && entry.sessionScores[sessKey] !== undefined) {
-        entry.sessionScores[sessKey] = (Number(entry.sessionScores[sessKey]) || 0) + ptsRendus;
+      if (!entry.sessionScores || typeof entry.sessionScores !== "object") {
+        entry.sessionScores = {};
       }
-      entry.score = entry.quizScore + (Number(entry.ticketScore) || 0);
+      entry.sessionScores[sessKey] = (Number(entry.sessionScores[sessKey]) || 0) + ptsRendus;
+      if (!entry.sessions.includes(sessKey)) entry.sessions.push(sessKey);
       serverState.scores = normaliserListeScores(serverState.scores);
     }
 
@@ -1694,7 +1851,7 @@
 
     document.getElementById("admin-welcome-title").textContent = `Bonjour, ${currentUser.pseudo}`;
     document.getElementById("admin-welcome-sub").textContent = isFounder
-      ? "Tu disposes de tous les droits (timing par question, délivrance des pénalités, candidats & spectateurs, éliminations, disqualifications, billets, chat et admins)."
+      ? "Tu disposes de tous les droits (points par session pour candidats & spectateurs, timing par question, pénalités, éliminations, disqualifications, billets, chat et admins)."
       : "Tu peux attribuer les points de billets (max 30 pts), modérer le chat et suivre les sessions en direct.";
 
     const chatPill = document.getElementById("chat-status-pill");
@@ -1718,7 +1875,6 @@
       afficherListePenalitesFondateur();
       document.getElementById("founder-min-points").value = Number(serverState.minPointsThreshold) || 0;
 
-      // Sélecteur élimination
       const selectElim = document.getElementById("founder-eliminate-user");
       selectElim.innerHTML = CANDIDATS_OFFICIELS.map(c => {
         const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
@@ -1729,7 +1885,6 @@
       }).join("");
       preRemplirElimination();
 
-      // Liste des candidats éliminés
       const elimBox = document.getElementById("founder-eliminated-list");
       const elimEntries = Object.entries(serverState.eliminated || {});
       elimBox.innerHTML = elimEntries.length
@@ -1741,7 +1896,6 @@
           }).join("")
         : `<div class="meta">Aucun candidat éliminé actuellement.</div>`;
 
-      // Sélecteur disqualification
       const selectDisq = document.getElementById("founder-disqualify-user");
       selectDisq.innerHTML = CANDIDATS_OFFICIELS.map(c => {
         const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
@@ -1750,19 +1904,6 @@
       }).join("");
       preRemplirDisqualification();
 
-      // Liste des candidats disqualifiés
-      const disqBox = document.getElementById("founder-disqualified-list");
-      const disqEntries = Object.entries(serverState.disqualified || {});
-      disqBox.innerHTML = disqEntries.length
-        ? `<div class="meta" style="margin-bottom:6px;"><strong>Candidats disqualifiés (${disqEntries.length}) :</strong></div>` +
-          disqEntries.map(([id, info]) => {
-            const cand = CANDIDATS_OFFICIELS.find(c => normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat") === id);
-            const nom = cand ? cand.pseudo : id;
-            return `<div class="meta" style="padding:4px 0; border-top:1px solid var(--border);">• <strong>${nom}</strong> — ${info.reason || "Inscription non finalisée"}</div>`;
-          }).join("")
-        : `<div class="meta">Aucun candidat disqualifié actuellement.</div>`;
-
-      // Sélecteur édition points, pseudos & reset test (Candidats ET Spectateurs)
       const selectFounder = document.getElementById("founder-edit-user");
       const mapUsers = new Map();
       CANDIDATS_OFFICIELS.forEach(c => {
@@ -1774,7 +1915,8 @@
           nom: ex ? ex.nom : c.pseudo,
           whatsapp: c.whatsapp,
           quizScore: ex ? (ex.quizScore || 0) : 0,
-          ticketScore: ex ? (ex.ticketScore || 0) : 0
+          ticketScore: ex ? (ex.ticketScore || 0) : 0,
+          sessionScores: ex?.sessionScores || {}
         });
       });
       serverState.scores.forEach(s => {
@@ -1785,18 +1927,21 @@
             nom: s.nom,
             whatsapp: s.whatsapp || "",
             quizScore: s.quizScore || 0,
-            ticketScore: s.ticketScore || 0
+            ticketScore: s.ticketScore || 0,
+            sessionScores: s.sessionScores || {}
           });
         }
       });
 
       selectFounder.innerHTML = Array.from(mapUsers.values()).map(u => {
         const tag = u.role === "spectateur" ? " [Spectateur]" : " [Candidat]";
-        return `<option value="${u.id}" data-nom="${escapeHtml(u.nom)}" data-quiz="${u.quizScore}">${escapeHtml(u.nom)}${tag} (Quiz : ${u.quizScore} pts · Billets : ${u.ticketScore} pts)</option>`;
+        const s1 = Number(u.sessionScores?.S1) || 0;
+        const s2 = Number(u.sessionScores?.S2) || 0;
+        const s3 = Number(u.sessionScores?.S3) || 0;
+        return `<option value="${u.id}" data-nom="${escapeHtml(u.nom)}" data-s1="${s1}" data-s2="${s2}" data-s3="${s3}">${escapeHtml(u.nom)}${tag} (S1:${s1} · S2:${s2} · S3:${s3})</option>`;
       }).join("");
       preRemplirEditionFondateur();
 
-      // Liste des administrateurs à gérer
       const adminsBox = document.getElementById("founder-admins-list");
       const admins = STAFF_LIST.filter(s => s.role === "admin");
       adminsBox.innerHTML = admins.map(adm => {
@@ -1976,20 +2121,32 @@
 
   function preRemplirEditionFondateur() {
     const sel = document.getElementById("founder-edit-user");
-    const opt = sel.options[sel.selectedIndex];
+    const opt = sel?.options[sel.selectedIndex];
+    const sessKey = document.getElementById("founder-edit-session")?.value || "S1";
     if (!opt) return;
+
+    const s1 = Number(opt.dataset.s1) || 0;
+    const s2 = Number(opt.dataset.s2) || 0;
+    const s3 = Number(opt.dataset.s3) || 0;
+    const mapSess = { S1: s1, S2: s2, S3: s3 };
+
     document.getElementById("founder-new-pseudo").value = opt.dataset.nom || "";
-    document.getElementById("founder-new-quiz-pts").value = opt.dataset.quiz || 0;
+    document.getElementById("founder-new-session-pts").value = mapSess[sessKey] ?? 0;
+    const summaryEl = document.getElementById("founder-user-sessions-summary");
+    if (summaryEl) {
+      summaryEl.textContent = `Détail actuel : S1 = ${s1} pts · S2 = ${s2} pts · S3 = ${s3} pts`;
+    }
   }
 
   async function sauvegarderEditionFondateur() {
     if (currentUser?.role !== "fondateur") return;
     const candidatId = document.getElementById("founder-edit-user").value;
+    const sessKey = document.getElementById("founder-edit-session").value || "S1";
     const nouveauPseudo = document.getElementById("founder-new-pseudo").value.trim();
-    const nouveauxPointsQuiz = Number(document.getElementById("founder-new-quiz-pts").value);
+    const nouveauxPointsSession = Number(document.getElementById("founder-new-session-pts").value);
 
-    if (!nouveauPseudo || isNaN(nouveauxPointsQuiz) || nouveauxPointsQuiz < 0) {
-      afficherFeedbackAdmin("Renseigne un pseudo valide et un score positif.", true);
+    if (!nouveauPseudo || isNaN(nouveauxPointsSession) || nouveauxPointsSession < 0) {
+      afficherFeedbackAdmin("Renseigne un pseudo valide et un score positif pour la session.", true);
       return;
     }
 
@@ -2004,26 +2161,30 @@
         role: isSpec ? "spectateur" : "candidat",
         nom: nouveauPseudo,
         whatsapp: candInfo ? candInfo.whatsapp : "",
-        quizScore: nouveauxPointsQuiz,
+        quizScore: nouveauxPointsSession,
         ticketScore: 0,
-        score: nouveauxPointsQuiz,
+        score: nouveauxPointsSession,
         total: 0,
-        sessions: [],
-        sessionScores: {},
+        sessions: [sessKey],
+        sessionScores: { [sessKey]: nouveauxPointsSession },
         date: Date.now()
       };
       serverState.scores.push(entry);
     } else {
       entry.nom = nouveauPseudo;
-      entry.quizScore = nouveauxPointsQuiz;
-      entry.score = nouveauxPointsQuiz + (Number(entry.ticketScore) || 0);
+      if (!Array.isArray(entry.sessions)) entry.sessions = [];
+      if (!entry.sessions.includes(sessKey)) entry.sessions.push(sessKey);
+      if (!entry.sessionScores || typeof entry.sessionScores !== "object") {
+        entry.sessionScores = {};
+      }
+      entry.sessionScores[sessKey] = nouveauxPointsSession;
     }
 
     serverState.scores = normaliserListeScores(serverState.scores);
     await sauvegarderEtatServeur();
     afficherDoubleClassement();
     rafraichirPanneauAdmin();
-    afficherFeedbackAdmin(`Profil et points mis à jour pour ${nouveauPseudo}.`);
+    afficherFeedbackAdmin(`${nouveauPseudo} : ${nouveauxPointsSession} pt(s) enregistrés sur ${sessKey}.`);
   }
 
   async function reinitialiserScoreParticipant() {
@@ -2471,13 +2632,10 @@
           entry.sessionScores = {};
         }
         entry.sessionScores[sessionCode] = finalSessionScore;
-        entry.quizScore = (Number(entry.quizScore) || 0) + finalSessionScore;
-        entry.score = entry.quizScore + (Number(entry.ticketScore) || 0);
         entry.total = (Number(entry.total) || 0) + totalPoints;
         entry.date = Date.now();
       }
 
-      // Enregistre la pénalité dans l'historique pour que le Fondateur puisse la consulter et la délivrer
       if (role === "candidat" && activePenalty > 0) {
         if (!Array.isArray(serverState.penalties)) serverState.penalties = [];
         const alreadyLogged = serverState.penalties.some(
