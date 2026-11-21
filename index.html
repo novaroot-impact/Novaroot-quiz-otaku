@@ -247,14 +247,119 @@
       border-radius: 6px;
     }
 
-    /* CHAT */
-    .chat-container { display: flex; flex-direction: column; height: 380px; background: var(--card-2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 12px; }
-    .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-    .chat-msg { background: rgba(255,255,255,0.06); padding: 8px 10px; border-radius: 10px; font-size: 13px; max-width: 88%; position: relative; }
-    .chat-msg.mine { background: rgba(255, 107, 44, 0.2); align-self: flex-end; border: 1px solid rgba(255, 107, 44, 0.35); }
-    .chat-msg.staff { background: rgba(245, 185, 66, 0.14); border: 1px solid rgba(245, 185, 66, 0.35); }
-    .chat-sender { font-size: 10px; color: var(--accent-2); font-weight: 700; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    /* CHAT FAÇON WHATSAPP */
+    .chat-container { display: flex; flex-direction: column; height: 420px; background: var(--card-2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 12px; }
+    .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .chat-msg {
+      background: rgba(255,255,255,0.06);
+      padding: 9px 11px;
+      border-radius: 12px;
+      font-size: 13px;
+      max-width: 88%;
+      align-self: flex-start;
+      position: relative;
+      word-break: break-word;
+    }
+    .chat-msg.mine {
+      background: rgba(255, 107, 44, 0.2);
+      align-self: flex-end;
+      border: 1px solid rgba(255, 107, 44, 0.35);
+    }
+    .chat-msg.staff {
+      background: rgba(245, 185, 66, 0.14);
+      border: 1px solid rgba(245, 185, 66, 0.35);
+    }
+    .chat-sender {
+      font-size: 11px;
+      color: var(--accent-2);
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-msg.staff .chat-sender { color: var(--gold); }
+    .chat-actions { display: flex; align-items: center; gap: 6px; }
+    .chat-reply-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+    .chat-reply-btn:hover { color: #fff; background: rgba(255, 107, 44, 0.35); }
     .chat-del-btn { background: none; border: none; color: var(--err); font-size: 11px; cursor: pointer; padding: 0 3px; font-weight: 800; }
+
+    /* CITATION INTÉGRÉE AU MESSAGE */
+    .quoted-block {
+      background: rgba(0, 0, 0, 0.28);
+      border-left: 3px solid var(--ok);
+      border-radius: 8px;
+      padding: 6px 8px;
+      margin-bottom: 6px;
+      font-size: 11px;
+    }
+    .quoted-author {
+      font-weight: 700;
+      color: #6ef0b4;
+      margin-bottom: 2px;
+    }
+    .quoted-text {
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 240px;
+    }
+    .chat-body-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    .chat-text { line-height: 1.38; }
+    .chat-time {
+      font-size: 9px;
+      color: var(--muted);
+      white-space: nowrap;
+      opacity: 0.85;
+    }
+
+    /* BANDEAU DE RÉPONSE AVANT ENVOI */
+    .reply-preview-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      background: #141d38;
+      border-top: 1px solid var(--border);
+      border-left: 3px solid var(--ok);
+    }
+    .reply-preview-info { overflow: hidden; }
+    .reply-preview-title { font-size: 11px; font-weight: 700; color: #6ef0b4; }
+    .reply-preview-msg {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .reply-cancel-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: var(--text);
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 11px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .img-fluid { width: 100%; border-radius: 12px; margin-bottom: 10px; object-fit: cover; }
@@ -381,7 +486,7 @@
         <h1 style="margin:0;">Espace de Discussion</h1>
         <button class="btn btn-secondary btn-small" type="button" onclick="chargerEtatServeur()">Actualiser</button>
       </div>
-      <p class="sub" style="margin-top:6px;">Discutez entre candidats et passionnés directement sur l'application.</p>
+      <p class="sub" style="margin-top:6px;">Appuie sur <strong>↩ Répondre</strong> sur un message pour citer son auteur.</p>
       
       <div id="chat-locked-banner" class="alert err hidden">🔒 Le chat est temporairement verrouillé par l'administration. Seuls les administrateurs peuvent écrire.</div>
 
@@ -392,8 +497,18 @@
             Bienvenue dans le chat officiel du Quiz Otaku 2026 !
           </div>
         </div>
+
+        <!-- Aperçu de la réponse sélectionnée -->
+        <div id="chat-reply-preview" class="reply-preview-bar hidden">
+          <div class="reply-preview-info">
+            <div class="reply-preview-title" id="reply-preview-author">Réponse à ...</div>
+            <div class="reply-preview-msg" id="reply-preview-text"></div>
+          </div>
+          <button type="button" class="reply-cancel-btn" onclick="annulerReponseChat()" title="Annuler">✕</button>
+        </div>
+
         <div class="chat-input-area" id="chat-input-wrapper" style="display:flex; padding:8px; background:#10172e; border-top:1px solid var(--border); gap:6px;">
-          <input type="text" id="chat-input" placeholder="Écris ton message..." maxlength="150" />
+          <input type="text" id="chat-input" placeholder="Écris ton message..." maxlength="200" />
           <button class="btn btn-small" id="chat-send-btn" type="button" style="margin-top:0; width:auto;">Envoyer</button>
         </div>
       </div>
@@ -674,6 +789,7 @@
   let timeLeft = 15;
   let enCoursEnvoi = false;
   let isAnswering = false;
+  let replyingTo = null; // { sender, text }
 
   const btnRoleCandidat = document.getElementById("role-candidat");
   const btnRoleSpectateur = document.getElementById("role-spectateur");
@@ -694,6 +810,21 @@
   btnRoleCandidat.addEventListener("click", () => setRole("candidat"));
   btnRoleSpectateur.addEventListener("click", () => setRole("spectateur"));
   btnRoleStaff.addEventListener("click", () => setRole("staff"));
+
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function formaterHeureChat(timestamp) {
+    if (!timestamp) return "";
+    const d = new Date(Number(timestamp));
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  }
 
   function normaliserTelephone(tel) {
     const digits = (tel || "").replace(/\D/g, "");
@@ -878,7 +1009,6 @@
   // ====== AFFICHAGE CLASSEMENT ======
   function afficherDoubleClassement() {
     const scores = serverState.scores || [];
-    // Les candidats disqualifiés ou éliminés n'apparaissent plus dans le classement actif
     const officiels = scores.filter(s =>
       s.role !== "spectateur" &&
       !getDisqualificationInfo(s.candidatId) &&
@@ -895,7 +1025,7 @@
             const totPts = qPts + bPts;
             const sessTxt = item.sessions?.length ? ` · ${item.sessions.join(", ")}` : "";
             return `<li>
-              <strong>${item.nom}</strong> — <strong style="color:var(--accent-2);">${totPts} pts</strong><br>
+              <strong>${escapeHtml(item.nom)}</strong> — <strong style="color:var(--accent-2);">${totPts} pts</strong><br>
               <span class="score-breakdown">Quiz : ${qPts} pts | Billets : ${bPts}/30 pts${sessTxt}</span>
             </li>`;
           }).join("")
@@ -907,7 +1037,7 @@
       elSpec.innerHTML = spectateurs.length
         ? spectateurs.map(item => {
             const qPts = Number(item.quizScore) || 0;
-            return `<li><strong>${item.nom}</strong> — ${qPts} pts <span class="meta">(Quiz)</span></li>`;
+            return `<li><strong>${escapeHtml(item.nom)}</strong> — ${qPts} pts <span class="meta">(Quiz)</span></li>`;
           }).join("")
         : "<li>Aucun spectateur classé pour le moment.</li>";
     }
@@ -1016,7 +1146,31 @@
     switchTab('home');
   });
 
-  // ====== CHAT & MODÉRATION ======
+  // ====== CHAT & RÉPONSES CITÉES FAÇON WHATSAPP ======
+  function selectionnerReponseChat(index) {
+    const msg = serverState.chat?.[index];
+    if (!msg) return;
+    if (serverState.chatLocked && !isStaffActive()) return;
+
+    replyingTo = {
+      sender: msg.sender,
+      text: msg.text
+    };
+
+    const isSelf = currentUser && msg.sender === currentUser.pseudo;
+    document.getElementById("reply-preview-author").textContent = isSelf
+      ? "Réponse à vous-même"
+      : `Réponse à ${msg.sender}`;
+    document.getElementById("reply-preview-text").textContent = msg.text;
+    document.getElementById("chat-reply-preview").classList.remove("hidden");
+    document.getElementById("chat-input").focus();
+  }
+
+  function annulerReponseChat() {
+    replyingTo = null;
+    document.getElementById("chat-reply-preview").classList.add("hidden");
+  }
+
   function appliquerEtatVerrouillageChat() {
     const banner = document.getElementById("chat-locked-banner");
     const wrapper = document.getElementById("chat-input-wrapper");
@@ -1025,6 +1179,7 @@
     if (locked && !isStaffActive()) {
       banner.classList.remove("hidden");
       wrapper.classList.add("hidden");
+      annulerReponseChat();
     } else {
       banner.classList.toggle("hidden", !locked);
       wrapper.classList.remove("hidden");
@@ -1040,16 +1195,41 @@
     }
 
     const canModerate = isStaffActive();
+    const canReply = !serverState.chatLocked || canModerate;
+
     box.innerHTML = messages.map((m, idx) => {
       const isMine = currentUser && m.sender === currentUser.pseudo;
       const isStaffMsg = m.isStaff;
-      const badge = isStaffMsg ? ` [${m.staffTitle || "Staff"}]` : "";
-      const delBtn = canModerate
-        ? `<button class="chat-del-btn" title="Supprimer" onclick="supprimerMessageChat(${idx})">✕</button>`
+      const badge = isStaffMsg ? ` [${escapeHtml(m.staffTitle || "Staff")}]` : "";
+      const timeStr = formaterHeureChat(m.date);
+
+      let quoteHtml = "";
+      if (m.replyTo && m.replyTo.sender) {
+        const quotedIsCurrentUser = currentUser && m.replyTo.sender === currentUser.pseudo;
+        const quotedName = quotedIsCurrentUser ? "Vous" : escapeHtml(m.replyTo.sender);
+        quoteHtml = `<div class="quoted-block">
+          <div class="quoted-author">${quotedName}</div>
+          <div class="quoted-text">${escapeHtml(m.replyTo.text || "")}</div>
+        </div>`;
+      }
+
+      const replyBtn = canReply
+        ? `<button type="button" class="chat-reply-btn" onclick="selectionnerReponseChat(${idx})">↩ Répondre</button>`
         : "";
+      const delBtn = canModerate
+        ? `<button type="button" class="chat-del-btn" title="Supprimer" onclick="supprimerMessageChat(${idx})">✕</button>`
+        : "";
+
       return `<div class="chat-msg ${isMine ? 'mine' : ''} ${isStaffMsg ? 'staff' : ''}">
-        <div class="chat-sender"><span>${m.sender}${badge}</span>${delBtn}</div>
-        <div>${m.text}</div>
+        <div class="chat-sender">
+          <span>${escapeHtml(m.sender)}${badge}</span>
+          <div class="chat-actions">${replyBtn}${delBtn}</div>
+        </div>
+        ${quoteHtml}
+        <div class="chat-body-row">
+          <div class="chat-text">${escapeHtml(m.text)}</div>
+          ${timeStr ? `<span class="chat-time">${timeStr}</span>` : ""}
+        </div>
       </div>`;
     }).join("");
     box.scrollTop = box.scrollHeight;
@@ -1065,7 +1245,7 @@
     }
   }
 
-  document.getElementById("chat-send-btn").addEventListener("click", async () => {
+  async function envoyerMessageChat() {
     const input = document.getElementById("chat-input");
     const text = input.value.trim();
     if (!text || !currentUser) return;
@@ -1076,18 +1256,36 @@
       return;
     }
 
-    serverState.chat.push({
+    const nouveauMessage = {
       sender: currentUser.pseudo,
       isStaff: isStaffActive(),
       staffTitle: currentUser.titre || "",
       text: text,
       date: Date.now()
-    });
+    };
+
+    if (replyingTo) {
+      nouveauMessage.replyTo = {
+        sender: replyingTo.sender,
+        text: replyingTo.text
+      };
+    }
+
+    serverState.chat.push(nouveauMessage);
     if (serverState.chat.length > 60) serverState.chat.shift();
 
     input.value = "";
+    annulerReponseChat();
     afficherMessagesChat();
     await sauvegarderEtatServeur();
+  }
+
+  document.getElementById("chat-send-btn").addEventListener("click", envoyerMessageChat);
+  document.getElementById("chat-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      envoyerMessageChat();
+    }
   });
 
   // ====== PANNEAU ADMIN & FONDATEUR ======
