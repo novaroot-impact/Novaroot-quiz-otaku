@@ -196,7 +196,6 @@
     .pill.open { background: rgba(39, 196, 125, 0.18); color: #6ef0b4; }
     .pill.done { background: rgba(154, 167, 204, 0.18); color: #cdd6f4; }
     .pill.locked { background: rgba(255, 77, 109, 0.16); color: #ff8fa3; }
-    .pill.qualified { background: rgba(245, 185, 66, 0.2); color: var(--gold); border: 1px solid rgba(245, 185, 66, 0.45); }
     .meta { font-size: 12px; color: var(--muted); line-height: 1.4; }
 
     /* COMPTE À REBOURS */
@@ -502,7 +501,7 @@
 
     <div class="card-box">
       <h2>Grand Tournoi Otaku 2026</h2>
-      <p class="sub">Bienvenue sur la plateforme officielle de la communauté NovaRoot Impact. Sessions chaque samedi de 21h00 à 22h00 (heure de Kisangani) et finale en présentiel à l'<strong>Alliance française</strong> (qualification dès <strong>40 pts</strong>) !</p>
+      <p class="sub">Bienvenue sur la plateforme officielle de la communauté NovaRoot Impact. Sessions chaque samedi de 21h00 à 22h00 (heure de Kisangani) !</p>
       <img src="finale.JPG" alt="Affiche Grande Finale" class="img-fluid" />
       <button class="btn" onclick="switchTab('sessions')">Voir les sessions de Quiz</button>
     </div>
@@ -515,11 +514,9 @@
       <h1 id="sessions-main-title">Sessions & Tests</h1>
       <p class="sub" id="candidate-summary"></p>
       <div id="status-session-banner" class="alert err hidden"></div>
-      <div id="finale-qualification-banner" class="alert hidden"></div>
       <div class="alert">
         <strong>Horaires officiels (Heure de Kisangani : 21h00 – 22h00) :</strong><br>
         • <strong>3 Sessions officielles</strong> (cumulées dans le classement officiel) + <strong>Test 1 (Lun 23/11)</strong> &amp; <strong>Test 2 (Mar 24/11)</strong> (classement test séparé).<br>
-        • <strong>Finale en présentiel à l'Alliance française :</strong> qualification officielle à partir de <strong id="sessions-finale-threshold-label">40 pts</strong> (3 sessions officielles + billets).<br>
         • À partir de <strong>21h15</strong> : -1 pt · À <strong>21h20</strong> : -2 pts · À <strong>21h30</strong> : -3 pts · Clôture à <strong>22h00</strong>.<br>
         • Toute session officielle précédente manquée est enregistrée à <strong>0 pt</strong> (modifiable par le Fondateur).
       </div>
@@ -548,7 +545,7 @@
       </div>
       <p class="sub" style="margin-top: 6px;">
         <strong>Classement Officiel Cumulé</strong> = addition des <strong>3 sessions officielles</strong> + <strong>Billets (30 pts max)</strong>.<br>
-        Qualification pour la <strong>Finale en présentiel à l'Alliance française</strong> à partir de <strong id="lb-finale-threshold-label">40 pts</strong>. Les <strong>Tests 1 &amp; 2</strong> sont classés séparément.
+        Les <strong>Tests 1 &amp; 2</strong> ne sont pas cumulés dans le classement officiel et ont leurs propres classements cumulés.
       </p>
 
       <div class="field">
@@ -615,7 +612,7 @@
   <div id="tab-rules" class="hidden">
     <div class="card-box">
       <h1>Règles & Barème</h1>
-      <p class="sub">Tout ce qu'il faut savoir pour remporter le titre de Champion Otaku 2026 et te qualifier pour la finale en présentiel à l'<strong>Alliance française</strong> (à partir de <strong>40 pts</strong>).</p>
+      <p class="sub">Tout ce qu'il faut savoir pour remporter le titre de Champion Otaku 2026.</p>
       <img src="regles1.JPG" alt="Règles Quiz en Ligne" class="img-fluid" />
       <img src="regles2.JPG" alt="Système de Billets" class="img-fluid" />
       <img src="regles3.JPG" alt="Qualifications et Discipline" class="img-fluid" />
@@ -715,20 +712,8 @@
         <hr style="border:0; border-top:1px solid var(--border); margin:18px 0;">
         <span class="badge founder">Pouvoirs Exclusifs Fondateur</span>
 
-        <!-- Qualification Finale (Alliance française) -->
-        <div class="admin-row" style="margin-top:12px;">
-          <div class="session-title" style="margin-bottom:6px;">🎟️ Qualification Finale (Alliance française)</div>
-          <p class="meta" style="margin-bottom:10px;">La finale se joue en présentiel à l'<strong>Alliance française</strong>. À partir du seuil défini (<strong>40 pts</strong> par défaut sur le total officiel cumulé), le candidat est qualifié.</p>
-          <div class="field">
-            <label for="founder-finale-threshold">Seuil minimum de qualification (pts)</label>
-            <input type="number" id="founder-finale-threshold" min="1" max="500" value="40" />
-          </div>
-          <button class="btn btn-ok" type="button" onclick="sauvegarderSeuilQualificationFinale()">Enregistrer le seuil de qualification</button>
-          <div id="founder-qualified-summary" class="meta" style="margin-top:10px;"></div>
-        </div>
-
         <!-- Timing individuel par question -->
-        <div class="admin-row">
+        <div class="admin-row" style="margin-top:12px;">
           <div class="session-title" style="margin-bottom:6px;">⏱️ Timing Individuel par Question (5s à 60s)</div>
           <p class="meta" style="margin-bottom:10px;">Règle la durée exacte de chaque question (Q1, Q2, Q3...) pour la session ou le test choisi.</p>
           <div class="field">
@@ -882,8 +867,6 @@
 <script>
   // ====== RÉFÉRENCE HORAIRE OFFICIELLE : KISANGANI (RDC, UTC+2) ======
   const KISANGANI_TIMEZONE = "Africa/Lubumbashi";
-  const DEFAULT_FINALE_QUALIFICATION_POINTS = 40;
-  const FINALE_VENUE = "Alliance française";
 
   // ====== CONFIGURATION STAFF (FONDATEUR & ADMINISTRATEURS) ======
   const STAFF_LIST = [
@@ -1044,7 +1027,6 @@
     concours: "Quiz Otaku 2026",
     questionTimers: construireTimingsParDefaut(),
     minPointsThreshold: 0,
-    finaleQualificationThreshold: DEFAULT_FINALE_QUALIFICATION_POINTS,
     scores: [],
     penalties: [],
     livePlayers: {},
@@ -1114,60 +1096,6 @@
 
   function getUserTimeZone() {
     return currentUser?.timezone || document.getElementById("timezone-select")?.value || KISANGANI_TIMEZONE;
-  }
-
-  function getFinaleQualificationThreshold() {
-    const raw = Number(serverState.finaleQualificationThreshold);
-    return (!isNaN(raw) && raw > 0) ? raw : DEFAULT_FINALE_QUALIFICATION_POINTS;
-  }
-
-  function getOfficialTotalPointsForEntry(item) {
-    const qPts = getOfficialQuizTotal(item);
-    const bPts = item.role === "spectateur" ? 0 : Math.min(30, Math.max(0, Number(item.ticketScore) || 0));
-    return qPts + bPts;
-  }
-
-  function getFinaleQualificationStatus(item) {
-    const threshold = getFinaleQualificationThreshold();
-    const totalOfficial = getOfficialTotalPointsForEntry(item);
-    const isBlocked = Boolean(getDisqualificationInfo(item.candidatId) || getEliminationInfo(item.candidatId));
-
-    if (isBlocked) {
-      return {
-        qualified: false,
-        threshold,
-        totalOfficial,
-        remaining: Math.max(0, threshold - totalOfficial),
-        label: "Non qualifié (bloqué)"
-      };
-    }
-
-    if (totalOfficial >= threshold) {
-      return {
-        qualified: true,
-        threshold,
-        totalOfficial,
-        remaining: 0,
-        label: `🎟️ QUALIFIÉ FINALE (${FINALE_VENUE})`
-      };
-    }
-
-    const remaining = threshold - totalOfficial;
-    return {
-      qualified: false,
-      threshold,
-      totalOfficial,
-      remaining,
-      label: `Encore ${remaining} pt(s) pour la finale`
-    };
-  }
-
-  function mettreAJourLabelsQualification() {
-    const threshold = getFinaleQualificationThreshold();
-    const sLabel = document.getElementById("sessions-finale-threshold-label");
-    const lbLabel = document.getElementById("lb-finale-threshold-label");
-    if (sLabel) sLabel.textContent = `${threshold} pts`;
-    if (lbLabel) lbLabel.textContent = `${threshold} pts`;
   }
 
   function formaterHeureDansZone(utcMs, timeZone) {
@@ -1358,10 +1286,6 @@
       });
       serverState.questionTimers = mergedTimers;
       serverState.minPointsThreshold = Number(rec.minPointsThreshold) || 0;
-      const rawFinaleThresh = Number(rec.finaleQualificationThreshold);
-      serverState.finaleQualificationThreshold = (!isNaN(rawFinaleThresh) && rawFinaleThresh > 0)
-        ? rawFinaleThresh
-        : DEFAULT_FINALE_QUALIFICATION_POINTS;
       serverState.scores = normaliserListeScores(Array.isArray(rec.scores) ? rec.scores : []);
       serverState.penalties = Array.isArray(rec.penalties) ? rec.penalties : [];
       serverState.livePlayers = rec.livePlayers && typeof rec.livePlayers === "object" ? rec.livePlayers : {};
@@ -1379,7 +1303,6 @@
         }
       }
 
-      mettreAJourLabelsQualification();
       afficherDoubleClassement();
       afficherMessagesChat();
       appliquerEtatVerrouillageChat();
@@ -1400,14 +1323,10 @@
         "Content-Type": "application/json",
         "X-Master-Key": JSONBIN_CONFIG.masterKey
       },
-      body: JSONstringifySafeState()
+      body: JSON.stringify(serverState)
     });
     if (!rep.ok) throw new Error("HTTP " + rep.status);
     return serverState;
-  }
-
-  function JSONstringifySafeState() {
-    return JSON.stringify(serverState);
   }
 
   function normaliserCleParticipant(nom, whatsapp, role) {
@@ -1489,7 +1408,6 @@
 
   // ====== CLASSEMENTS (OFFICIEL CUMULÉ + TESTS CUMULÉ + PAR SESSION/TEST) ======
   function afficherDoubleClassement() {
-    mettreAJourLabelsQualification();
     const scores = serverState.scores || [];
     const sessKey = String(document.getElementById("daily-session-filter")?.value || "S1");
     const sessObj = SESSIONS.find(s => s.code === sessKey) || SESSIONS[0];
@@ -1509,14 +1427,10 @@
             const qPts = getOfficialQuizTotal(item);
             const bPts = Number(item.ticketScore) || 0;
             const totPts = qPts + bPts;
-            const qual = getFinaleQualificationStatus(item);
             const offSess = (item.sessions || []).filter(k => ["S1", "S2", "S3"].includes(k));
             const sessTxt = offSess.length ? ` · ${offSess.join(", ")}` : "";
-            const qualPill = qual.qualified
-              ? `<span class="pill qualified" style="margin-left:4px;">🎟️ QUALIFIÉ FINALE</span>`
-              : `<span class="pill" style="margin-left:4px;">${qual.remaining} pt(s) / ${qual.threshold}</span>`;
             return `<li>
-              <strong>${escapeHtml(item.nom)}</strong> — <strong style="color:var(--accent-2);">${totPts} pts</strong>${qualPill}<br>
+              <strong>${escapeHtml(item.nom)}</strong> — <strong style="color:var(--accent-2);">${totPts} pts</strong><br>
               <span class="score-breakdown">3 Sessions officielles : ${qPts} pts | Billets : ${bPts}/30 pts${sessTxt}</span>
             </li>`;
           }).join("")
@@ -1829,4 +1743,1129 @@
 
   function afficherMessagesChat() {
     const box = document.getElementById("chat-messages-box");
-    const messages = serverState.chat
+    const messages = serverState.chat || [];
+    if (!messages.length) {
+      box.innerHTML = `<div class="chat-msg"><div class="chat-sender">Système</div>Aucun message pour l'instant.</div>`;
+      return;
+    }
+
+    const canModerate = isStaffActive();
+    const canReply = !serverState.chatLocked || canModerate;
+
+    box.innerHTML = messages.map((m, idx) => {
+      const isMine = currentUser && m.sender === currentUser.pseudo;
+      const isStaffMsg = m.isStaff;
+      const badge = isStaffMsg ? ` [${escapeHtml(m.staffTitle || "Staff")}]` : "";
+      const timeStr = formaterHeureChat(m.date);
+
+      let quoteHtml = "";
+      if (m.replyTo && m.replyTo.sender) {
+        const quotedIsCurrentUser = currentUser && m.replyTo.sender === currentUser.pseudo;
+        const quotedName = quotedIsCurrentUser ? "Vous" : escapeHtml(m.replyTo.sender);
+        quoteHtml = `<div class="quoted-block">
+          <div class="quoted-author">${quotedName}</div>
+          <div class="quoted-text">${escapeHtml(m.replyTo.text || "")}</div>
+        </div>`;
+      }
+
+      const safeImageSrc = (typeof m.image === "string" && m.image.startsWith("data:image/"))
+        ? `<img src="${m.image}" alt="Photo envoyée par ${escapeHtml(m.sender)}" class="chat-photo" />`
+        : "";
+
+      const textHtml = m.text
+        ? `<div class="chat-text">${formaterTexteAvecLiens(m.text)}</div>`
+        : "";
+
+      const replyBtn = canReply
+        ? `<button type="button" class="chat-reply-btn" onclick="selectionnerReponseChat(${idx})">↩ Répondre</button>`
+        : "";
+      const delBtn = canModerate
+        ? `<button type="button" class="chat-del-btn" title="Supprimer" onclick="supprimerMessageChat(${idx})">✕</button>`
+        : "";
+
+      return `<div class="chat-msg ${isMine ? 'mine' : ''} ${isStaffMsg ? 'staff' : ''}">
+        <div class="chat-sender">
+          <span>${escapeHtml(m.sender)}${badge}</span>
+          <div class="chat-actions">${replyBtn}${delBtn}</div>
+        </div>
+        ${quoteHtml}
+        ${safeImageSrc}
+        <div class="chat-body-row">
+          ${textHtml}
+          ${timeStr ? `<span class="chat-time">${timeStr}</span>` : ""}
+        </div>
+      </div>`;
+    }).join("");
+    box.scrollTop = box.scrollHeight;
+  }
+
+  async function supprimerMessageChat(index) {
+    if (!isStaffActive()) return;
+    await chargerEtatServeur();
+    if (serverState.chat[index]) {
+      serverState.chat.splice(index, 1);
+      await sauvegarderEtatServeur();
+      afficherMessagesChat();
+    }
+  }
+
+  async function envoyerMessageChat() {
+    const input = document.getElementById("chat-input");
+    const text = input.value.trim();
+    if ((!text && !pendingPhotoData) || !currentUser) return;
+
+    await chargerEtatServeur();
+    if (serverState.chatLocked && !isStaffActive()) {
+      appliquerEtatVerrouillageChat();
+      return;
+    }
+
+    const nouveauMessage = {
+      sender: currentUser.pseudo,
+      isStaff: isStaffActive(),
+      staffTitle: currentUser.titre || "",
+      text: text,
+      date: Date.now()
+    };
+
+    if (pendingPhotoData) {
+      nouveauMessage.image = pendingPhotoData;
+    }
+
+    if (replyingTo) {
+      nouveauMessage.replyTo = {
+        sender: replyingTo.sender,
+        text: replyingTo.text
+      };
+    }
+
+    serverState.chat.push(nouveauMessage);
+    if (serverState.chat.length > 150) serverState.chat.shift();
+
+    input.value = "";
+    annulerReponseChat();
+    annulerPhotoChat();
+    afficherMessagesChat();
+    await sauvegarderEtatServeur();
+  }
+
+  document.getElementById("chat-send-btn").addEventListener("click", envoyerMessageChat);
+  document.getElementById("chat-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      envoyerMessageChat();
+    }
+  });
+
+  // ====== PANNEAU ADMIN & FONDATEUR ======
+  function afficherFeedbackAdmin(texte, estErreur = false) {
+    const box = document.getElementById("admin-feedback");
+    box.textContent = texte;
+    box.className = `alert ${estErreur ? 'err' : 'ok'}`;
+    box.classList.remove("hidden");
+    setTimeout(() => box.classList.add("hidden"), 4500);
+  }
+
+  function chargerInputsTimingQuestions() {
+    const sid = Number(document.getElementById("founder-timer-session")?.value || 1);
+    const timers = normaliserTimersSession(serverState.questionTimers, sid);
+    const grid = document.getElementById("founder-per-question-timers");
+    if (!grid) return;
+
+    grid.innerHTML = timers.map((sec, idx) => `
+      <div class="q-timer-item">
+        <label for="q-sec-${sid}-${idx}">Question ${idx + 1} (sec)</label>
+        <input type="number" id="q-sec-${sid}-${idx}" min="5" max="60" value="${sec}" />
+      </div>
+    `).join("");
+  }
+
+  function appliquerTempsUniformeQuestions() {
+    const sid = Number(document.getElementById("founder-timer-session")?.value || 1);
+    const uniformSec = Number(document.getElementById("founder-uniform-sec")?.value);
+    if (isNaN(uniformSec) || uniformSec < 5 || uniformSec > 60) {
+      afficherFeedbackAdmin("Choisis un temps entre 5 et 60 secondes.", true);
+      return;
+    }
+    const timers = normaliserTimersSession(serverState.questionTimers, sid);
+    timers.forEach((_, idx) => {
+      const inp = document.getElementById(`q-sec-${sid}-${idx}`);
+      if (inp) inp.value = uniformSec;
+    });
+  }
+
+  async function sauvegarderTimingQuestions() {
+    if (currentUser?.role !== "fondateur") return;
+    const sid = Number(document.getElementById("founder-timer-session")?.value || 1);
+    const nb = (SESSION_QUESTIONS[sid] || []).length || 10;
+    const nouveauxTimings = [];
+
+    for (let i = 0; i < nb; i++) {
+      const val = Number(document.getElementById(`q-sec-${sid}-${i}`)?.value);
+      if (isNaN(val) || val < 5 || val > 60) {
+        afficherFeedbackAdmin(`Question ${i + 1} : renseigne un temps valide entre 5 et 60 secondes.`, true);
+        return;
+      }
+      nouveauxTimings.push(val);
+    }
+
+    await chargerEtatServeur();
+    if (!serverState.questionTimers || typeof serverState.questionTimers !== "object") {
+      serverState.questionTimers = construireTimingsParDefaut();
+    }
+    serverState.questionTimers[sid] = nouveauxTimings;
+    await sauvegarderEtatServeur();
+    afficherFeedbackAdmin(`Timing individuel enregistré (${nouveauxTimings.map((t, i) => `Q${i + 1}:${t}s`).join(", ")}).`);
+  }
+
+  function afficherListePenalitesFondateur() {
+    const box = document.getElementById("founder-penalties-list");
+    if (!box) return;
+    const list = Array.isArray(serverState.penalties) ? serverState.penalties : [];
+    if (!list.length) {
+      box.innerHTML = `<div class="meta">Aucune pénalité enregistrée pour le moment.</div>`;
+      return;
+    }
+
+    box.innerHTML = list.map((p, idx) => {
+      const delivree = Boolean(p.delivered);
+      const badgeClass = delivree ? "done" : "locked";
+      const badgeTxt = delivree ? "Délivrée (Annulée)" : `-${p.points} pt(s) appliqués`;
+      return `<div class="session-card" style="margin-bottom:8px;">
+        <div class="session-top">
+          <div class="session-title">${escapeHtml(p.nom)} <span class="meta">(${escapeHtml(p.sessionLabel || `Session ${p.sessionId}`)})</span></div>
+          <span class="pill ${badgeClass}">${badgeTxt}</span>
+        </div>
+        <div class="meta" style="margin-bottom:8px;">Pénalité : -${p.points} pt(s) · Ville : ${escapeHtml(p.ville || "Kisangani")}</div>
+        ${!delivree
+          ? `<button class="btn btn-ok btn-small" type="button" onclick="delivrerPenalite(${idx})">✓ Délivrer la pénalité (+${p.points} pt rendu)</button>`
+          : `<div class="meta" style="color:var(--ok);">Pénalité délivrée le ${new Date(p.deliveredAt || Date.now()).toLocaleString("fr-FR")}.</div>`
+        }
+      </div>`;
+    }).join("");
+  }
+
+  async function delivrerPenalite(index) {
+    if (currentUser?.role !== "fondateur") return;
+    await chargerEtatServeur();
+    const p = serverState.penalties?.[index];
+    if (!p || p.delivered) return;
+
+    p.delivered = true;
+    p.deliveredAt = Date.now();
+
+    const ptsRendus = Number(p.points) || 0;
+    const sessKey = p.sessionCode || `S${p.sessionId}`;
+    let entry = serverState.scores.find(s => s.candidatId === p.candidatId);
+    if (entry && ptsRendus > 0) {
+      if (!entry.sessionScores || typeof entry.sessionScores !== "object") {
+        entry.sessionScores = {};
+      }
+      entry.sessionScores[sessKey] = (Number(entry.sessionScores[sessKey]) || 0) + ptsRendus;
+      if (!entry.sessions.includes(sessKey)) entry.sessions.push(sessKey);
+      serverState.scores = normaliserListeScores(serverState.scores);
+    }
+
+    await sauvegarderEtatServeur();
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`Pénalité délivrée à ${p.nom} (+${ptsRendus} pt restitué).`);
+  }
+
+  function rafraichirPanneauAdmin() {
+    if (!isStaffActive()) return;
+
+    const isFounder = currentUser.role === "fondateur";
+    const badge = document.getElementById("admin-role-badge");
+    badge.textContent = isFounder ? "👑 Fondateur" : `🛡️ ${currentUser.titre}`;
+    badge.className = `badge ${isFounder ? 'founder' : ''}`;
+
+    document.getElementById("admin-welcome-title").textContent = `Bonjour, ${currentUser.pseudo}`;
+    document.getElementById("admin-welcome-sub").textContent = isFounder
+      ? "Tu disposes de tous les droits (points par session ou test pour candidats & spectateurs, timing par question, pénalités, éliminations, disqualifications, billets, chat et admins)."
+      : "Tu peux attribuer les points de billets (max 30 pts), modérer le chat et suivre les sessions en direct.";
+
+    const chatPill = document.getElementById("chat-status-pill");
+    chatPill.textContent = serverState.chatLocked ? "Verrouillé" : "Ouvert";
+    chatPill.className = `pill ${serverState.chatLocked ? 'locked' : 'open'}`;
+
+    const selectTicket = document.getElementById("admin-ticket-candidat");
+    selectTicket.innerHTML = CANDIDATS_OFFICIELS.map(c => {
+      const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
+      const existant = serverState.scores.find(s => s.candidatId === id);
+      const bPts = existant ? (existant.ticketScore || 0) : 0;
+      const tag = getDisqualificationInfo(id) ? " [DISQUALIFIÉ]" : (getEliminationInfo(id) ? " [ÉLIMINÉ]" : "");
+      return `<option value="${id}">${c.pseudo}${tag} (Billets : ${bPts}/30 pts)</option>`;
+    }).join("");
+
+    const founderSec = document.getElementById("founder-only-section");
+    founderSec.classList.toggle("hidden", !isFounder);
+
+    if (isFounder) {
+      chargerInputsTimingQuestions();
+      afficherListePenalitesFondateur();
+      document.getElementById("founder-min-points").value = Number(serverState.minPointsThreshold) || 0;
+
+      const selectElim = document.getElementById("founder-eliminate-user");
+      selectElim.innerHTML = CANDIDATS_OFFICIELS.map(c => {
+        const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
+        const ex = serverState.scores.find(s => s.candidatId === id);
+        const tot = ex ? (Number(ex.score) || 0) : 0;
+        const elim = getEliminationInfo(id);
+        return `<option value="${id}">${c.pseudo} — ${tot} pts ${elim ? "(Éliminé)" : "(Actif)"}</option>`;
+      }).join("");
+      preRemplirElimination();
+
+      const elimBox = document.getElementById("founder-eliminated-list");
+      const elimEntries = Object.entries(serverState.eliminated || {});
+      elimBox.innerHTML = elimEntries.length
+        ? `<div class="meta" style="margin-bottom:6px;"><strong>Candidats éliminés (${elimEntries.length}) :</strong></div>` +
+          elimEntries.map(([id, info]) => {
+            const cand = CANDIDATS_OFFICIELS.find(c => normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat") === id);
+            const nom = cand ? cand.pseudo : id;
+            return `<div class="meta" style="padding:4px 0; border-top:1px solid var(--border);">• <strong>${nom}</strong> — ${info.reason || "Points insuffisants"}</div>`;
+          }).join("")
+        : `<div class="meta">Aucun candidat éliminé actuellement.</div>`;
+
+      const selectDisq = document.getElementById("founder-disqualify-user");
+      selectDisq.innerHTML = CANDIDATS_OFFICIELS.map(c => {
+        const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
+        const disq = getDisqualificationInfo(id);
+        return `<option value="${id}">${c.pseudo} ${disq ? "(Disqualifié)" : "(Actif)"}</option>`;
+      }).join("");
+      preRemplirDisqualification();
+
+      const selectFounder = document.getElementById("founder-edit-user");
+      const mapUsers = new Map();
+      CANDIDATS_OFFICIELS.forEach(c => {
+        const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
+        const ex = serverState.scores.find(s => s.candidatId === id);
+        mapUsers.set(id, {
+          id,
+          role: "candidat",
+          nom: ex ? ex.nom : c.pseudo,
+          whatsapp: c.whatsapp,
+          sessionScores: ex?.sessionScores || {}
+        });
+      });
+      serverState.scores.forEach(s => {
+        if (!mapUsers.has(s.candidatId)) {
+          mapUsers.set(s.candidatId, {
+            id: s.candidatId,
+            role: s.role || "spectateur",
+            nom: s.nom,
+            whatsapp: s.whatsapp || "",
+            sessionScores: s.sessionScores || {}
+          });
+        }
+      });
+
+      selectFounder.innerHTML = Array.from(mapUsers.values()).map(u => {
+        const tag = u.role === "spectateur" ? " [Spectateur]" : " [Candidat]";
+        const s1 = Number(u.sessionScores?.S1) || 0;
+        const s2 = Number(u.sessionScores?.S2) || 0;
+        const s3 = Number(u.sessionScores?.S3) || 0;
+        const t1 = Number(u.sessionScores?.T1) || 0;
+        const t2 = Number(u.sessionScores?.T2) || 0;
+        return `<option value="${u.id}" data-nom="${escapeHtml(u.nom)}" data-s1="${s1}" data-s2="${s2}" data-s3="${s3}" data-t1="${t1}" data-t2="${t2}">${escapeHtml(u.nom)}${tag} (Off:${s1+s2+s3} · Tests:${t1+t2})</option>`;
+      }).join("");
+      preRemplirEditionFondateur();
+
+      const adminsBox = document.getElementById("founder-admins-list");
+      const admins = STAFF_LIST.filter(s => s.role === "admin");
+      adminsBox.innerHTML = admins.map(adm => {
+        const suspendu = estAdminSuspendu(adm.id);
+        const finStr = suspendu ? new Date(serverState.suspensions[adm.id]).toLocaleString("fr-FR", { timeZone: getUserTimeZone() }) : "";
+        return `<div class="session-card" style="margin-bottom:8px;">
+          <div class="session-top">
+            <div class="session-title">${adm.pseudo} <span class="meta">(${adm.titre})</span></div>
+            <span class="pill ${suspendu ? 'locked' : 'open'}">${suspendu ? 'Suspendu' : 'Actif'}</span>
+          </div>
+          ${suspendu ? `<div class="meta" style="margin-bottom:8px;">Suspendu jusqu'au : ${finStr}</div>` : ''}
+          <div class="grid-2" style="margin-top:6px;">
+            <button class="btn btn-danger btn-small" type="button" onclick="suspendreAdmin('${adm.id}', 24)">Suspendre 24h</button>
+            <button class="btn btn-ok btn-small" type="button" onclick="reactiverAdmin('${adm.id}')">Réactiver</button>
+          </div>
+        </div>`;
+      }).join("");
+    }
+  }
+
+  function preRemplirElimination() {
+    const id = document.getElementById("founder-eliminate-user").value;
+    const info = getEliminationInfo(id);
+    const seuil = Number(document.getElementById("founder-min-points").value) || 0;
+    document.getElementById("founder-eliminate-reason").value = info
+      ? (info.reason || "")
+      : (seuil > 0 ? `Score inférieur au seuil requis (${seuil} pts)` : "Nombre de points requis non atteint");
+  }
+
+  async function definirElimination(eliminer) {
+    if (currentUser?.role !== "fondateur") return;
+    const id = document.getElementById("founder-eliminate-user").value;
+    const reason = document.getElementById("founder-eliminate-reason").value.trim() || "Nombre de points requis non atteint";
+    const cand = CANDIDATS_OFFICIELS.find(c => normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat") === id);
+    const nom = cand ? cand.pseudo : id;
+
+    await chargerEtatServeur();
+    if (!serverState.eliminated || typeof serverState.eliminated !== "object") {
+      serverState.eliminated = {};
+    }
+
+    if (eliminer) {
+      serverState.eliminated[id] = { reason, date: Date.now() };
+    } else {
+      delete serverState.eliminated[id];
+    }
+
+    await sauvegarderEtatServeur();
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(eliminer
+      ? `${nom} a été éliminé (${reason}).`
+      : `${nom} a été réintégré.`
+    );
+  }
+
+  async function eliminerSousSeuil() {
+    if (currentUser?.role !== "fondateur") return;
+    const seuil = Number(document.getElementById("founder-min-points").value);
+    if (isNaN(seuil) || seuil < 0) {
+      afficherFeedbackAdmin("Entre un seuil de points valide (0 ou plus).", true);
+      return;
+    }
+
+    await chargerEtatServeur();
+    serverState.minPointsThreshold = seuil;
+    if (!serverState.eliminated || typeof serverState.eliminated !== "object") {
+      serverState.eliminated = {};
+    }
+
+    let compteur = 0;
+    CANDIDATS_OFFICIELS.forEach(c => {
+      const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
+      if (getDisqualificationInfo(id)) return;
+      const ex = serverState.scores.find(s => s.candidatId === id);
+      const totalPts = ex ? (Number(ex.score) || 0) : 0;
+      if (totalPts < seuil) {
+        serverState.eliminated[id] = {
+          reason: `Score (${totalPts} pts) inférieur au seuil requis (${seuil} pts)`,
+          date: Date.now()
+        };
+        compteur += 1;
+      }
+    });
+
+    await sauvegarderEtatServeur();
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`${compteur} candidat(s) sous le seuil de ${seuil} pts ont été éliminés.`);
+  }
+
+  function preRemplirDisqualification() {
+    const id = document.getElementById("founder-disqualify-user").value;
+    const info = getDisqualificationInfo(id);
+    document.getElementById("founder-disqualify-reason").value = info
+      ? (info.reason || "")
+      : "Inscription non finalisée";
+  }
+
+  async function definirDisqualification(disqualifier) {
+    if (currentUser?.role !== "fondateur") return;
+    const id = document.getElementById("founder-disqualify-user").value;
+    const reason = document.getElementById("founder-disqualify-reason").value.trim() || "Inscription non finalisée";
+    const cand = CANDIDATS_OFFICIELS.find(c => normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat") === id);
+    const nom = cand ? cand.pseudo : id;
+
+    await chargerEtatServeur();
+    if (!serverState.disqualified || typeof serverState.disqualified !== "object") {
+      serverState.disqualified = {};
+    }
+
+    if (disqualifier) {
+      serverState.disqualified[id] = { reason, date: Date.now() };
+    } else {
+      delete serverState.disqualified[id];
+    }
+
+    await sauvegarderEtatServeur();
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(disqualifier
+      ? `${nom} a été disqualifié (${reason}).`
+      : `${nom} a été réintégré dans le concours.`
+    );
+  }
+
+  async function toggleChatLock(verrouiller) {
+    if (!isStaffActive()) return;
+    await chargerEtatServeur();
+    serverState.chatLocked = verrouiller;
+    await sauvegarderEtatServeur();
+    appliquerEtatVerrouillageChat();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(verrouiller ? "Le chat est maintenant verrouillé pour les candidats." : "Le chat est ouvert à tous.");
+  }
+
+  async function sauvegarderPointsBillets() {
+    if (!isStaffActive()) return;
+    const candidatId = document.getElementById("admin-ticket-candidat").value;
+    const val = Number(document.getElementById("admin-ticket-pts").value);
+
+    if (isNaN(val) || val < 0 || val > 30) {
+      afficherFeedbackAdmin("Erreur : les points de billets doivent être compris entre 0 et 30 maximum.", true);
+      return;
+    }
+
+    await chargerEtatServeur();
+    const candInfo = CANDIDATS_OFFICIELS.find(c => normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat") === candidatId);
+    let entry = serverState.scores.find(s => s.candidatId === candidatId);
+
+    if (!entry && candInfo) {
+      entry = {
+        candidatId,
+        role: "candidat",
+        nom: candInfo.pseudo,
+        whatsapp: candInfo.whatsapp,
+        quizScore: 0,
+        ticketScore: val,
+        score: val,
+        total: 0,
+        sessions: [],
+        sessionScores: {},
+        date: Date.now()
+      };
+      serverState.scores.push(entry);
+    } else if (entry) {
+      entry.ticketScore = val;
+    }
+
+    serverState.scores = normaliserListeScores(serverState.scores);
+    await sauvegarderEtatServeur();
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`Points de billets mis à jour (${val}/30 pts).`);
+  }
+
+  function preRemplirEditionFondateur() {
+    const sel = document.getElementById("founder-edit-user");
+    const opt = sel?.options[sel.selectedIndex];
+    const sessKey = document.getElementById("founder-edit-session")?.value || "S1";
+    if (!opt) return;
+
+    const s1 = Number(opt.dataset.s1) || 0;
+    const s2 = Number(opt.dataset.s2) || 0;
+    const s3 = Number(opt.dataset.s3) || 0;
+    const t1 = Number(opt.dataset.t1) || 0;
+    const t2 = Number(opt.dataset.t2) || 0;
+    const mapSess = { S1: s1, S2: s2, S3: s3, T1: t1, T2: t2 };
+
+    document.getElementById("founder-new-pseudo").value = opt.dataset.nom || "";
+    document.getElementById("founder-new-session-pts").value = mapSess[sessKey] ?? 0;
+    const summaryEl = document.getElementById("founder-user-sessions-summary");
+    if (summaryEl) {
+      summaryEl.textContent = `Officiel : S1=${s1} · S2=${s2} · S3=${s3} | Tests : T1=${t1} · T2=${t2}`;
+    }
+  }
+
+  async function sauvegarderEditionFondateur() {
+    if (currentUser?.role !== "fondateur") return;
+    const candidatId = document.getElementById("founder-edit-user").value;
+    const sessKey = document.getElementById("founder-edit-session").value || "S1";
+    const nouveauPseudo = document.getElementById("founder-new-pseudo").value.trim();
+    const nouveauxPointsSession = Number(document.getElementById("founder-new-session-pts").value);
+
+    if (!nouveauPseudo || isNaN(nouveauxPointsSession) || nouveauxPointsSession < 0) {
+      afficherFeedbackAdmin("Renseigne un pseudo valide et un score positif.", true);
+      return;
+    }
+
+    await chargerEtatServeur();
+    const candInfo = CANDIDATS_OFFICIELS.find(c => normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat") === candidatId);
+    let entry = serverState.scores.find(s => s.candidatId === candidatId);
+
+    if (!entry) {
+      const isSpec = candidatId.startsWith("spectateur__");
+      entry = {
+        candidatId,
+        role: isSpec ? "spectateur" : "candidat",
+        nom: nouveauPseudo,
+        whatsapp: candInfo ? candInfo.whatsapp : "",
+        quizScore: 0,
+        ticketScore: 0,
+        score: 0,
+        total: 0,
+        sessions: [sessKey],
+        sessionScores: { [sessKey]: nouveauxPointsSession },
+        date: Date.now()
+      };
+      serverState.scores.push(entry);
+    } else {
+      entry.nom = nouveauPseudo;
+      if (!Array.isArray(entry.sessions)) entry.sessions = [];
+      if (!entry.sessions.includes(sessKey)) entry.sessions.push(sessKey);
+      if (!entry.sessionScores || typeof entry.sessionScores !== "object") {
+        entry.sessionScores = {};
+      }
+      entry.sessionScores[sessKey] = nouveauxPointsSession;
+    }
+
+    serverState.scores = normaliserListeScores(serverState.scores);
+    await sauvegarderEtatServeur();
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`${nouveauPseudo} : ${nouveauxPointsSession} pt(s) enregistrés sur ${sessKey}.`);
+  }
+
+  async function reinitialiserScoreParticipant() {
+    if (currentUser?.role !== "fondateur") return;
+    const candidatId = document.getElementById("founder-edit-user").value;
+
+    await chargerEtatServeur();
+    const entry = serverState.scores.find(s => s.candidatId === candidatId);
+    if (entry) {
+      entry.quizScore = 0;
+      entry.ticketScore = 0;
+      entry.score = 0;
+      entry.testScore = 0;
+      entry.sessions = [];
+      entry.sessionScores = {};
+      serverState.scores = normaliserListeScores(serverState.scores);
+      await sauvegarderEtatServeur();
+      afficherDoubleClassement();
+      rafraichirPanneauAdmin();
+      afficherFeedbackAdmin("Le score du participant a été réinitialisé à 0.");
+    }
+  }
+
+  async function resetProgressionTestParticipant() {
+    if (currentUser?.role !== "fondateur") return;
+    const candidatId = document.getElementById("founder-edit-user").value;
+    if (!candidatId) return;
+
+    await chargerEtatServeur();
+    const entry = serverState.scores.find(s => s.candidatId === candidatId);
+    const candOff = CANDIDATS_OFFICIELS.find(c => normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat") === candidatId);
+    const nomAffiche = entry?.nom || candOff?.pseudo || candidatId;
+
+    const parts = candidatId.split("__");
+    const suffix = parts.length >= 3 ? `${parts[1]}__${parts[2]}` : candidatId;
+    localStorage.removeItem(`nr_quiz_prog_candidat__${suffix}`);
+    localStorage.removeItem(`nr_quiz_prog_spectateur__${suffix}`);
+    localStorage.removeItem(`nr_quiz_prog_${candidatId}`);
+
+    if (entry) {
+      entry.quizScore = 0;
+      entry.ticketScore = 0;
+      entry.score = 0;
+      entry.testScore = 0;
+      entry.total = 0;
+      entry.sessions = [];
+      entry.sessionScores = {};
+      serverState.scores = normaliserListeScores(serverState.scores);
+      await sauvegarderEtatServeur();
+    }
+
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`Progression locale et score réinitialisés pour ${nomAffiche}.`);
+  }
+
+  async function nettoyerScoresEssai() {
+    if (currentUser?.role !== "fondateur") return;
+    await chargerEtatServeur();
+
+    const testNames = ["nova_test", "kenjiro", "kenjiro_2077"];
+    const avant = serverState.scores.length;
+
+    serverState.scores = serverState.scores.filter(s => {
+      const n = (s.nom || "").trim().toLowerCase();
+      return !testNames.includes(n);
+    });
+
+    CANDIDATS_OFFICIELS.filter(c => testNames.includes(c.pseudo.trim().toLowerCase())).forEach(c => {
+      const id = normaliserCleParticipant(c.pseudo, c.whatsapp, "candidat");
+      localStorage.removeItem(`nr_quiz_prog_${id}`);
+    });
+    Object.keys(localStorage).forEach(k => {
+      if (k.startsWith("nr_quiz_prog_") && testNames.some(t => k.toLowerCase().includes(t))) {
+        localStorage.removeItem(k);
+      }
+    });
+
+    const retires = avant - serverState.scores.length;
+    await sauvegarderEtatServeur();
+    afficherDoubleClassement();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`${retires} entrée(s) d'essai (Nova_test / Kenjiro) retirée(s) et progression locale nettoyée.`);
+  }
+
+  async function suspendreAdmin(staffId, heures) {
+    if (currentUser?.role !== "fondateur") return;
+    await chargerEtatServeur();
+    serverState.suspensions[staffId] = Date.now() + heures * 3600 * 1000;
+    await sauvegarderEtatServeur();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin(`Administrateur suspendu pour ${heures} heures.`);
+  }
+
+  async function reactiverAdmin(staffId) {
+    if (currentUser?.role !== "fondateur") return;
+    await chargerEtatServeur();
+    delete serverState.suspensions[staffId];
+    await sauvegarderEtatServeur();
+    rafraichirPanneauAdmin();
+    afficherFeedbackAdmin("Administrateur réactivé avec succès.");
+  }
+
+  // ====== SUPERVISION EN DIRECT (FONDATEUR & ADMINS) ======
+  async function publierEtatEnDirect(statut, derniereReponseTexte = "") {
+    if (!currentUser || isStaffRole()) return;
+    const pid = normaliserCleParticipant(currentUser.pseudo, currentUser.whatsapp, currentUser.role);
+    if (!serverState.livePlayers || typeof serverState.livePlayers !== "object") {
+      serverState.livePlayers = {};
+    }
+
+    serverState.livePlayers[pid] = {
+      id: pid,
+      nom: currentUser.pseudo,
+      role: currentUser.role === "spectateur" ? "Spectateur" : "Candidat",
+      ville: currentUser.ville || "Kisangani",
+      pays: currentUser.pays || "RD Congo",
+      sessionId: activeSession ? activeSession.id : null,
+      sessionTitle: activeSession ? activeSession.title : "",
+      questionNum: activeSession ? (qIndex + 1) : 0,
+      totalQuestions: sessionQuestions.length || 10,
+      lastAnswer: derniereReponseTexte || (serverState.livePlayers[pid]?.lastAnswer || "Aucune encore"),
+      currentScore: score,
+      status: statut,
+      updatedAt: Date.now()
+    };
+
+    try {
+      await sauvegarderEtatServeur();
+    } catch (_) {}
+  }
+
+  function afficherMoniteurStaff() {
+    const monitor = document.getElementById("staff-live-monitor");
+    const box = document.getElementById("live-activity-list");
+    if (!monitor || !box) return;
+
+    if (!isStaffRole()) {
+      monitor.classList.add("hidden");
+      if (liveMonitorInterval) {
+        clearInterval(liveMonitorInterval);
+        liveMonitorInterval = null;
+      }
+      return;
+    }
+
+    monitor.classList.remove("hidden");
+    const players = Object.values(serverState.livePlayers || {}).sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+    if (!players.length) {
+      box.innerHTML = `<div class="session-card"><div class="meta">Aucun candidat ou spectateur actif en session pour le moment.</div></div>`;
+      return;
+    }
+
+    box.innerHTML = players.map(p => {
+      const isPlaying = p.status === "en_cours";
+      const heureStr = p.updatedAt ? formaterHeureDansZone(p.updatedAt, getUserTimeZone()) : "";
+      return `<div class="session-card">
+        <div class="session-top">
+          <div class="session-title">${escapeHtml(p.nom)} <span class="pill">${escapeHtml(p.role)}</span></div>
+          <span class="pill ${isPlaying ? 'open' : 'done'}">${isPlaying ? 'En train de jouer' : 'Terminé'}</span>
+        </div>
+        <div class="meta">
+          • <strong>Session :</strong> ${escapeHtml(p.sessionTitle || `Session ${p.sessionId}`)}<br>
+          • <strong>Progression :</strong> Question ${p.questionNum}/${p.totalQuestions} · Score en cours : <strong>${p.currentScore} pts</strong><br>
+          • <strong>Dernière réponse :</strong> ${escapeHtml(p.lastAnswer || "Aucune")} <span style="opacity:0.75;">(${escapeHtml(p.ville || "Kisangani")} · ${heureStr})</span>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  // ====== SESSIONS, TESTS & JEU ======
+  function shuffle(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function userKey() {
+    return currentUser ? `${currentUser.role}__${currentUser.pseudo.toLowerCase()}__${normaliserTelephone(currentUser.whatsapp)}` : "";
+  }
+
+  function getProgress() {
+    if (!currentUser) return { completed: [] };
+    const raw = localStorage.getItem("nr_quiz_prog_" + userKey());
+    return raw ? JSON.parse(raw) : { completed: [] };
+  }
+
+  function saveProgress(prog) {
+    localStorage.setItem("nr_quiz_prog_" + userKey(), JSON.stringify(prog));
+  }
+
+  async function enregistrerSessionManqueeZeroPoint(missedSessionCode) {
+    if (!currentUser || isStaffRole()) return;
+    try {
+      const role = currentUser.role === "spectateur" ? "spectateur" : "candidat";
+      const candidatId = normaliserCleParticipant(currentUser.pseudo, currentUser.whatsapp, role);
+
+      let entry = serverState.scores.find(s => s.candidatId === candidatId);
+      if (!entry) {
+        entry = {
+          candidatId,
+          role,
+          nom: currentUser.pseudo,
+          whatsapp: currentUser.whatsapp,
+          quizScore: 0,
+          ticketScore: 0,
+          score: 0,
+          testScore: 0,
+          total: 0,
+          sessions: [missedSessionCode],
+          sessionScores: { [missedSessionCode]: 0 },
+          date: Date.now()
+        };
+        serverState.scores.push(entry);
+      } else {
+        if (!Array.isArray(entry.sessions)) entry.sessions = [];
+        if (!entry.sessions.includes(missedSessionCode)) {
+          entry.sessions.push(missedSessionCode);
+        }
+        if (!entry.sessionScores || typeof entry.sessionScores !== "object") {
+          entry.sessionScores = {};
+        }
+        if (entry.sessionScores[missedSessionCode] === undefined) {
+          entry.sessionScores[missedSessionCode] = 0;
+        }
+      }
+
+      serverState.scores = normaliserListeScores(serverState.scores);
+      await sauvegarderEtatServeur();
+    } catch (_) {}
+  }
+
+  function renderSessions() {
+    if (countdownInterval) clearInterval(countdownInterval);
+    const prog = getProgress();
+    const nowUtcMs = Date.now();
+    const userTz = getUserTimeZone();
+    const locLabel = `${currentUser?.ville || "Kisangani"} (${currentUser?.pays || "RD Congo"})`;
+    const blockReason = getCurrentCandidatBlockReason();
+    const banner = document.getElementById("status-session-banner");
+
+    if (isStaffRole()) {
+      document.getElementById("sessions-main-title").textContent = "Observation des Sessions & Tests";
+      document.getElementById("candidate-summary").textContent = `Mode Observation (${currentUser.titre || currentUser.pseudo}) · ${locLabel} · Référence : Kisangani (21h00–22h00)`;
+      banner.classList.add("hidden");
+      afficherMoniteurStaff();
+      if (!liveMonitorInterval) {
+        liveMonitorInterval = setInterval(() => {
+          if (!document.getElementById("tab-sessions").classList.contains("hidden") && isStaffRole()) {
+            chargerEtatServeur();
+          }
+        }, 6000);
+      }
+    } else {
+      document.getElementById("sessions-main-title").textContent = "Sessions & Tests";
+      document.getElementById("staff-live-monitor").classList.add("hidden");
+      if (blockReason) {
+        banner.textContent = `${blockReason} Tu ne peux plus lancer de session.`;
+        banner.classList.remove("hidden");
+      } else {
+        banner.classList.add("hidden");
+      }
+      const labelStatut = currentUser.role === "candidat" ? "Candidat Officiel" : "Spectateur";
+      document.getElementById("candidate-summary").textContent = `${labelStatut} : ${currentUser.pseudo} · ${locLabel} · ${prog.completed.length}/${SESSIONS.length} complétés`;
+    }
+
+    const container = document.getElementById("sessions-list");
+    container.innerHTML = "";
+
+    SESSIONS.forEach(sess => {
+      const isDone = prog.completed.includes(sess.id);
+      const started = nowUtcMs >= sess.startUtcMs;
+      const notExpired = nowUtcMs <= sess.endUtcMs;
+      const heuresLoc = `${formaterHeureDansZone(sess.startUtcMs, userTz)}–${formaterHeureDansZone(sess.endUtcMs, userTz)}`;
+      const timingsResume = getResumeTimingsSession(sess.id);
+      const typeTag = sess.isTest
+        ? `<span class="pill" style="background:rgba(39,196,125,0.14);color:#6ef0b4;">TEST ENTRAÎNEMENT</span>`
+        : `<span class="pill" style="background:rgba(255,107,44,0.14);color:var(--accent-2);">OFFICIEL</span>`;
+
+      let statusLabel = "Verrouillée", pillClass = "locked", reason = "", canPlay = false;
+
+      if (isStaffRole()) {
+        statusLabel = !started ? "À venir" : (!notExpired ? "Clôturée (22h00)" : "En cours");
+        pillClass = (!started || !notExpired) ? "locked" : "open";
+        reason = `Kisangani : 21h00–22h00 (${heuresLoc} chez toi) · Timings : ${timingsResume} · <em>Observation uniquement</em>.`;
+      } else if (blockReason) {
+        statusLabel = "Bloqué"; pillClass = "locked"; reason = "Accès bloqué.";
+      } else if (isDone) {
+        statusLabel = "Terminé"; pillClass = "done"; reason = `Complété et enregistré · ${heuresLoc} (${locLabel}).`;
+      } else if (!started) {
+        statusLabel = "À venir"; pillClass = "locked";
+        reason = `<div class="countdown-date">Ouverture à 21h00 Kisangani — ${formaterDateCompleteDansZone(sess.startUtcMs, userTz)} (${locLabel})</div>
+          <div class="countdown-grid" data-start="${sess.startUtcMs}">
+            <div class="countdown-box"><div class="countdown-num cd-j">00</div><div class="countdown-label">jours</div></div>
+            <div class="countdown-box"><div class="countdown-num cd-h">00</div><div class="countdown-label">h</div></div>
+            <div class="countdown-box"><div class="countdown-num cd-m">00</div><div class="countdown-label">min</div></div>
+            <div class="countdown-box"><div class="countdown-num cd-s">00</div><div class="countdown-label">s</div></div>
+          </div>`;
+      } else if (!notExpired) {
+        statusLabel = "Clôturée (22h00)"; pillClass = "locked";
+        reason = `Terminé à 22h00 heure de Kisangani (${heuresLoc} chez toi).`;
+      } else {
+        const pen = calculerPenaliteRetardKisangani(sess.startUtcMs, nowUtcMs);
+        const prevMissed = !sess.isTest && sess.id > 1 && !prog.completed.includes(sess.id - 1);
+        const prevNote = prevMissed
+          ? ` · <em>Session ${sess.id - 1} non passée : comptée à 0 pt (modifiable par le Fondateur)</em>`
+          : "";
+        statusLabel = "En cours"; pillClass = "open";
+        reason = pen > 0
+          ? `Ouvert (${heuresLoc} chez toi · 21h00–22h00 Kisangani) · Retard actif : <strong>-${pen} pt(s)</strong> · ${timingsResume}${prevNote}.`
+          : `Ouvert (${heuresLoc} chez toi · 21h00–22h00 Kisangani) · Aucune pénalité · ${timingsResume}${prevNote}.`;
+        canPlay = true;
+      }
+
+      const card = document.createElement("div");
+      card.className = "session-card";
+      card.innerHTML = `<div class="session-top"><div class="session-title">${sess.title}</div><div style="display:flex;gap:4px;align-items:center;">${typeTag}<span class="pill ${pillClass}">${statusLabel}</span></div></div><div class="meta">${reason}</div>`;
+
+      if (canPlay && !isStaffRole()) {
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.textContent = sess.isTest ? `Lancer ${sess.code} (Test)` : `Lancer la Session ${sess.id}`;
+        btn.addEventListener("click", () => startSession(sess));
+        card.appendChild(btn);
+      }
+      container.appendChild(card);
+    });
+
+    countdownInterval = setInterval(updateCountdowns, 1000);
+    updateCountdowns();
+  }
+
+  function updateCountdowns() {
+    const now = Date.now();
+    document.querySelectorAll(".countdown-grid").forEach(el => {
+      const diff = Number(el.dataset.start) - now;
+      if (diff <= 0) { renderSessions(); return; }
+      const totalSec = Math.floor(diff / 1000);
+      el.querySelector(".cd-j").textContent = String(Math.floor(totalSec / 86400)).padStart(2, '0');
+      el.querySelector(".cd-h").textContent = String(Math.floor((totalSec % 86400) / 3600)).padStart(2, '0');
+      el.querySelector(".cd-m").textContent = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+      el.querySelector(".cd-s").textContent = String(totalSec % 60).padStart(2, '0');
+    });
+  }
+
+  async function startSession(sess) {
+    if (isStaffRole()) {
+      switchTab("sessions");
+      return;
+    }
+
+    await chargerEtatServeur();
+    if (getCurrentCandidatBlockReason()) {
+      renderSessions();
+      return;
+    }
+
+    if (countdownInterval) clearInterval(countdownInterval);
+    const nowUtcMs = Date.now();
+    if (nowUtcMs > sess.endUtcMs || nowUtcMs < sess.startUtcMs) {
+      renderSessions();
+      return;
+    }
+
+    const prog = getProgress();
+    if (prog.completed.includes(sess.id)) { switchTab('sessions'); return; }
+    prog.completed.push(sess.id);
+
+    if (!sess.isTest && sess.id > 1) {
+      const prevSess = SESSIONS.find(s => s.id === sess.id - 1);
+      if (prevSess && !prog.completed.includes(prevSess.id)) {
+        prog.completed.push(prevSess.id);
+        saveProgress(prog);
+        await enregistrerSessionManqueeZeroPoint(prevSess.code || `S${prevSess.id}`);
+      } else {
+        saveProgress(prog);
+      }
+    } else {
+      saveProgress(prog);
+    }
+
+    activeSession = sess;
+    activePenalty = calculerPenaliteRetardKisangani(sess.startUtcMs, nowUtcMs);
+    score = 0; qIndex = 0; isAnswering = false;
+
+    const bank = SESSION_QUESTIONS[sess.id] || [];
+    sessionQuestions = shuffle(bank).map(item => ({
+      q: item.q, pts: item.pts,
+      opts: shuffle(item.opts.map((text, idx) => ({ text, isCorrect: idx === item.ans })))
+    }));
+
+    document.getElementById("game-session-title").textContent = sess.title;
+    document.getElementById("game-sub").textContent = `${currentUser.pseudo} · ${currentUser.ville || "Kisangani"}`;
+    document.getElementById("game-penalty-info").innerHTML = activePenalty > 0
+      ? `⚠️ Retard constaté (heure de Kisangani) : <strong>-${activePenalty} point(s)</strong> seront déduits du total.`
+      : `Attention : quitter ou rafraîchir la page consomme ta tentative.`;
+
+    ["tab-home", "tab-sessions", "tab-leaderboard", "tab-rules", "tab-chat", "tab-admin"].forEach(id => document.getElementById(id).classList.add("hidden"));
+    document.getElementById("screen-game").classList.remove("hidden");
+
+    await publierEtatEnDirect("en_cours", `${sess.code} démarré`);
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    clearInterval(timerId);
+    isAnswering = false;
+    const currentQ = sessionQuestions[qIndex];
+    timeLeft = getQuestionTimeSecFor(activeSession.id, qIndex);
+
+    document.getElementById("q-counter").textContent = `Question ${qIndex + 1}/${sessionQuestions.length}`;
+    document.getElementById("q-timer").textContent = `${timeLeft}s`;
+    document.getElementById("q-text").textContent = currentQ.q;
+
+    const optsBox = document.getElementById("q-options");
+    optsBox.innerHTML = "";
+    currentQ.opts.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.className = "opt";
+      btn.textContent = opt.text;
+      btn.dataset.correct = opt.isCorrect ? "1" : "0";
+      btn.addEventListener("click", () => handleAnswer(btn, opt.isCorrect, opt.text));
+      optsBox.appendChild(btn);
+    });
+
+    timerId = setInterval(() => {
+      timeLeft -= 1;
+      document.getElementById("q-timer").textContent = `${timeLeft}s`;
+      if (timeLeft <= 0) { clearInterval(timerId); handleAnswer(null, false, "Temps écoulé"); }
+    }, 1000);
+  }
+
+  async function handleAnswer(clickedBtn, isCorrect, answerLabel = "") {
+    if (isAnswering) return;
+    isAnswering = true;
+    clearInterval(timerId);
+
+    document.querySelectorAll("#q-options .opt").forEach(btn => {
+      btn.disabled = true;
+      if (btn.dataset.correct === "1") btn.classList.add("correct");
+    });
+    if (clickedBtn && !isCorrect) clickedBtn.classList.add("wrong");
+    if (isCorrect) score += sessionQuestions[qIndex].pts;
+
+    const resumeRep = `${answerLabel} (${isCorrect ? "Juste" : "Faux"})`;
+    await publierEtatEnDirect("en_cours", `Q${qIndex + 1} : ${resumeRep}`);
+
+    setTimeout(() => {
+      qIndex += 1;
+      if (qIndex < sessionQuestions.length) renderQuestion();
+      else finishSession();
+    }, 650);
+  }
+
+  async function finishSession() {
+    const finalSessionScore = Math.max(0, score - activePenalty);
+    const totalPoints = sessionQuestions.length;
+    const sessionCode = activeSession.code || `S${activeSession.id}`;
+
+    document.getElementById("screen-game").classList.add("hidden");
+    document.getElementById("screen-result").classList.remove("hidden");
+    document.getElementById("result-sub-msg").textContent = activeSession.isTest
+      ? "Résultat de test enregistré dans le classement des tests (non cumulé au classement officiel)."
+      : "Ton résultat a été enregistré et cumulé dans ton classement officiel.";
+    document.getElementById("res-score").textContent = `${finalSessionScore} / ${totalPoints} pts`;
+    document.getElementById("res-detail").textContent = activePenalty > 0
+      ? `${currentUser.pseudo} · ${sessionCode} (Brut : ${score} pts · Pénalité retard : -${activePenalty} pt)`
+      : `${currentUser.pseudo} · ${sessionCode}`;
+
+    const syncBox = document.getElementById("sync-status");
+    syncBox.className = "alert";
+    syncBox.textContent = "Enregistrement du score dans le classement...";
+
+    if (enCoursEnvoi) return;
+    enCoursEnvoi = true;
+
+    try {
+      await chargerEtatServeur();
+      const role = currentUser.role === "spectateur" ? "spectateur" : "candidat";
+      const candidatId = normaliserCleParticipant(currentUser.pseudo, currentUser.whatsapp, role);
+
+      let entry = serverState.scores.find(s => s.candidatId === candidatId);
+      if (!entry) {
+        entry = {
+          candidatId,
+          role,
+          nom: currentUser.pseudo,
+          whatsapp: currentUser.whatsapp,
+          quizScore: activeSession.isTest ? 0 : finalSessionScore,
+          ticketScore: 0,
+          score: activeSession.isTest ? 0 : finalSessionScore,
+          testScore: activeSession.isTest ? finalSessionScore : 0,
+          total: totalPoints,
+          sessions: [sessionCode],
+          sessionScores: { [sessionCode]: finalSessionScore },
+          date: Date.now()
+        };
+        serverState.scores.push(entry);
+      } else {
+        if (!Array.isArray(entry.sessions)) entry.sessions = [];
+        if (!entry.sessions.includes(sessionCode)) entry.sessions.push(sessionCode);
+        if (!entry.sessionScores || typeof entry.sessionScores !== "object") {
+          entry.sessionScores = {};
+        }
+        entry.sessionScores[sessionCode] = finalSessionScore;
+        entry.total = (Number(entry.total) || 0) + totalPoints;
+        entry.date = Date.now();
+      }
+
+      if (role === "candidat" && activePenalty > 0) {
+        if (!Array.isArray(serverState.penalties)) serverState.penalties = [];
+        const alreadyLogged = serverState.penalties.some(
+          p => p.candidatId === candidatId && p.sessionCode === sessionCode
+        );
+        if (!alreadyLogged) {
+          serverState.penalties.push({
+            candidatId,
+            nom: currentUser.pseudo,
+            sessionId: activeSession.id,
+            sessionCode: sessionCode,
+            sessionLabel: activeSession.title,
+            points: activePenalty,
+            ville: currentUser.ville || "Kisangani",
+            delivered: false,
+            date: Date.now()
+          });
+        }
+      }
+
+      serverState.scores = normaliserListeScores(serverState.scores);
+      await sauvegarderEtatServeur();
+      await publierEtatEnDirect("termine", `${sessionCode} terminé (${finalSessionScore}/${totalPoints} pts)`);
+      syncBox.className = "alert ok";
+      syncBox.textContent = "Score enregistré avec succès !";
+    } catch (_) {
+      syncBox.className = "alert err";
+      syncBox.textContent = "Erreur de synchronisation. Vérifie ta connexion.";
+    } finally {
+      enCoursEnvoi = false;
+    }
+  }
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
